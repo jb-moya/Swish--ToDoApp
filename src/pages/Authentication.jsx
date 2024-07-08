@@ -5,40 +5,29 @@ import {
     Box,
     Flex,
     Heading,
-    Input,
     Button,
-    Text,
-    Divider,
-    IconButton,
     VStack,
-    HStack,
     useColorMode,
 } from "@chakra-ui/react";
-import { FaFacebook, FaTwitter, FaGoogle } from "react-icons/fa";
 import { MdDarkMode, MdOutlineLightMode } from "react-icons/md";
+import AuthForm from "../components/AuthForm";
 
 const Authentication = () => {
     const { colorMode, toggleColorMode } = useColorMode();
 
     return (
         <>
-            <Flex
-                align="center"
-                justify="center"
-                height="100vh"
-                // bgGradient="linear(to-r, purple.500, blue.500)"
-            >
+            <Flex align="center" justify="center" height="100vh">
                 <Box
-                    // bg="white"
                     p={6}
                     rounded="md"
                     width="sm"
-                    boxShadow="lg"
+                    boxShadow="2xl"
                     textAlign="center"
                 >
                     <Flex mb={16} align="center" justify="space-between">
                         <Heading>Swish</Heading>
-                        <Button onClick={toggleColorMode}>
+                        <Button variant={"outline"} onClick={toggleColorMode}>
                             {colorMode === "light" ? (
                                 <MdDarkMode />
                             ) : (
@@ -47,27 +36,7 @@ const Authentication = () => {
                         </Button>
                     </Flex>
                     <VStack spacing={4} align="stretch">
-                        <Input placeholder="Email" variant="filled" />
-                        <Input
-                            placeholder="Password"
-                            type="password"
-                            variant="filled"
-                        />
-                        <Button colorScheme="teal" size="md" width="full">
-                            LOGIN
-                        </Button>
-                        <Text>Or</Text>
-                        <Button
-                            colorScheme="red"
-                            align="center"
-                            size="md"
-                            width="full"
-                            textAlign="center"
-                            alignItems={"center"}
-                        >
-                            <FaGoogle />
-                            <Text ml={2}>LogIn with Google</Text>
-                        </Button>
+                        <AuthForm />
                     </VStack>
                 </Box>
             </Flex>
