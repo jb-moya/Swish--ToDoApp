@@ -1,4 +1,4 @@
-import React from "react";
+
 
 // import { Box, Container } from "@chakra-ui/react";
 import {
@@ -10,7 +10,7 @@ import {
     useColorMode,
 } from "@chakra-ui/react";
 import { MdDarkMode, MdOutlineLightMode } from "react-icons/md";
-import AuthForm from "../components/AuthForm";
+import AuthForm from "../components/AuthForm/AuthForm";
 
 const Authentication = () => {
     const { colorMode, toggleColorMode } = useColorMode();
@@ -24,8 +24,9 @@ const Authentication = () => {
                     width="sm"
                     boxShadow="2xl"
                     textAlign="center"
+                    bg={colorMode === "light" ? "white" : "gray.700"}
                 >
-                    <Flex mb={16} align="center" justify="space-between">
+                    <Flex mb={10} align="center" justify="space-between">
                         <Heading>Swish</Heading>
                         <Button variant={"outline"} onClick={toggleColorMode}>
                             {colorMode === "light" ? (

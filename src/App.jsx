@@ -1,8 +1,10 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Authentication from "./pages/Authentication";
-import Navbar from "./components/NavBar";
-import { useColorMode, Box } from "@chakra-ui/react";
+// import Navbar from "./components/NavBar";
+import { useColorMode } from "@chakra-ui/react";
+import useAuthStore from "./store/authStore";
+import PageLayout from "./layouts/PageLayout/PageLayout";
 
 function App() {
     const { colorMode } = useColorMode();
@@ -41,15 +43,26 @@ function App() {
     )
   `;
 
+    const authUser = useAuthStore((state) => state.user);
+
     const gradient = colorMode === "light" ? lightGradient : darkGradient;
 
     return (
-        <Box minH="100vh">
+        <PageLayout>
             <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/auth" element={<Authentication />} />
+                <Route
+                    path="/"
+                    // element={authUser ? <Home /> : <Navigate to="/auth" />}
+                    element={<Home />}
+                />
+                <Route
+                    path="/auth"
+                    element={
+                        !authUser ? <Authentication /> : <Navigate to="/" />
+                    }
+                />
             </Routes>
-        </Box>
+        </PageLayout>
     );
 }
 
