@@ -16,28 +16,26 @@ import {
     InputLeftElement,
     IconButton,
     HStack,
+    useDisclosure,
 } from "@chakra-ui/react";
-import { MdDarkMode, MdOutlineLightMode } from "react-icons/md";
+import EditProfile from "./AuthForm/Profile/EditProfile";
+import { MdPerson, MdDarkMode, MdOutlineLightMode } from "react-icons/md";
 import PropTypes from "prop-types";
 import useLogout from "../hooks/useLogout";
+import useAuthStore from "../store/authStore";
 import { SearchIcon, ChevronDownIcon } from "@chakra-ui/icons";
-
-const menus = {
-    home: {
-        name: "Home",
-        href: "/home",
-    },
-    auth: {
-        name: "Auth",
-        href: "/auth",
-    },
-};
 
 const Navbar = () => {
     const { colorMode, toggleColorMode } = useColorMode();
     const { handleLogout, isLoggingOut, error } = useLogout();
+
+    const user = useAuthStore((state) => state.user);
+	const { isOpen, onOpen, onClose } = useDisclosure();
+
     return (
         <Flex align="center" justify="center">
+            {isOpen && <EditProfile isOpen={isOpen} onClose={onClose} />}
+
             <Flex
                 width="fit-content"
                 mx="auto"
@@ -47,23 +45,6 @@ const Navbar = () => {
                 px="2"
                 transition="all 0.5s ease-in-out"
             >
-                {/* <Flex spaceX="4" align="center"> */}
-                {/* {Object.entries(menus).map(([key, menu]) => (
-                        <Link
-                            key={key}
-                            href={menu.href}
-                            flex="1"
-                            // w="full"
-                            justifyContent="center"
-                            textAlign="center"
-                            _hover={{
-                                transform: "scale(1.05)",
-                                color: "customContent1",
-                            }}
-                        >
-                            <span>{menu.name}</span>
-                        </Link>
-                    ))} */}
                 <InputGroup width={"300px"}>
                     <InputLeftElement pointerEvents="none">
                         <SearchIcon opacity={0.4} />
@@ -71,29 +52,38 @@ const Navbar = () => {
                     <Input type="tel" placeholder="Search" />
                 </InputGroup>
 
-                <Menu>
+                <Menu >
                     <MenuButton
                         as={Button}
+                        mx={3}
                         variant={"ghost"}
                         leftIcon={
-                            <Box display={"flex"} alignItems={"center"}>
+                            user?.profilePicURL ? (
                                 <Avatar
-                                    size="sm"
-                                    name="Dan Abrahmov"
-                                    src="https://bit.ly/dan-abramov"
+                                    size={"sm"}
+                                    name={user?.username}
+                                    src={user?.profilePicURL}
                                 />
-                            </Box>
+                            ) : (
+                                <MdPerson size={"24"} />
+                            )
                         }
                     >
-                        username
-                        <ChevronDownIcon ml={1}/>
+                        {user?.username}
+                        <ChevronDownIcon ml={1} />
                     </MenuButton>
                     <MenuList>
-                        <MenuItem>Download</MenuItem>
-                        <MenuItem>Create a Copy</MenuItem>
-                        <MenuItem>Mark as Draft</MenuItem>
-                        <MenuItem>Delete</MenuItem>
-                        <MenuItem>Attend a Workshop</MenuItem>
+                        <MenuItem as={Button} onClick={onOpen}>
+                            Edit Profile
+                        </MenuItem>
+                        <MenuItem
+                            as={Button}
+                            onClick={handleLogout}
+                            isDisabled={isLoggingOut}
+                            color={"red.500"}
+                        >
+                            Logout
+                        </MenuItem>
                     </MenuList>
                 </Menu>
 
@@ -112,10 +102,6 @@ const Navbar = () => {
             </Flex>
         </Flex>
     );
-};
-
-Navbar.propTypes = {
-    menus: PropTypes.object.isRequired,
 };
 
 export default Navbar;
