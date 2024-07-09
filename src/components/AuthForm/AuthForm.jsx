@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Box, Button, Flex, Text, VStack } from "@chakra-ui/react";
 import Login from "./Login";
 import SignUp from "./SignUp";
-import GoogleAuth from "./GoogleAuth";
+// import GoogleAuth from "./GoogleAuth";
+import { GoogleAuth, FacebookAuth, GithubAuth } from "./SocialAuth";
 
 const AuthForm = () => {
     const [isLogin, setIsLogin] = useState(true);
@@ -19,7 +20,14 @@ const AuthForm = () => {
                 </Text>
                 <Box flex={2} h={"1px"} bg="teal.500" opacity={0.5} />
             </Flex>
-            <GoogleAuth />
+            {/* <GoogleAuth prefix={isLogin ? "Login" : "Sign Up"}/> */}
+
+            {/* <FacebookAuth prefix={isLogin ? "Login" : "Sign Up"} /> */}
+
+            {/* <GithubAuth prefix={isLogin ? "Login" : "Sign Up"} /> */}
+
+            <GoogleAuth prefix={isLogin ? "Login" : "Sign Up"} />
+
             <VStack mt={7}>
                 <Text>
                     {isLogin

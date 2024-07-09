@@ -1,6 +1,13 @@
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth, firestore } from "../firebase/firebase";
-import { setDoc, doc } from "firebase/firestore";
+import {
+    collection,
+    doc,
+    getDocs,
+    query,
+    setDoc,
+    where,
+} from "firebase/firestore";
 import useShowToast from "./useShowToast";
 import useAuthStore from "../store/authStore";
 
@@ -12,7 +19,6 @@ const useSignUpWithEmailAndPassword = () => {
 
     const loginUser = useAuthStore((state) => state.login);
 
-
     const signUp = async (inputs) => {
         if (!inputs.username || !inputs.email || !inputs.password) {
             showToast("Error", "Please fill in all fields", "error");
@@ -21,6 +27,16 @@ const useSignUpWithEmailAndPassword = () => {
 
         if (inputs.password !== inputs.confirmPassword) {
             showToast("Error", "Passwords do not match", "error");
+            return;
+        }
+
+        const usersRef = collection(firestore, "users");
+
+        const q = query(usersRef, where("username", "==", inputs.username));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            showToast("Error", "Username already exists", "error");
             return;
         }
 
@@ -42,10 +58,10 @@ const useSignUpWithEmailAndPassword = () => {
 
             if (newUser) {
                 const userDoc = {
-                    username: inputs.username,
-                    email: inputs.email,
-                    profilePicURL: "",
                     uid: newUser.user.uid,
+                    email: inputs.email,
+                    username: inputs.username,
+                    profilePicURL: "",
                     tasks: [],
                     categories: [],
                     created: new Date(),

@@ -1,9 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import {
-    background,
     ChakraProvider,
-    useColorModeValue,
 } from "@chakra-ui/react";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";

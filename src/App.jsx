@@ -5,6 +5,8 @@ import Authentication from "./pages/Authentication";
 import { useColorMode } from "@chakra-ui/react";
 import useAuthStore from "./store/authStore";
 import PageLayout from "./layouts/PageLayout/PageLayout";
+import { auth } from "./firebase/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 function App() {
     const { colorMode } = useColorMode();
@@ -42,6 +44,10 @@ function App() {
       hsl(200deg 50% 10%) 100%
     )
   `;
+
+    // minor problem: there's split-second that the login page can be seen before the user goes to the home page
+    // const [authUser] = useAuthState(auth);
+
 
     const authUser = useAuthStore((state) => state.user);
 

@@ -7,7 +7,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import useUserProfileStore from "../store/userProfileStore";
 
 const useEditProfile = () => {
-    const [isUpdating, setIsUpdating] = useState(false);
+    const [isProfileUpdating, setIsProfileUpdating] = useState(false);
 
     const authUser = useAuthStore((state) => state.user);
     const setAuthUser = useAuthStore((state) => state.setUser);
@@ -16,8 +16,8 @@ const useEditProfile = () => {
     const showToast = useShowToast();
 
     const editProfile = async (inputs, selectedFile) => {
-        if (isUpdating || !authUser) return;
-        setIsUpdating(true);
+        if (isProfileUpdating || !authUser) return;
+        setIsProfileUpdating(true);
 
         const storageRef = ref(storage, `profilePics/${authUser.uid}`);
         const userDocRef = doc(firestore, "users", authUser.uid);
@@ -47,7 +47,7 @@ const useEditProfile = () => {
         }
     };
 
-    return { editProfile, isUpdating };
+    return { editProfile, isProfileUpdating };
 };
 
 export default useEditProfile;

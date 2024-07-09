@@ -25,6 +25,7 @@ import { SmallCloseIcon } from "@chakra-ui/icons";
 import PasswordInput from "../PasswordInput";
 import useUpdateUserPassword from "../../../hooks/useUpdatePassword";
 import useReauthenticateWithCredential from "../../../hooks/useReauthenticateWithCredential";
+import { getAuth } from "firebase/auth";
 
 export default function EditProfile({ isOpen, onClose }) {
     const [inputs, setInputs] = useState({
@@ -45,11 +46,23 @@ export default function EditProfile({ isOpen, onClose }) {
     const fileRef = useRef(null);
     const { handleImageChange, selectedFile, setSelectedFile } =
         usePreviewImg();
-    const { isUpdating, editProfile } = useEditProfile();
-    const { updateUserPassword, updating } = useUpdateUserPassword();
+    const { isProfileUpdating, editProfile } = useEditProfile();
+    const { updateUserPassword, isPasswordUpdating } = useUpdateUserPassword();
     const showToast = useShowToast();
 
     const { verifyPassword } = useReauthenticateWithCredential();
+
+    const auth = getAuth();
+    const userSignInProvider = auth.currentUser?.providerData[0].providerId;
+
+    const defaultSignInProvider = "password";
+
+    const labelBackground = useColorModeValue("gray.100", "gray.700");
+
+    useEffect(() => {
+        console.log("getIDToken", auth.currentUser?.getIdTokenResult());
+        console.log("provider", userSignInProvider);
+    }, [auth.currentUser, userSignInProvider]);
 
     const handleEditProfile = async () => {
         try {
@@ -61,13 +74,12 @@ export default function EditProfile({ isOpen, onClose }) {
         }
     };
 
-    useEffect(() => {
-    }, [inputs]);
+    useEffect(() => {}, [inputs]);
 
     const isPasswordValid = () => {
         if (!verifyPassword(inputs.oldPassword)) {
             return false;
-        }   
+        }
 
         if (inputs.newPassword !== inputs.confirmNewPassword) {
             showToast("Error", "New Passwords do not match", "error");
@@ -110,7 +122,7 @@ export default function EditProfile({ isOpen, onClose }) {
                                 src={selectedFile || authUser.profilePicURL}
                                 border={"2px solid white "}
                             >
-                                <AvatarBadge
+                                {selectedFile && <AvatarBadge
                                     as={IconButton}
                                     size="sm"
                                     rounded="full"
@@ -121,7 +133,7 @@ export default function EditProfile({ isOpen, onClose }) {
                                     aria-label="remove Image"
                                     icon={<SmallCloseIcon />}
                                     onClick={() => setSelectedFile(null)}
-                                />
+                                />}
                             </Avatar>
                         </Center>
                         <Center w="full">
@@ -163,80 +175,92 @@ export default function EditProfile({ isOpen, onClose }) {
                     </FormLabel>
                 </FormControl>
 
-                <FormControl id="email" isRequired variant="floating">
-                    <Input
-                        size={"sm"}
-                        placeholder=" "
-                        _placeholder={{ color: "gray.500" }}
-                        type="email"
-                        variant="flushed"
-                        value={inputs.email || authUser.email}
-                        onChange={(e) =>
-                            setInputs({ ...inputs, email: e.target.value })
-                        }
-                    />
-                    <FormLabel
-                        fontWeight={"thin"}
-                        size={"sm"}
-                        bg={useColorModeValue("#fff", "#2d3748")}
-                    >
-                        Email address
-                    </FormLabel>
-                </FormControl>
+                {userSignInProvider === defaultSignInProvider && (
+                    <>
+                        <FormControl id="email" isRequired variant="floating">
+                            <Input
+                                size={"sm"}
+                                placeholder=" "
+                                _placeholder={{ color: "gray.500" }}
+                                type="email"
+                                variant="flushed"
+                                value={inputs.email || authUser.email}
+                                onChange={(e) =>
+                                    setInputs({
+                                        ...inputs,
+                                        email: e.target.value,
+                                    })
+                                }
+                            />
+                            <FormLabel
+                                fontWeight={"thin"}
+                                size={"sm"}
+                                bg={labelBackground}
+                            >
+                                Email address
+                            </FormLabel>
+                        </FormControl>
 
-                <Heading
-                    mt={4}
-                    lineHeight={1.1}
-                    fontSize={{ base: "xl", sm: "2xl" }}
-                >
-                    Change Password
-                </Heading>
+                        <Heading
+                            mt={4}
+                            lineHeight={1.1}
+                            fontSize={{ base: "xl", sm: "2xl" }}
+                        >
+                            Change Password
+                        </Heading>
 
-                <PasswordInput
-                    placeholder={"old password"}
-                    showPassword={showPassword.showOldPassword}
-                    setShowPassword={() =>
-                        setShowPassword({
-                            ...showPassword,
-                            showOldPassword: !showPassword.showOldPassword,
-                        })
-                    }
-                    input={inputs.oldPassword}
-                    setInput={(e) => setInputs({ ...inputs, oldPassword: e })}
-                    // mb={0}
-                />
+                        <PasswordInput
+                            placeholder={"old password"}
+                            showPassword={showPassword.showOldPassword}
+                            setShowPassword={() =>
+                                setShowPassword({
+                                    ...showPassword,
+                                    showOldPassword:
+                                        !showPassword.showOldPassword,
+                                })
+                            }
+                            input={inputs.oldPassword}
+                            setInput={(e) =>
+                                setInputs({ ...inputs, oldPassword: e })
+                            }
+                            // mb={0}
+                        />
 
-                <PasswordInput
-                    placeholder={"new password"}
-                    showPassword={showPassword.showNewPassword}
-                    setShowPassword={() =>
-                        setShowPassword({
-                            ...showPassword,
-                            showNewPassword: !showPassword.showNewPassword,
-                        })
-                    }
-                    input={inputs.newPassword}
-                    setInput={(e) => setInputs({ ...inputs, newPassword: e })}
-                    // mb={0}
-                />
+                        <PasswordInput
+                            placeholder={"new password"}
+                            showPassword={showPassword.showNewPassword}
+                            setShowPassword={() =>
+                                setShowPassword({
+                                    ...showPassword,
+                                    showNewPassword:
+                                        !showPassword.showNewPassword,
+                                })
+                            }
+                            input={inputs.newPassword}
+                            setInput={(e) =>
+                                setInputs({ ...inputs, newPassword: e })
+                            }
+                            // mb={0}
+                        />
 
-                <PasswordInput
-                    placeholder={"confirm new password"}
-                    showPassword={showPassword.showConfirmNewPassword}
-                    setShowPassword={() =>
-                        setShowPassword({
-                            ...showPassword,
-                            showConfirmNewPassword:
-                                !showPassword.showConfirmNewPassword,
-                        })
-                    }
-                    input={inputs.confirmNewPassword}
-                    setInput={(e) =>
-                        setInputs({ ...inputs, confirmNewPassword: e })
-                    }
-                    // mb={0}
-                />
-
+                        <PasswordInput
+                            placeholder={"confirm new password"}
+                            showPassword={showPassword.showConfirmNewPassword}
+                            setShowPassword={() =>
+                                setShowPassword({
+                                    ...showPassword,
+                                    showConfirmNewPassword:
+                                        !showPassword.showConfirmNewPassword,
+                                })
+                            }
+                            input={inputs.confirmNewPassword}
+                            setInput={(e) =>
+                                setInputs({ ...inputs, confirmNewPassword: e })
+                            }
+                            // mb={0}
+                        />
+                    </>
+                )}
                 <Stack spacing={6} direction={["column", "row"]}>
                     <Button
                         bg={"red.400"}
@@ -282,8 +306,8 @@ export default function EditProfile({ isOpen, onClose }) {
 
                             handleEditProfile();
                         }}
-                        isLoading={isUpdating}
-                        isDisabled={isUpdating}
+                        isLoading={isProfileUpdating || isPasswordUpdating}
+                        isDisabled={isProfileUpdating || isPasswordUpdating}
                     >
                         Submit
                     </Button>

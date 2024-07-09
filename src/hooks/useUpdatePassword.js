@@ -1,4 +1,3 @@
-import { useState } from "react";
 import useAuthStore from "../store/authStore";
 import useShowToast from "./useShowToast";
 import { auth } from "../firebase/firebase";
@@ -18,7 +17,7 @@ const useUpdateUserPassword = () => {
             const success = await updatePassword(newPassword);
             if (success) {
                 showToast(
-                    "ppppppppppppppppp",
+                    "Success",
                     "Password updated successfully",
                     "success"
                 );
@@ -30,7 +29,7 @@ const useUpdateUserPassword = () => {
         }
     };
 
-    return { updateUserPassword, updating, error };
+    return { updateUserPassword, isPasswordUpdating: updating, error };
 };
 
 export default useUpdateUserPassword;

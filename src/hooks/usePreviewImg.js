@@ -1,10 +1,7 @@
 import { useState } from "react";
 import useShowToast from "./useShowToast";
-import useAuthStore from "../store/authStore";
-
 
 const usePreviewImg = () => {
-    const authUser = useAuthStore((state) => state.user);
     const [selectedFile, setSelectedFile] = useState(null);
 
     const showToast = useShowToast();

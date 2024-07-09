@@ -1,7 +1,5 @@
 import {
-    Box,
     Flex,
-    Link,
     Button,
     useColorMode,
     Avatar,
@@ -9,18 +7,14 @@ import {
     MenuButton,
     MenuList,
     MenuItem,
-    MenuGroup,
-    MenuDivider,
     Input,
     InputGroup,
     InputLeftElement,
     IconButton,
-    HStack,
     useDisclosure,
 } from "@chakra-ui/react";
 import EditProfile from "./AuthForm/Profile/EditProfile";
 import { MdPerson, MdDarkMode, MdOutlineLightMode } from "react-icons/md";
-import PropTypes from "prop-types";
 import useLogout from "../hooks/useLogout";
 import useAuthStore from "../store/authStore";
 import { SearchIcon, ChevronDownIcon } from "@chakra-ui/icons";
@@ -28,9 +22,8 @@ import { SearchIcon, ChevronDownIcon } from "@chakra-ui/icons";
 const Navbar = () => {
     const { colorMode, toggleColorMode } = useColorMode();
     const { handleLogout, isLoggingOut, error } = useLogout();
-
     const user = useAuthStore((state) => state.user);
-	const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     return (
         <Flex align="center" justify="center">
@@ -52,7 +45,7 @@ const Navbar = () => {
                     <Input type="tel" placeholder="Search" />
                 </InputGroup>
 
-                <Menu >
+                <Menu>
                     <MenuButton
                         as={Button}
                         mx={3}
@@ -60,6 +53,7 @@ const Navbar = () => {
                         leftIcon={
                             user?.profilePicURL ? (
                                 <Avatar
+                                    border={"1px solid cyan"}
                                     size={"sm"}
                                     name={user?.username}
                                     src={user?.profilePicURL}
