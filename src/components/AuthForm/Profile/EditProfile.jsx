@@ -289,7 +289,7 @@ export default function EditProfile({ isOpen, onClose }) {
                                 if (!isPasswordValid()) {
                                     return;
                                 }
-
+ 
                                 handlePasswordChange();
                             } else if (
                                 inputs.oldPassword ||

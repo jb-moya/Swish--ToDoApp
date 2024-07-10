@@ -3,20 +3,20 @@ import { create } from "zustand";
 const useUserProfileStore = create((set) => ({
     userProfile: null,
     setUserProfile: (userProfile) => set({ userProfile }),
-    // this is used to update the number of posts in the profile page
-    addPost: (post) =>
+    // this is used to update the number of tasks in the profile page
+    addTask: (task) =>
         set((state) => ({
             userProfile: {
                 ...state.userProfile,
-                posts: [post.id, ...state.userProfile.posts],
+                tasks: [task.id, ...state.userProfile.tasks],
             },
         })),
         
-    deletePost: (postId) =>
+    deletePost: (taskId) =>
         set((state) => ({
             userProfile: {
                 ...state.userProfile,
-                posts: state.userProfile.posts.filter((id) => id !== postId),
+                tasks: state.userProfile.tasks.filter((id) => id !== taskId),
             },
         })),
 }));

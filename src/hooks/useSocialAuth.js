@@ -7,6 +7,7 @@ import useAuthStore from "../store/authStore";
 const useSocialAuth = (signInMethod) => {
     const showToast = useShowToast();
     const loginUser = useAuthStore((state) => state.login);
+    const setAuthUser = useAuthStore((state) => state.setUser);
 
     const handleSocialAuth = useCallback(async () => {
         try {
@@ -19,8 +20,12 @@ const useSocialAuth = (signInMethod) => {
 
             if (userSnap.exists()) {
                 const userDoc = userSnap.data();
+                console.log("userDocasdf", userDoc);
                 localStorage.setItem("user-info", JSON.stringify(userDoc));
                 loginUser(userDoc);
+                // 
+                // setAuthUser(userDoc);
+
             } else {
                 const userDoc = {
                     uid: newUser.user.uid,

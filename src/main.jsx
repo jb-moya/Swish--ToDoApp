@@ -1,17 +1,44 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {
-    ChakraProvider,
-} from "@chakra-ui/react";
+import { ChakraProvider, defineStyle } from "@chakra-ui/react";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
-import { extendTheme, baseTheme, withDefaultColorScheme } from "@chakra-ui/react";
+import {
+    extendTheme,
+    baseTheme,
+    withDefaultColorScheme,
+    createMultiStyleConfigHelpers,
+} from "@chakra-ui/react";
+
+import { checkboxAnatomy } from "@chakra-ui/anatomy";
+
+const { definePartsStyle, defineMultiStyleConfig } =
+    createMultiStyleConfigHelpers(checkboxAnatomy.keys);
 
 const activeLabelStyles = {
     transform: "scale(0.80) translateY(-20px)",
     opacity: 0.75,
 };
+
+const checkBoxBaseStyle = definePartsStyle({
+    label: defineStyle({
+        paddingX: 3,
+        marginLeft: 3,
+    }),
+    control: defineStyle({
+        marginLeft: 3,
+        rounded: "full",
+    }),
+    container: defineStyle({
+        _hover: {
+            borderColor: "brand.500",
+        },
+    }),
+});
+
+
+const checkboxTheme = defineMultiStyleConfig({ baseStyle: checkBoxBaseStyle });
 
 const theme = extendTheme(
     {
@@ -19,6 +46,7 @@ const theme = extendTheme(
             brand: baseTheme.colors.cyan,
         },
         components: {
+            Checkbox: checkboxTheme,
             Alert: {
                 defaultProps: {
                     colorScheme: "blue",
