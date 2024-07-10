@@ -23,17 +23,19 @@ const activeLabelStyles = {
 
 const checkBoxBaseStyle = definePartsStyle({
     label: defineStyle({
-        paddingX: 3,
+        paddingX: 5,
         marginLeft: 3,
     }),
     control: defineStyle({
-        marginLeft: 3,
+        padding: 2,
+        // mt: 1,
         rounded: "full",
     }),
     container: defineStyle({
         _hover: {
             borderColor: "brand.500",
         },
+        // width: "full",
     }),
 });
 

@@ -1,5 +1,13 @@
 import React, { useState, useCallback } from "react";
-import { Box, useColorModeValue, Checkbox, IconButton } from "@chakra-ui/react";
+import {
+    Box,
+    useColorModeValue,
+    Checkbox,
+    IconButton,
+    Stack,
+    HStack,
+    Flex,
+} from "@chakra-ui/react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import TaskEditable from "./TaskEditable";
 import PropTypes from "prop-types";
@@ -92,33 +100,50 @@ const TaskContainer = React.memo(({ task }) => {
                 />
             ) : (
                 <Box>
-                    <Checkbox
-                        mr={2}
-                        onChange={() => {
-                            setCurrentTaskInfo({
-                                ...currentTaskInfo,
-                                isCompleted: !currentTaskInfo.isCompleted,
-                            });
+                    <Flex>
+                        <Stack spacing={0}>
+                            <HStack alignContent={"center"} alignItems={"center"}>
+                                <Checkbox
+                                    justifySelf={"center"}
+                                    onChange={() => {
+                                        setCurrentTaskInfo({
+                                            ...currentTaskInfo,
+                                            isCompleted:
+                                                !currentTaskInfo.isCompleted,
+                                        });
 
-                            handleCompleteTask();
-                        }}
-                        isChecked={currentTaskInfo.isCompleted}
-                    >
-                        <Box
-                            fontWeight={"bold"}
-                            color={currentTaskInfo.isCompleted && taskNameColor}
-                            textDecoration={
-                                currentTaskInfo.isCompleted && "line-through"
-                            }
-                        >
-                            {currentTaskInfo.taskName}
-                        </Box>
-                        <Box lineHeight={1} opacity={0.75}>
-                            {currentTaskInfo.description}
-                        </Box>
-                    </Checkbox>
+                                        handleCompleteTask();
+                                    }}
+                                    isChecked={currentTaskInfo.isCompleted}
+                                    isDisabled={isEditing}
+                                    isLoading={isEditing}
+                                ></Checkbox>
+                                <Box
+                                    lineHeight={10}
+                                    fontWeight={"bold"}
+                                    color={
+                                        currentTaskInfo.isCompleted &&
+                                        taskNameColor
+                                    }
+                                    textDecoration={
+                                        currentTaskInfo.isCompleted &&
+                                        "line-through"
+                                    }
+                                    >
+                                    {currentTaskInfo.taskName}
+                                </Box>
+                            </HStack>
+                            <Box ml={7} lineHeight={1} opacity={0.75} minHeight={4}>
+                                    
+                                {currentTaskInfo.description
+                                    ? currentTaskInfo.description
+                                    : " "}
+                            </Box>
+                        </Stack>
+                    </Flex>
+
                     {isHovered && (
-                        <Box position={"absolute"} right={2} top={2}>
+                        <Box position={"absolute"} right={3} top={3}>
                             <IconButton
                                 size={"sm"}
                                 variant={"ghost"}

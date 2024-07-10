@@ -1,14 +1,10 @@
 import { useState } from "react";
 import { firestore } from "../firebase/firebase";
-import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
-import useAuthStore from "../store/authStore";
+import { doc, updateDoc } from "firebase/firestore";
 import useShowToast from "./useShowToast";
-import useTaskStore from "../store/taskStore";
 
 function useEditTask() {
     const showToast = useShowToast();
-    const authUser = useAuthStore((state) => state.user);
-    const { tasks, setTasks } = useTaskStore();
     const [isEditing, setIsEditing] = useState(false);
 
     const handleEditTask = async (task) => {
