@@ -1,6 +1,8 @@
 function dateFormat(date) {
     const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to midnight
     const targetDate = new Date(date);
+    targetDate.setHours(0, 0, 0, 0);
 
     const diffTime = Math.abs(targetDate - today);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -15,10 +17,12 @@ function dateFormat(date) {
         "Saturday",
     ];
 
+    console.log("diffDays  s s s ", diffDays);
+
     if (diffDays === 0) {
-        return "today";
+        return "Today";
     } else if (diffDays === 1) {
-        return "tomorrow";
+        return "Tomorrow";
     } else if (diffDays < 7) {
         return daysOfWeek[targetDate.getDay()];
     } else {

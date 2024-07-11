@@ -12,7 +12,9 @@ import {
     IconButton,
     MenuList,
     MenuItem,
+    Divider,
     Portal,
+    ButtonGroup,
 } from "@chakra-ui/react";
 import { CalendarIcon, CloseIcon } from "@chakra-ui/icons";
 import DatePicker from "../../components/DatePicker";
@@ -32,13 +34,15 @@ const TaskEditable = React.memo(
         onSave,
         onCancel,
         isLoading,
+        isAddingNewTask,
     }) => {
         const [editTaskInfo, setEditTaskInfo] = useState({
             id: taskInfo.id,
             taskName: taskInfo.taskName,
             description: taskInfo.description,
             isCompleted: taskInfo.isCompleted,
-            dueDate: taskInfo.dueDate === null ? null : new Date(taskInfo.dueDate),
+            dueDate:
+                taskInfo.dueDate === null ? null : new Date(taskInfo.dueDate),
             priority: taskInfo.priority,
             createdBy: taskInfo.createdBy,
             createdAt: taskInfo.createdAt,
@@ -54,7 +58,7 @@ const TaskEditable = React.memo(
         const handleSave = () => {
             onSave(editTaskInfo);
 
-            // setEditTaskInfo(taskInfo);
+            setEditTaskInfo(taskInfo);
 
             if (inputTitleRef.current) {
                 inputTitleRef.current.focus();
@@ -71,6 +75,12 @@ const TaskEditable = React.memo(
             console.log("edittable", editTaskInfo);
         }, [editTaskInfo]);
 
+        const borderStyle = useColorModeValue("gray.500", "gray.500");
+        const borderColor = useColorModeValue(
+            "rgba(0, 163, 196, 0.2)",
+            "rgba(0, 163, 196, 0.2)"
+        );
+
         return (
             <Box
                 position={"relative"}
@@ -80,13 +90,14 @@ const TaskEditable = React.memo(
                     "rgba(0, 163, 196, 0.2)",
                     "rgba(0, 163, 196, 0.2)"
                 )}`}
-                p={2}
+                p={4}
             >
                 <Input
                     type="text"
-                    size="sm"
+                    height={"22px"}
                     px={0}
                     variant={"ghost"}
+                    fontWeight={"bold"}
                     bg={"transparent"}
                     placeholder="task name"
                     value={editTaskInfo.taskName}
@@ -102,7 +113,7 @@ const TaskEditable = React.memo(
 
                 <Input
                     type="text"
-                    size="sm"
+                    height={"22px"}
                     px={0}
                     variant={"ghost"}
                     bg={"transparent"}
@@ -116,31 +127,23 @@ const TaskEditable = React.memo(
                     }
                 ></Input>
 
-                <Flex gap={2} pt={2} position={"relative"}>
-                    <Box
-                        px={2}
-                        as={Button}
-                        variant={"outline"}
-                        color={useColorModeValue("gray.500", "gray.500")}
-                        border={`1px solid ${useColorModeValue(
-                            "rgba(0, 163, 196, 0.2)",
-                            "rgba(0, 163, 196, 0.2)"
-                        )}`}
-                        height={"28px"}
-                        leftIcon={<CalendarIcon />}
-                        onClick={() => setShowDatePicker(!showDatePicker)}
-                        fontWeight={"thin"}
-                    >
-                        {editTaskInfo.dueDate !== null
-                            ? dateFormat(editTaskInfo.dueDate)
-                            : "No Date"}
+                <Flex gap={2} pt={2} mb={2} position={"relative"}>
+                    <ButtonGroup size="sm" isAttached variant="outline">
+                        <Button
+                            color={borderStyle}
+                            border={`1px solid ${borderColor}`}
+                            onClick={() => setShowDatePicker(!showDatePicker)}
+                            // fontWeight={"thin"}
+                        >
+                            {editTaskInfo.dueDate !== null
+                                ? dateFormat(editTaskInfo.dueDate)
+                                : "No Date"}
+                        </Button>
 
                         {editTaskInfo.dueDate && (
                             <IconButton
-                                ml={1}
-                                size={"xs"}
-                                variant={"ghost"}
-                                color={"gray.500"}
+                                border={`1px solid ${borderColor}`}
+                                color={borderStyle}
                                 icon={<CloseIcon />}
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -153,14 +156,14 @@ const TaskEditable = React.memo(
                                 _hover={{ color: "red" }}
                             />
                         )}
-                    </Box>
+                    </ButtonGroup>
 
                     {showDatePicker && (
                         <Box
                             position={"absolute"}
                             left={0}
                             top={10}
-                            zIndex={10}
+                            zIndex={12}
                         >
                             <DatePicker
                                 // selected={null}
@@ -178,44 +181,67 @@ const TaskEditable = React.memo(
                     )}
 
                     <Menu>
-                        <MenuButton
-                            as={Button}
-                            variant={"outline"}
-                            color={useColorModeValue("gray.500", "gray.500")}
-                            border={`1px solid ${useColorModeValue(
-                                "rgba(0, 163, 196, 0.2)",
-                                "rgba(0, 163, 196, 0.2)"
-                            )}`}
-                            height={"28px"}
-                            fontWeight={"thin"}
-                        >
-                            {priority[editTaskInfo.priority || 0]}
-                        </MenuButton>
-                        <Portal>
-                            <MenuList>
-                                {priority.map((item, index) => (
-                                    <MenuItem
-                                        key={item}
-                                        onClick={() =>
-                                            setEditTaskInfo({
-                                                ...editTaskInfo,
-                                                priority: index,
-                                            })
-                                        }
-                                        // width={"fit-content"}
-                                    >
-                                        {item}
-                                    </MenuItem>
-                                ))}
-                            </MenuList>
-                        </Portal>
+                        <ButtonGroup size="sm" isAttached variant="outline">
+                            <MenuButton
+                                as={Button}
+                                display={"flex"}
+                                px={2}
+                                color={useColorModeValue(
+                                    "gray.500",
+                                    "gray.500"
+                                )}
+                                border={`1px solid ${useColorModeValue(
+                                    "rgba(0, 163, 196, 0.2)",
+                                    "rgba(0, 163, 196, 0.2)"
+                                )}`}
+                                // fontWeight={"thin"}
+                            >
+                                {priority[editTaskInfo.priority || 0]}
+                            </MenuButton>
+
+                            {editTaskInfo.priority !== 0 && (
+                                <IconButton
+                                    variant={"ghost"}
+                                    color={borderStyle}
+                                    border={`1px solid ${borderColor}`}
+                                    icon={<CloseIcon />}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+
+                                        setEditTaskInfo({
+                                            ...editTaskInfo,
+                                            priority: 0,
+                                        });
+                                    }}
+                                    _hover={{ color: "red" }}
+                                />
+                            )}
+                        </ButtonGroup>
+
+                        {/* <Portal> */}
+                        <MenuList>
+                            {priority.map((item, index) => (
+                                <MenuItem
+                                    key={item}
+                                    onClick={() =>
+                                        setEditTaskInfo({
+                                            ...editTaskInfo,
+                                            priority: index,
+                                        })
+                                    }
+                                >
+                                    {item}
+                                </MenuItem>
+                            ))}
+                        </MenuList>
+                        {/* </Portal> */}
                     </Menu>
                 </Flex>
-
+                <Divider />
                 <Flex
                     mt={2}
                     justifyContent={"end"}
-                    gap={2}
+                    gap={3}
                     // direction={["column", "row"]}
                 >
                     <Button
@@ -233,7 +259,7 @@ const TaskEditable = React.memo(
                         isLoading={isLoading}
                         isDisabled={saveButtonDisable}
                     >
-                        Save
+                        {isAddingNewTask ? "Add Task" : "Save"}
                     </Button>
                 </Flex>
             </Box>

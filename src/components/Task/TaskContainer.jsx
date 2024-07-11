@@ -7,6 +7,10 @@ import {
     Stack,
     HStack,
     Flex,
+    Tag,
+    TagLabel,
+    Text,
+    TagRightIcon,
 } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import TaskEditable from "./TaskEditable";
@@ -14,6 +18,8 @@ import PropTypes from "prop-types";
 import useDeleteTask from "../../hooks/useDeleteTask";
 import useTaskStore from "../../store/taskStore";
 import useEditTask from "../../hooks/useEditTask";
+import dateFormat from "../utils/dateFormat";
+import { IoCalendarClearOutline } from "react-icons/io5";
 
 const TaskContainer = React.memo(({ task }) => {
     const { isDeleting, handleDeleteTask } = useDeleteTask();
@@ -46,7 +52,12 @@ const TaskContainer = React.memo(({ task }) => {
         }
     };
 
-    // keep an eye on these two
+    const taskButtonStyle = useColorModeValue(
+        "rgba(255, 255, 255, 0.7)",
+        "rgba(26, 32, 44, 0.7)"
+    );
+
+    // keep an eye on these tworgb(26, 32, 44)
     // might use zustand for this
 
     const handleCompleteTask = () => {
@@ -88,12 +99,10 @@ const TaskContainer = React.memo(({ task }) => {
             position={"relative"}
             width={"full"}
             borderBottom={`1px solid ${useColorModeValue(
-                "rgba(0, 163, 196, 0.2)",
-                "rgba(0, 163, 196, 0.2)"
+                "rgba(126, 132, 144, 0.3)",
+                "rgba(126, 132, 144, 0.3)"
             )}`}
-            // borderColor={useColorModeValue("white.00", "black.400")}
-            p={2}
-            // _hover={{ bg: "rgba(0, 163, 196, 0.05)" }}
+            py={2}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
@@ -107,26 +116,29 @@ const TaskContainer = React.memo(({ task }) => {
             ) : (
                 <Box>
                     <Flex>
-                        <Stack spacing={0}>
-                            <HStack alignContent={"center"} alignItems={"center"}>
-                                <Checkbox
-                                    justifySelf={"center"}
-                                    onChange={() => {
-                                        setCurrentTaskInfo({
-                                            ...currentTaskInfo,
-                                            isCompleted:
-                                                !currentTaskInfo.isCompleted,
-                                        });
+                        <Stack spacing={0} position={"relative"}>
+                            <Checkbox
+                                position={"absolute"}
+                                top={0}
+                                // bg={"red"}
+                                onChange={() => {
+                                    setCurrentTaskInfo({
+                                        ...currentTaskInfo,
+                                        isCompleted:
+                                            !currentTaskInfo.isCompleted,
+                                    });
 
-                                        handleCompleteTask();
-                                    }}
-                                    isChecked={currentTaskInfo.isCompleted}
-                                    isDisabled={isEditing}
-                                    isLoading={isEditing}
-                                ></Checkbox>
+                                    handleCompleteTask();
+                                }}
+                                isChecked={currentTaskInfo.isCompleted}
+                                isDisabled={isEditing}
+                                isLoading={isEditing}
+                            ></Checkbox>
+
+                            <Box pl={7}>
                                 <Box
-                                    lineHeight={10}
-                                    fontWeight={"bold"}
+                                    lineHeight={1}
+                                    fontSize={"17px"}
                                     color={
                                         currentTaskInfo.isCompleted &&
                                         taskNameColor
@@ -135,21 +147,62 @@ const TaskContainer = React.memo(({ task }) => {
                                         currentTaskInfo.isCompleted &&
                                         "line-through"
                                     }
-                                    >
+                                >
                                     {currentTaskInfo.taskName}
                                 </Box>
-                            </HStack>
-                            <Box ml={7} lineHeight={1} opacity={0.75} minHeight={4}>
-                                    
-                                {currentTaskInfo.description
-                                    ? currentTaskInfo.description
-                                    : " "}
+                                <Box
+                                    opacity={0.8}
+                                    fontSize={"15px"}
+                                    noOfLines={[1, 2]}
+                                >
+                                    {" "}
+                                    {currentTaskInfo.description
+                                        ? currentTaskInfo.description
+                                        : " "}
+                                </Box>
                             </Box>
                         </Stack>
                     </Flex>
 
+                    <HStack spacing={4} mt={1} minHeight={"20px"}>
+                        {task.dueDate && (
+                            // <Tag variant="outline" colorScheme="blue">
+                            //     <TagLabel>{task.dueDate}</TagLabel>
+                            //     {/* <TagRightIcon as={IoCalendarClearOutline} /> */}
+                            //     <IoCalendarClearOutline />
+                            // </Tag>
+                            <Tag
+                                p={0}
+                                bg={"transparent"}
+                                // colorScheme="blue"
+                                ml={7}
+                                size={"sm"}
+                            >
+                                <TagRightIcon
+                                    as={IoCalendarClearOutline}
+                                    ml={0}
+                                    mr={1}
+                                />
+                                <TagLabel>{dateFormat(task.dueDate)}</TagLabel>
+                            </Tag>
+                        )}
+                    </HStack>
+
                     {isHovered && (
-                        <Box position={"absolute"} right={3} top={3}>
+                        <Box
+                            position={"absolute"}
+                            right={3}
+                            top={3}
+                            bg={taskButtonStyle}
+                            backdropBlur={15}
+                        >
+                            <IconButton
+                                size={"sm"}
+                                variant={"ghost"}
+                                aria-label="edit task"
+                                icon={<EditIcon />}
+                                onClick={() => setEditMode(true)}
+                            />
                             <IconButton
                                 size={"sm"}
                                 variant={"ghost"}
@@ -157,13 +210,6 @@ const TaskContainer = React.memo(({ task }) => {
                                 icon={<DeleteIcon />}
                                 onClick={handleDeletingTask}
                                 isLoading={isDeleting}
-                            />
-                            <IconButton
-                                size={"sm"}
-                                variant={"ghost"}
-                                aria-label="edit task"
-                                icon={<EditIcon />}
-                                onClick={() => setEditMode(true)}
                             />
                         </Box>
                     )}

@@ -7,18 +7,12 @@ import useAddTask from "../hooks/useAddTask";
 import useGetAllTasks from "../hooks/useGetAllTasks";
 import useTaskStore from "../store/taskStore";
 
-
 const Home = () => {
     const { handleAddTask, isAddTaskLoading } = useAddTask();
     const [openTaskEditable, setOpenTaskEditable] = useState(false);
 
     const { isLoading: isLoadingTasks, tasks: allTasks } = useGetAllTasks();
     const { tasks } = useTaskStore();
-    const [quote, setQuote] = useState({});
-
-    const changeDate = () => {
-        setSelectedDate(new Date());
-    };
 
     const handleAddingTask = async (task) => {
         try {
@@ -40,6 +34,7 @@ const Home = () => {
                         onCancel={() => setOpenTaskEditable(false)}
                         onSave={handleAddingTask}
                         isLoading={isAddTaskLoading}
+                        isAddingNewTask
                     />
                 ) : (
                     <Button
