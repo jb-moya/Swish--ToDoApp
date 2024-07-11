@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
     Box,
     useColorModeValue,
@@ -26,6 +26,8 @@ const TaskContainer = React.memo(({ task }) => {
         taskName: task.taskName,
         description: task.description,
         isCompleted: task.isCompleted,
+        dueDate: task.dueDate,
+        priority: task.priority,
         createdBy: task.createdBy,
         createdAt: task.createdAt,
     });
@@ -77,17 +79,21 @@ const TaskContainer = React.memo(({ task }) => {
         setEditMode(false);
     }, []);
 
+    useEffect(() => {
+        console.log("currentTaskInfo", currentTaskInfo);
+    }, [currentTaskInfo]);
+
     return (
         <Box
             position={"relative"}
             width={"full"}
             borderBottom={`1px solid ${useColorModeValue(
-                "rgba(0, 163, 196, 0.1)",
-                "rgba(0, 163, 196, 0.1)"
+                "rgba(0, 163, 196, 0.2)",
+                "rgba(0, 163, 196, 0.2)"
             )}`}
             // borderColor={useColorModeValue("white.00", "black.400")}
             p={2}
-            _hover={{ bg: "rgba(0, 163, 196, 0.05)" }}
+            // _hover={{ bg: "rgba(0, 163, 196, 0.05)" }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >

@@ -31,7 +31,7 @@ const Navbar = () => {
 
     return (
         <Flex align="center" justify="center">
-            {isOpen && <EditProfile isOpen={isOpen} onClose={onClose} />}
+            <EditProfile isOpen={isOpen} onClose={onClose} />
             {authUser?.tasks?.length}
             <Flex
                 width="fit-content"

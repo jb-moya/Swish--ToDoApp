@@ -4,6 +4,7 @@ import useAuthStore from "../store/authStore";
 import useShowToast from "./useShowToast";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
+import { convertFirestoreTimestampToDate } from "../components/utils/dateFormat";
 
 const useGetAllTasks = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -37,6 +38,11 @@ const useGetAllTasks = () => {
             localStorage.setItem("user-info", JSON.stringify(updatedUserInfo));
             setAuthUser(updatedUserInfo);
 
+            console.log("Task", tasks)
+            tasks.forEach((task) => {
+                task.dueDate = convertFirestoreTimestampToDate(task.dueDate);
+            });
+            
             tasks.sort((a, b) => b.createdAt - a.createdAt);
             setTasks(tasks);
         } catch (error) {

@@ -4,12 +4,31 @@ import {
     Input,
     Button,
     Flex,
+    Text,
     useColorModeValue,
+    Stack,
+    Menu,
+    MenuButton,
+    IconButton,
+    MenuList,
+    MenuItem,
+    Portal,
 } from "@chakra-ui/react";
+import { CalendarIcon, CloseIcon } from "@chakra-ui/icons";
+import DatePicker from "../../components/DatePicker";
+import dateFormat from "../utils/dateFormat";
+
+const priority = ["none", "low", "medium", "high", "critical"];
 
 const TaskEditable = React.memo(
     ({
-        taskInfo = { taskName: "", description: "" },
+        taskInfo = {
+            taskName: "",
+            description: "",
+            isCompleted: false,
+            dueDate: null,
+            priority: 0,
+        },
         onSave,
         onCancel,
         isLoading,
@@ -19,11 +38,14 @@ const TaskEditable = React.memo(
             taskName: taskInfo.taskName,
             description: taskInfo.description,
             isCompleted: taskInfo.isCompleted,
+            dueDate: taskInfo.dueDate === null ? null : new Date(taskInfo.dueDate),
+            priority: taskInfo.priority,
             createdBy: taskInfo.createdBy,
             createdAt: taskInfo.createdAt,
         });
         const [saveButtonDisable, setSaveButtonDisable] = useState(true);
         const inputTitleRef = useRef(null);
+        const [showDatePicker, setShowDatePicker] = useState(false);
 
         useEffect(() => {
             setSaveButtonDisable(!editTaskInfo.taskName);
@@ -45,19 +67,25 @@ const TaskEditable = React.memo(
             }
         };
 
+        useEffect(() => {
+            console.log("edittable", editTaskInfo);
+        }, [editTaskInfo]);
+
         return (
             <Box
                 position={"relative"}
                 width={"full"}
                 rounded={"md"}
                 border={`1px solid ${useColorModeValue(
-                    "rgba(0, 163, 196, 0.1)",
-                    "rgba(0, 163, 196, 0.1)"
+                    "rgba(0, 163, 196, 0.2)",
+                    "rgba(0, 163, 196, 0.2)"
                 )}`}
                 p={2}
             >
                 <Input
                     type="text"
+                    size="sm"
+                    px={0}
                     variant={"ghost"}
                     bg={"transparent"}
                     placeholder="task name"
@@ -71,9 +99,11 @@ const TaskEditable = React.memo(
                     }}
                     ref={inputTitleRef}
                 ></Input>
-                
+
                 <Input
                     type="text"
+                    size="sm"
+                    px={0}
                     variant={"ghost"}
                     bg={"transparent"}
                     placeholder="description"
@@ -86,10 +116,107 @@ const TaskEditable = React.memo(
                     }
                 ></Input>
 
+                <Flex gap={2} pt={2} position={"relative"}>
+                    <Box
+                        px={2}
+                        as={Button}
+                        variant={"outline"}
+                        color={useColorModeValue("gray.500", "gray.500")}
+                        border={`1px solid ${useColorModeValue(
+                            "rgba(0, 163, 196, 0.2)",
+                            "rgba(0, 163, 196, 0.2)"
+                        )}`}
+                        height={"28px"}
+                        leftIcon={<CalendarIcon />}
+                        onClick={() => setShowDatePicker(!showDatePicker)}
+                        fontWeight={"thin"}
+                    >
+                        {editTaskInfo.dueDate !== null
+                            ? dateFormat(editTaskInfo.dueDate)
+                            : "No Date"}
+
+                        {editTaskInfo.dueDate && (
+                            <IconButton
+                                ml={1}
+                                size={"xs"}
+                                variant={"ghost"}
+                                color={"gray.500"}
+                                icon={<CloseIcon />}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+
+                                    setEditTaskInfo({
+                                        ...editTaskInfo,
+                                        dueDate: null,
+                                    });
+                                }}
+                                _hover={{ color: "red" }}
+                            />
+                        )}
+                    </Box>
+
+                    {showDatePicker && (
+                        <Box
+                            position={"absolute"}
+                            left={0}
+                            top={10}
+                            zIndex={10}
+                        >
+                            <DatePicker
+                                // selected={null}
+                                selected={editTaskInfo.dueDate}
+                                onChange={(date) => {
+                                    setEditTaskInfo({
+                                        ...editTaskInfo,
+                                        dueDate: date,
+                                    });
+                                    setShowDatePicker(false);
+                                }}
+                                inline
+                            />
+                        </Box>
+                    )}
+
+                    <Menu>
+                        <MenuButton
+                            as={Button}
+                            variant={"outline"}
+                            color={useColorModeValue("gray.500", "gray.500")}
+                            border={`1px solid ${useColorModeValue(
+                                "rgba(0, 163, 196, 0.2)",
+                                "rgba(0, 163, 196, 0.2)"
+                            )}`}
+                            height={"28px"}
+                            fontWeight={"thin"}
+                        >
+                            {priority[editTaskInfo.priority || 0]}
+                        </MenuButton>
+                        <Portal>
+                            <MenuList>
+                                {priority.map((item, index) => (
+                                    <MenuItem
+                                        key={item}
+                                        onClick={() =>
+                                            setEditTaskInfo({
+                                                ...editTaskInfo,
+                                                priority: index,
+                                            })
+                                        }
+                                        // width={"fit-content"}
+                                    >
+                                        {item}
+                                    </MenuItem>
+                                ))}
+                            </MenuList>
+                        </Portal>
+                    </Menu>
+                </Flex>
+
                 <Flex
+                    mt={2}
                     justifyContent={"end"}
                     gap={2}
-                    direction={["column", "row"]}
+                    // direction={["column", "row"]}
                 >
                     <Button
                         size={"sm"}

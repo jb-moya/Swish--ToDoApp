@@ -25,6 +25,12 @@ function useEditTask() {
             if (task.isCompleted !== undefined) {
                 updateData.isCompleted = task.isCompleted;
             }
+            if (task.dueDate !== undefined) {
+                updateData.dueDate = task.dueDate;
+            }
+            if (task.priority !== undefined) {
+                updateData.priority = task.priority;
+            }
 
             // Update the document with the fields present in updateData
             await updateDoc(taskRef, updateData);

@@ -1,21 +1,12 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/NavBar";
-import {
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
-    Button,
-    Box,
-    Container,
-    Spinner,
-} from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
+import { Button, Box, Container, Spinner } from "@chakra-ui/react";
 import TaskContainer from "../components/Task/TaskContainer";
 import TaskEditable from "../components/Task/TaskEditable";
 import useAddTask from "../hooks/useAddTask";
 import useGetAllTasks from "../hooks/useGetAllTasks";
 import useTaskStore from "../store/taskStore";
+
 
 const Home = () => {
     const { handleAddTask, isAddTaskLoading } = useAddTask();
@@ -23,18 +14,20 @@ const Home = () => {
 
     const { isLoading: isLoadingTasks, tasks: allTasks } = useGetAllTasks();
     const { tasks } = useTaskStore();
+    const [quote, setQuote] = useState({});
+
+    const changeDate = () => {
+        setSelectedDate(new Date());
+    };
 
     const handleAddingTask = async (task) => {
         try {
+            console.log("tasl", task);
             await handleAddTask(task);
         } catch (error) {
             console.log(error);
         }
     };
-
-    useEffect(() => {
-        console.log("tasks in home", tasks);
-    }, [tasks]);
 
     return (
         <>

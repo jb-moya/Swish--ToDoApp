@@ -26,6 +26,8 @@ function useAddTask() {
         const newTask = {
             taskName: task.taskName || "",
             description: task.description || "",
+            dueDate: task.dueDate || null,
+            priority: task.priority || 0,
             isCompleted: false,
             createdAt: Date.now(),
             createdBy: authUser.uid,
@@ -39,7 +41,7 @@ function useAddTask() {
 
             const userDocRef = doc(firestore, "users", authUser.uid);
 
-            console.log("AuthUser Tasks", authUser);
+            // console.log("AuthUser Tasks", authUser);
 
             await updateDoc(userDocRef, { tasks: arrayUnion(taskDocRef.id) });
 

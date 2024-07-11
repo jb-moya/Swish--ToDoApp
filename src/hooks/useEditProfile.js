@@ -44,6 +44,8 @@ const useEditProfile = () => {
             showToast("Success", "User profile updated successfully", "success");
         } catch (error) {
             showToast("Error", error.message, "error");
+        } finally {
+            setIsProfileUpdating(false);
         }
     };
 
