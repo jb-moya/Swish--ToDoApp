@@ -7,15 +7,12 @@ import useEditProfile from "../../../hooks/useEditProfile";
 import useShowToast from "../../../hooks/useShowToast";
 import {
     Button,
-    Flex,
     FormControl,
     FormLabel,
     Heading,
     Input,
     Stack,
     useColorModeValue,
-    Box,
-    Text,
     Modal,
     Avatar,
     AvatarBadge,
@@ -66,11 +63,6 @@ export default function EditProfile({ isOpen, onClose }) {
 
     const labelBackground = useColorModeValue("gray.100", "gray.700");
 
-    useEffect(() => {
-        console.log("getIDToken", auth.currentUser?.getIdTokenResult());
-        console.log("provider", userSignInProvider);
-    }, [auth.currentUser, userSignInProvider]);
-
     const handleEditProfile = async () => {
         try {
             await editProfile(inputs, selectedFile);
@@ -97,7 +89,6 @@ export default function EditProfile({ isOpen, onClose }) {
     };
 
     const handlePasswordChange = () => {
-        console.log("handlePasswordChange");
         updateUserPassword(inputs.newPassword);
     };
 

@@ -2,7 +2,6 @@ import { useCallback } from "react";
 
 export const useDateFormat = () => {
     return useCallback((date) => {
-        console.log("Formatting data.................................");
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Set to midnight
         const targetDate = new Date(date);

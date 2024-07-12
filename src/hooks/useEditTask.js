@@ -31,6 +31,9 @@ function useEditTask() {
             if (task.priority !== undefined) {
                 updateData.priority = task.priority;
             }
+            if (task.category !== undefined) {
+                updateData.category = task.category;
+            }
 
             // Update the document with the fields present in updateData
             await updateDoc(taskRef, updateData);

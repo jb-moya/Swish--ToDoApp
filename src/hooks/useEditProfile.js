@@ -34,6 +34,7 @@ const useEditProfile = () => {
             const updatedUser = {
                 ...authUser,
                 username: inputs.username || authUser.username,
+                categories: inputs.categories || authUser.categories,
                 profilePicURL: URL || authUser.profilePicURL,
             };
 

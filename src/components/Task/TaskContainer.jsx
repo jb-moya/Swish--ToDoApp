@@ -40,6 +40,7 @@ const TaskContainer = React.memo(({ task }) => {
         taskName: task.taskName,
         description: task.description,
         isCompleted: task.isCompleted,
+        category: task.category,
         dueDate: task.dueDate,
         priority: task.priority,
         createdBy: task.createdBy,
@@ -50,10 +51,6 @@ const TaskContainer = React.memo(({ task }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     const { isEditing, handleEditTask } = useEditTask();
-
-    useEffect(() => {
-        console.log("R E R E N D E R E D");
-    }, [isHovered]);
 
     const handleDeletingTask = async () => {
         try {
@@ -101,10 +98,6 @@ const TaskContainer = React.memo(({ task }) => {
         console.log("rerererender");
         setEditMode(false);
     }, []);
-
-    useEffect(() => {
-        console.log("currentTaskInfo", currentTaskInfo);
-    }, [currentTaskInfo]);
 
     const handleMouseEnter = useCallback(() => {
         setIsHovered(true);
@@ -158,7 +151,7 @@ const TaskContainer = React.memo(({ task }) => {
 
                             <Box pl={7}>
                                 <Box
-                                    lineHeight={1}
+                                    lineHeight={1.2}
                                     fontSize={"17px"}
                                     color={
                                         currentTaskInfo.isCompleted &&

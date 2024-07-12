@@ -33,6 +33,7 @@ const TaskEditable = React.memo(
             description: "",
             isCompleted: false,
             dueDate: null,
+            category: null,
             priority: 0,
         },
         onSave,
@@ -50,6 +51,7 @@ const TaskEditable = React.memo(
             dueDate:
                 taskInfo.dueDate === null ? null : new Date(taskInfo.dueDate),
             priority: taskInfo.priority,
+            category: taskInfo.category,
             createdBy: taskInfo.createdBy,
             createdAt: taskInfo.createdAt,
         });
