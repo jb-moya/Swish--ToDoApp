@@ -6,6 +6,11 @@ import {
     Container,
     Spinner,
     useBreakpointValue,
+    Modal,
+    useDisclosure,
+    ModalOverlay,
+    ModalBody,
+    ModalContent,
 } from "@chakra-ui/react";
 import TaskContainer from "../components/Task/TaskContainer";
 import TaskEditable from "../components/Task/TaskEditable";
@@ -15,8 +20,8 @@ import useTaskStore from "../store/taskStore";
 import { FaPlus } from "react-icons/fa6";
 
 const Home = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const { handleAddTask, isAddTaskLoading } = useAddTask();
-    const [openTaskEditable, setOpenTaskEditable] = useState(false);
 
     const { isLoading: isLoadingTasks, tasks: allTasks } = useGetAllTasks();
     const { tasks } = useTaskStore();
@@ -32,8 +37,10 @@ const Home = () => {
 
     const buttonText = useBreakpointValue({
         base: <FaPlus />,
-        md: "Add New Task",
+        sm: "Add New Task",
     });
+
+    const isSmallScreen = useBreakpointValue({ base: true, sm: false });
 
     return (
         <>
@@ -41,23 +48,48 @@ const Home = () => {
                 <Navbar />
             </Box>
             <Container maxW="5xl" centerContent>
-                {openTaskEditable ? (
-                    <TaskEditable
-                        onCancel={() => setOpenTaskEditable(false)}
-                        onSave={handleAddingTask}
-                        isLoading={isAddTaskLoading}
-                        isAddingNewTask
-                    />
+                {isSmallScreen ? (
+                    <Modal
+                        p={0}
+                        m={0}
+                        width="fit-content"
+                        isCentered
+                        isOpen={isOpen}
+                        onClose={onClose}
+                    >
+                        <ModalOverlay />
+                        <ModalContent p={0} m={0}>
+                            <ModalBody p={0} m={0}>
+                                <TaskEditable
+                                    onCancel={onClose}
+                                    onSave={handleAddingTask}
+                                    isLoading={isAddTaskLoading}
+                                    isAddingNewTask
+                                />
+                            </ModalBody>
+                        </ModalContent>
+                    </Modal>
                 ) : (
+                    isOpen && (
+                        <TaskEditable
+                            onCancel={onClose}
+                            onSave={handleAddingTask}
+                            isLoading={isAddTaskLoading}
+                            isAddingNewTask
+                        />
+                    )
+                )}
+
+                {!isOpen && (
                     <Button
                         zIndex={2}
-                        position={{ base: "absolute", md: "static" }}
+                        position={{ base: "fixed", sm: "static" }}
                         mt={4}
-                        width={{ base: "auto", md: "full" }}
+                        width={{ base: "auto", sm: "full" }}
                         bottom={10}
                         right={10}
-                        variant={{ base: "solid", md: "ghost" }}
-                        onClick={() => setOpenTaskEditable(true)}
+                        variant={{ base: "solid", sm: "ghost" }}
+                        onClick={onOpen}
                         isLoading={isAddTaskLoading}
                     >
                         {buttonText}

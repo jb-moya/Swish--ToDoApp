@@ -11,6 +11,7 @@ import {
     MenuButton,
     IconButton,
     MenuList,
+    MenuDivider,
     MenuItem,
     Divider,
     Portal,
@@ -20,10 +21,12 @@ import { IoCalendarClearOutline, IoFlagOutline } from "react-icons/io5";
 import { CloseIcon } from "@chakra-ui/icons";
 import DatePicker from "../../components/DatePicker";
 import useDateFormat from "../utils/dateFormat";
+import CategorySelector from "./CategorySelector";
 
 const priority = ["none", "low", "medium", "high", "critical"];
 
 const TaskEditable = React.memo(
+    // work with category ///////
     ({
         taskInfo = {
             taskName: "",
@@ -80,26 +83,11 @@ const TaskEditable = React.memo(
             "rgba(0, 163, 196, 0.2)"
         );
 
-        const containerStyles = {
-            height: isAddingNewTask ? { base: "100vh", md: "auto" } : "auto",
-            top: isAddingNewTask ? { base: "-40", md: "auto" } : "auto",
-            position: isAddingNewTask
-                ? { base: "absolute", md: "static" }
-                : "static",
-        };
-
         return (
-            <Flex
-                {...containerStyles}
-                justifyContent="center"
-                flexDir={"column"}
-                width={{ base: "full", md: "full" }}
-                px={{ base: "5", md: "0" }}
-            >
+            <Flex flexDir={"column"} width={"100%"}>
                 <Box
                     bg={useColorModeValue("white", "#1a202c")}
-                    shadow={{ base: "2xl", md: "none" }}
-                    zIndex={1}
+                    shadow={{ base: "2xl", sm: "none" }}
                     p={4}
                     rounded={"md"}
                     border={`1px solid ${useColorModeValue(
@@ -148,7 +136,7 @@ const TaskEditable = React.memo(
                         pt={2}
                         mb={2}
                         position={"relative"}
-                        zIndex={2}
+                        // zIndex={"popover"}
                     >
                         <Menu>
                             <ButtonGroup size="sm" isAttached variant="outline">
@@ -185,24 +173,22 @@ const TaskEditable = React.memo(
                                 )}
                             </ButtonGroup>
 
-                            <Portal>
-                                <MenuList p={0}>
-                                    <DatePicker
-                                        selected={editTaskInfo.dueDate}
-                                        onChange={(date) => {
-                                            setEditTaskInfo({
-                                                ...editTaskInfo,
-                                                dueDate: date,
-                                            });
-                                            setShowDatePicker(false);
-                                        }}
-                                        isCalendarOpen={showDatePicker}
-                                        setCalendarIsOpen={setShowDatePicker}
-                                        wrapperRef={calendarButtonRef}
-                                        inline
-                                    />
-                                </MenuList>
-                            </Portal>
+                            <MenuList p={0}>
+                                <DatePicker
+                                    selected={editTaskInfo.dueDate}
+                                    onChange={(date) => {
+                                        setEditTaskInfo({
+                                            ...editTaskInfo,
+                                            dueDate: date,
+                                        });
+                                        setShowDatePicker(false);
+                                    }}
+                                    isCalendarOpen={showDatePicker}
+                                    setCalendarIsOpen={setShowDatePicker}
+                                    wrapperRef={calendarButtonRef}
+                                    inline
+                                />
+                            </MenuList>
                         </Menu>
 
                         <Menu>
@@ -243,36 +229,38 @@ const TaskEditable = React.memo(
                                 )}
                             </ButtonGroup>
 
-                            <Portal>
-                                <MenuList>
-                                    {priority.map((item, index) => (
-                                        <MenuItem
-                                            key={item}
-                                            onClick={() =>
-                                                setEditTaskInfo({
-                                                    ...editTaskInfo,
-                                                    priority: index,
-                                                })
-                                            }
-                                        >
-                                            {item}
-                                        </MenuItem>
-                                    ))}
-                                </MenuList>
-                            </Portal>
+                            <MenuList>
+                                {priority.map((item, index) => (
+                                    <MenuItem
+                                        key={item}
+                                        onClick={() =>
+                                            setEditTaskInfo({
+                                                ...editTaskInfo,
+                                                priority: index,
+                                            })
+                                        }
+                                    >
+                                        {item}
+                                    </MenuItem>
+                                ))}
+                            </MenuList>
                         </Menu>
+
+                        <CategorySelector
+                            task={editTaskInfo}
+                            setEditTaskInfo={setEditTaskInfo}
+                        />
                     </Flex>
                     <Divider />
                     <Flex
                         mt={2}
-                        justifyContent={{ base: "center", md: "flex-end" }}
+                        justifyContent={{ base: "center", sm: "flex-end" }}
                         gap={3}
-                        // direction={["column", "row"]}
                     >
                         <Button
                             flex={{
                                 base: 1,
-                                md: "none",
+                                sm: "none",
                             }}
                             size={"sm"}
                             bg={"red.400"}
@@ -285,7 +273,7 @@ const TaskEditable = React.memo(
                         <Button
                             flex={{
                                 base: 1,
-                                md: "none",
+                                sm: "none",
                             }}
                             size={"sm"}
                             onClick={handleSave}
