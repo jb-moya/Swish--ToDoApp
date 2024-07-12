@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { firestore } from "../firebase/firebase";
 import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import useAuthStore from "../store/authStore";
@@ -10,11 +10,10 @@ function useDeleteTask() {
 
     const authUser = useAuthStore((state) => state.user);
     const { tasks, setTasks } = useTaskStore();
-    const setAuthUser = useAuthStore((state) => state.setUser);
 
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const handleDeleteTask = async (task) => {
+    const handleDeleteTask = useCallback(async (task) => {
         // if (!window.confirm("Are you sure you want to delete this post?"))
         //     return;
         if (isDeleting) return;
@@ -38,7 +37,7 @@ function useDeleteTask() {
         } finally {
             setIsDeleting(false);
         }
-    };
+    }, [authUser, showToast, setTasks, isDeleting]);
 
     return { isDeleting, handleDeleteTask };
 }

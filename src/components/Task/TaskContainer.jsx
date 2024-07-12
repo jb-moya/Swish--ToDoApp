@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import {
     Box,
     useColorModeValue,
@@ -10,6 +10,7 @@ import {
     Tag,
     TagLabel,
     Text,
+    Portal,
     TagRightIcon,
 } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
@@ -18,10 +19,17 @@ import PropTypes from "prop-types";
 import useDeleteTask from "../../hooks/useDeleteTask";
 import useTaskStore from "../../store/taskStore";
 import useEditTask from "../../hooks/useEditTask";
-import dateFormat from "../utils/dateFormat";
+import useDateFormat from "../utils/dateFormat";
 import { IoCalendarClearOutline } from "react-icons/io5";
 
 const TaskContainer = React.memo(({ task }) => {
+    const dateFormat = useDateFormat();
+
+    const formattedDate = useMemo(
+        () => dateFormat(task.dueDate),
+        [dateFormat, task.dueDate]
+    );
+
     const { isDeleting, handleDeleteTask } = useDeleteTask();
     const { tasks, setTasks } = useTaskStore();
 
@@ -42,6 +50,10 @@ const TaskContainer = React.memo(({ task }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     const { isEditing, handleEditTask } = useEditTask();
+
+    useEffect(() => {
+        console.log("R E R E N D E R E D");
+    }, [isHovered]);
 
     const handleDeletingTask = async () => {
         try {
@@ -94,6 +106,14 @@ const TaskContainer = React.memo(({ task }) => {
         console.log("currentTaskInfo", currentTaskInfo);
     }, [currentTaskInfo]);
 
+    const handleMouseEnter = useCallback(() => {
+        setIsHovered(true);
+    }, []);
+
+    const handleMouseLeave = useCallback(() => {
+        setIsHovered(false);
+    }, []);
+
     return (
         <Box
             position={"relative"}
@@ -102,9 +122,10 @@ const TaskContainer = React.memo(({ task }) => {
                 "rgba(126, 132, 144, 0.3)",
                 "rgba(126, 132, 144, 0.3)"
             )}`}
+            // zIndex={0}
             py={2}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
         >
             {editMode ? (
                 <TaskEditable
@@ -166,24 +187,13 @@ const TaskContainer = React.memo(({ task }) => {
 
                     <HStack spacing={4} mt={1} minHeight={"20px"}>
                         {task.dueDate && (
-                            // <Tag variant="outline" colorScheme="blue">
-                            //     <TagLabel>{task.dueDate}</TagLabel>
-                            //     {/* <TagRightIcon as={IoCalendarClearOutline} /> */}
-                            //     <IoCalendarClearOutline />
-                            // </Tag>
-                            <Tag
-                                p={0}
-                                bg={"transparent"}
-                                // colorScheme="blue"
-                                ml={7}
-                                size={"sm"}
-                            >
+                            <Tag p={0} bg={"transparent"} ml={7} size={"sm"}>
                                 <TagRightIcon
                                     as={IoCalendarClearOutline}
                                     ml={0}
                                     mr={1}
                                 />
-                                <TagLabel>{dateFormat(task.dueDate)}</TagLabel>
+                                <TagLabel>{formattedDate}</TagLabel>
                             </Tag>
                         )}
                     </HStack>

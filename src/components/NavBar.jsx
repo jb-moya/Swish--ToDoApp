@@ -18,8 +18,6 @@ import { MdPerson, MdDarkMode, MdOutlineLightMode } from "react-icons/md";
 import useLogout from "../hooks/useLogout";
 import useAuthStore from "../store/authStore";
 import { SearchIcon, ChevronDownIcon } from "@chakra-ui/icons";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../firebase/firebase";
 
 const Navbar = () => {
     const { colorMode, toggleColorMode } = useColorMode();
@@ -27,12 +25,10 @@ const Navbar = () => {
     const user = useAuthStore((state) => state.user);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [authUser] = useAuthStore((state) => [state.user]);
-    // const [authUser] = useAuthState(auth);
 
     return (
         <Flex align="center" justify="center">
             <EditProfile isOpen={isOpen} onClose={onClose} />
-            {authUser?.tasks?.length}
             <Flex
                 width="fit-content"
                 mx="auto"

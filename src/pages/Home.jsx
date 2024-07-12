@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/NavBar";
-import { Button, Box, Container, Spinner } from "@chakra-ui/react";
+import {
+    Button,
+    Box,
+    Container,
+    Spinner,
+    useBreakpointValue,
+} from "@chakra-ui/react";
 import TaskContainer from "../components/Task/TaskContainer";
 import TaskEditable from "../components/Task/TaskEditable";
 import useAddTask from "../hooks/useAddTask";
 import useGetAllTasks from "../hooks/useGetAllTasks";
 import useTaskStore from "../store/taskStore";
+import { FaPlus } from "react-icons/fa6";
 
 const Home = () => {
     const { handleAddTask, isAddTaskLoading } = useAddTask();
@@ -23,6 +30,11 @@ const Home = () => {
         }
     };
 
+    const buttonText = useBreakpointValue({
+        base: <FaPlus />,
+        md: "Add New Task",
+    });
+
     return (
         <>
             <Box h="60px">
@@ -38,13 +50,17 @@ const Home = () => {
                     />
                 ) : (
                     <Button
+                        zIndex={2}
+                        position={{ base: "absolute", md: "static" }}
                         mt={4}
-                        width="full"
-                        variant="ghost"
+                        width={{ base: "auto", md: "full" }}
+                        bottom={10}
+                        right={10}
+                        variant={{ base: "solid", md: "ghost" }}
                         onClick={() => setOpenTaskEditable(true)}
                         isLoading={isAddTaskLoading}
                     >
-                        Add Task
+                        {buttonText}
                     </Button>
                 )}
 

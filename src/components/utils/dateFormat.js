@@ -1,38 +1,41 @@
-function dateFormat(date) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set to midnight
-    const targetDate = new Date(date);
-    targetDate.setHours(0, 0, 0, 0);
+import { useCallback } from "react";
 
-    const diffTime = Math.abs(targetDate - today);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+export const useDateFormat = () => {
+    return useCallback((date) => {
+        console.log("Formatting data.................................");
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set to midnight
+        const targetDate = new Date(date);
+        targetDate.setHours(0, 0, 0, 0);
 
-    const daysOfWeek = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-    ];
+        const diffTime = Math.abs(targetDate - today);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    console.log("diffDays  s s s ", diffDays);
+        const daysOfWeek = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+        ];
 
-    if (diffDays === 0) {
-        return "Today";
-    } else if (diffDays === 1) {
-        return "Tomorrow";
-    } else if (diffDays < 7) {
-        return daysOfWeek[targetDate.getDay()];
-    } else {
-        const options = { month: "long", day: "numeric" };
-        if (targetDate.getFullYear() !== today.getFullYear()) {
-            options.year = "numeric";
+        if (diffDays === 0) {
+            return "Today";
+        } else if (diffDays === 1) {
+            return "Tomorrow";
+        } else if (diffDays < 7) {
+            return daysOfWeek[targetDate.getDay()];
+        } else {
+            const options = { month: "long", day: "numeric" };
+            if (targetDate.getFullYear() !== today.getFullYear()) {
+                options.year = "numeric";
+            }
+            return targetDate.toLocaleDateString("en-US", options);
         }
-        return targetDate.toLocaleDateString("en-US", options);
-    }
-}
+    }, []);
+};
 
 const convertFirestoreTimestampToDate = (timestamp) => {
     if (!timestamp) return null;
@@ -44,4 +47,4 @@ const convertFirestoreTimestampToDate = (timestamp) => {
 };
 
 export { convertFirestoreTimestampToDate };
-export default dateFormat;
+export default useDateFormat;

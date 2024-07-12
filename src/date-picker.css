@@ -42,7 +42,9 @@
 .react-datepicker {
     font-family: unset;
     font-size: 0.9rem;
-    border-color: var(--light-gray);
+    border: none;
+    /* border-color: none; */
+    /* border-color: var(--light-gray); */
 }
 
 .react-datepicker-wrapper,
@@ -55,9 +57,9 @@
     padding-left: 1rem;
     padding-right: 1rem;
     height: 2.5rem;
-    border-radius: 0.25rem;
-    border: 1px solid;
-    border-color: var(--light-gray);
+    /* border-radius: 0.25rem; */
+    /* border: 1px solid; */
+    /* border-color: var(--light-gray); */
 }
 .react-datapicker__input-text {
     background-color: transparent;
@@ -70,11 +72,11 @@
 }
 
 .react-datepicker__input-container:hover {
-    border-color: var(--gray);
+    /* border-color: var(--gray); */
 }
 .react-datepicker__input-container:focus-within {
     z-index: 1;
-    border-color: var(--cyan600);
+    /* border-color: var(--cyan600); */
     box-shadow: 0 0 0 1px var(--cyan600);
 }
 
@@ -94,11 +96,11 @@
 }
 
 .react-datepicker__day--selected {
-    border-radius: 50%;
+    /* border-radius: 50%; */
 }
 
 .react-datepicker__day:hover {
-    border-radius: 50%;
+    /* border-radius: 50%; */
 }
 
 .react-datepicker__day--disabled {
@@ -119,19 +121,19 @@
 }
 
 .react-datepicker__navigation--previous {
-    border-right-color: var(--cyan400);
+    /* border-right-color: var(--cyan400); */
 }
 
 .react-datepicker__navigation--previous:hover {
-    border-right-color: var(--cyan500);
+    /* border-right-color: var(--cyan500); */
 }
 
 .react-datepicker__navigation--next {
-    border-left-color: var(--cyan400);
+    /* border-left-color: var(--cyan400); */
 }
 
 .react-datepicker__navigation--next:hover {
-    border-left-color: var(--cyan500);
+    /* border-left-color: var(--cyan500); */
 }
 
 .react-datepicker__header {
@@ -141,7 +143,7 @@
 
 .react-datepicker__header,
 .react-datepicker__time-container {
-    border-color: var(--cyan300);
+    /* border-color: var(--cyan300); */
 }
 
 .react-datepicker__current-month,
@@ -214,7 +216,7 @@
 
 .react-datepicker__close-icon::after {
     background-color: unset;
-    border-radius: unset;
+    /* border-radius: unset; */
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--light-gray);
