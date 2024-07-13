@@ -2,10 +2,12 @@ import { useState } from "react";
 import { firestore } from "../firebase/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import useShowToast from "./useShowToast";
+import useTaskStore from "../store/taskStore";
 
 function useEditTask() {
     const showToast = useShowToast();
     const [isEditing, setIsEditing] = useState(false);
+    const { tasks: oldTasks, setTasks } = useTaskStore();
 
     const handleEditTask = async (task) => {
         if (isEditing) return;
@@ -15,28 +17,36 @@ function useEditTask() {
             const taskRef = doc(firestore, "tasks", task.id);
 
             // Prepare an object with only the fields that are provided in the task parameter
-            const updateData = {};
+            const updatedTaskInfo = {};
             if (task.taskName !== undefined) {
-                updateData.taskName = task.taskName;
+                updatedTaskInfo.taskName = task.taskName;
             }
             if (task.description !== undefined) {
-                updateData.description = task.description;
+                updatedTaskInfo.description = task.description;
             }
             if (task.isCompleted !== undefined) {
-                updateData.isCompleted = task.isCompleted;
+                updatedTaskInfo.isCompleted = task.isCompleted;
             }
             if (task.dueDate !== undefined) {
-                updateData.dueDate = task.dueDate;
+                updatedTaskInfo.dueDate = task.dueDate;
             }
             if (task.priority !== undefined) {
-                updateData.priority = task.priority;
+                updatedTaskInfo.priority = task.priority;
             }
             if (task.category !== undefined) {
-                updateData.category = task.category;
+                updatedTaskInfo.category = task.category;
             }
 
-            // Update the document with the fields present in updateData
-            await updateDoc(taskRef, updateData);
+            await updateDoc(taskRef, updatedTaskInfo);
+
+            setTasks(
+                oldTasks.map((oldTask) => {
+                    if (oldTask.id === task.id) {
+                        return { ...oldTask, ...updatedTaskInfo };
+                    }
+                    return oldTask;
+                })
+            );
 
             showToast("Success", "Task Updated successfully", "success");
         } catch (error) {

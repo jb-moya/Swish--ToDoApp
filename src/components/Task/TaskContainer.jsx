@@ -37,7 +37,7 @@ const TaskContainer = React.memo(({ task }) => {
         [dateFormat, task.dueDate]
     );
 
-    const { isDeleting, handleDeleteTask } = useDeleteTask();
+    const { isDeleting, handleDeleteTasks } = useDeleteTask();
     const { tasks, setTasks } = useTaskStore();
 
     const taskNameColor = useColorModeValue("cyan.500", "cyan.200");
@@ -61,8 +61,8 @@ const TaskContainer = React.memo(({ task }) => {
 
     const handleDeletingTask = async () => {
         try {
-            await handleDeleteTask(task);
-            setTasks(tasks.filter((t) => t.id !== task.id));
+            await handleDeleteTasks([task]);
+            // setTasks(tasks.filter((t) => t.id !== task.id));
         } catch (error) {
             console.log(error);
         }
@@ -72,9 +72,6 @@ const TaskContainer = React.memo(({ task }) => {
         "rgba(255, 255, 255, 0.7)",
         "rgba(26, 32, 44, 0.7)"
     );
-
-    // keep an eye on these tworgb(26, 32, 44)
-    // might use zustand for this
 
     const handleCompleteTask = () => {
         handleEditTask({
@@ -86,15 +83,6 @@ const TaskContainer = React.memo(({ task }) => {
     const handleSave = useCallback((updatedTaskInfo) => {
         console.log("rerererender", updatedTaskInfo);
         setCurrentTaskInfo(updatedTaskInfo);
-
-        setTasks(
-            tasks.map((task) => {
-                if (task.id === updatedTaskInfo.id) {
-                    return updatedTaskInfo;
-                }
-                return task;
-            })
-        );
 
         handleEditTask(updatedTaskInfo);
         setEditMode(false);
@@ -187,6 +175,7 @@ const TaskContainer = React.memo(({ task }) => {
 
                     <Flex
                         justifyContent={"start"}
+                        opacity={.75}
                         mt={1}
                         ml={7}
                         gap={3}

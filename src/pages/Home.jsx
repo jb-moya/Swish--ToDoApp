@@ -11,25 +11,45 @@ import {
     ModalOverlay,
     ModalBody,
     ModalContent,
+    Icon,
+    useColorModeValue,
 } from "@chakra-ui/react";
 import TaskContainer from "../components/Task/TaskContainer";
 import TaskEditable from "../components/Task/TaskEditable";
 import useAddTask from "../hooks/useAddTask";
 import useGetAllTasks from "../hooks/useGetAllTasks";
 import useTaskStore from "../store/taskStore";
+import { RiDeleteBin3Line } from "react-icons/ri";
 import { FaPlus } from "react-icons/fa6";
+import useDeleteTask from "../hooks/useDeleteTask";
 
 const Home = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { handleAddTask, isAddTaskLoading } = useAddTask();
+    const { isDeleting, handleDeleteTasks } = useDeleteTask();
 
-    const { isLoading: isLoadingTasks, tasks: allTasks } = useGetAllTasks();
+    const { isLoading: isLoadingTasks } = useGetAllTasks();
+    const [isAllTasksUncompleted, setIsAllTasksUncompleted] = useState(true);
     const { tasks } = useTaskStore();
+
+    useEffect(() => {
+        if (tasks.length > 0) {
+            setIsAllTasksUncompleted(tasks.every((task) => !task.isCompleted));
+        }
+    }, [tasks]);
 
     const handleAddingTask = async (task) => {
         try {
             console.log("tasl", task);
             await handleAddTask(task);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleDeletingCompletedTasks = async () => {
+        try {
+            await handleDeleteTasks(tasks.filter((task) => task.isCompleted));
         } catch (error) {
             console.log(error);
         }
@@ -113,6 +133,32 @@ const Home = () => {
                         <Box ml="3">Loading tasks...</Box>
                     </Box>
                 )}
+
+                <Box
+                    position={"relative"}
+                    width={"full"}
+                    py={2}
+                    borderBottom={`1px solid ${useColorModeValue(
+                        "rgba(126, 132, 144, 0.3)",
+                        "rgba(126, 132, 144, 0.3)"
+                    )}`}
+                >
+                    <Button
+                        size={"sm"}
+                        ml={-3}
+                        leftIcon={<Icon as={RiDeleteBin3Line} boxSize={5} />}
+                        variant="ghost"
+                        isDisabled={
+                            tasks.length === 0 ||
+                            isLoadingTasks ||
+                            isAllTasksUncompleted
+                        }
+                        onClick={handleDeletingCompletedTasks}
+                        isLoading={isDeleting}
+                    >
+                        Clear Completed
+                    </Button>
+                </Box>
 
                 {!isLoadingTasks &&
                     tasks.map((task) => (

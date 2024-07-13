@@ -13,33 +13,72 @@ function useDeleteTask() {
 
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const handleDeleteTask = useCallback(async (task) => {
-        // if (!window.confirm("Are you sure you want to delete this post?"))
-        //     return;
-        if (isDeleting) return;
+    // if (!window.confirm("Are you sure you want to delete this post?"))
+    //     return;
+    const handleDeleteTasks = useCallback(
+        async (tasksToDelete) => {
+            if (isDeleting) return;
 
-        try {
-            console.log("tasks ni user", task);
+            try {
+                setIsDeleting(true);
+                const userRef = doc(firestore, "users", authUser.uid);
 
-            setIsDeleting(true);
-            const userRef = doc(firestore, "users", authUser.uid);
-            await deleteDoc(doc(firestore, "tasks", task.id));
+                // Delete each task and update the user's tasks array
+                const deletePromises = tasksToDelete.map(async (task) => {
+                    await deleteDoc(doc(firestore, "tasks", task.id));
+                    await updateDoc(userRef, {
+                        tasks: arrayRemove(task.id),
+                    });
+                });
 
-            await updateDoc(userRef, {
-                tasks: arrayRemove(task.id),
-            });
+                await Promise.all(deletePromises);
 
-            setTasks(authUser.tasks.filter((id) => id !== task.id));
+                // Update the state to remove the deleted tasks
+                setTasks(
+                    tasks.filter(
+                        (task) =>
+                            !tasksToDelete.some(
+                                (delTask) => delTask.id === task.id
+                            )
+                    )
+                );
 
-            showToast("Success", "Task deleted successfully", "success");
-        } catch (error) {
-            showToast("Error", error.message, "error");
-        } finally {
-            setIsDeleting(false);
-        }
-    }, [authUser, showToast, setTasks, isDeleting]);
+                showToast("Success", "Tasks deleted successfully", "success");
+            } catch (error) {
+                showToast("Error", error.message, "error");
+            } finally {
+                setIsDeleting(false);
+            }
+        },
+        [authUser, showToast, setTasks, isDeleting, tasks]
+    );
 
-    return { isDeleting, handleDeleteTask };
+    // const handleDeleteTask = useCallback(
+    //     async (task) => {
+    //         if (isDeleting) return;
+
+    //         try {
+    //             setIsDeleting(true);
+    //             const userRef = doc(firestore, "users", authUser.uid);
+    //             await deleteDoc(doc(firestore, "tasks", task.id));
+
+    //             await updateDoc(userRef, {
+    //                 tasks: arrayRemove(task.id),
+    //             });
+
+    //             setTasks(tasks.filter((task) => task.id !== task.id));
+
+    //             showToast("Success", "Task deleted successfully", "success");
+    //         } catch (error) {
+    //             showToast("Error", error.message, "error");
+    //         } finally {
+    //             setIsDeleting(false);
+    //         }
+    //     },
+    //     [authUser, showToast, setTasks, isDeleting, tasks]
+    // );
+
+    return { isDeleting, handleDeleteTasks };
 }
 
 export default useDeleteTask;
