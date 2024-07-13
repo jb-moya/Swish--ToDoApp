@@ -18,7 +18,7 @@ import { CloseIcon } from "@chakra-ui/icons";
 import DatePicker from "../../components/DatePicker";
 import useDateFormat from "../utils/dateFormat";
 import CategorySelector from "./CategorySelector";
-
+import { ChevronDownIcon } from "@chakra-ui/icons";
 const priority = ["none", "low", "medium", "high", "critical"];
 
 const TaskEditable = React.memo(
@@ -203,6 +203,7 @@ const TaskEditable = React.memo(
                                         "rgba(0, 163, 196, 0.2)"
                                     )}`}
                                     leftIcon={<IoFlagOutline />}
+                                    rightIcon={<ChevronDownIcon />}
                                 >
                                     {priority[editTaskInfo.priority || 0]}
                                 </MenuButton>

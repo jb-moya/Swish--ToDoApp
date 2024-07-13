@@ -2,6 +2,10 @@ import { useCallback } from "react";
 
 export const useDateFormat = () => {
     return useCallback((date) => {
+        if (!date) {
+            return "Unscheduled";
+        }
+
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Set to midnight
         const targetDate = new Date(date);

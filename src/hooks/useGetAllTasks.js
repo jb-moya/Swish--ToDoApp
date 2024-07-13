@@ -39,6 +39,7 @@ const useGetAllTasks = () => {
             setAuthUser(updatedUserInfo);
 
             console.log("Task", tasks)
+            
             tasks.forEach((task) => {
                 task.dueDate = convertFirestoreTimestampToDate(task.dueDate);
             });

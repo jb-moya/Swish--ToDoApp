@@ -9,7 +9,7 @@ function useDeleteTask() {
     const showToast = useShowToast();
 
     const authUser = useAuthStore((state) => state.user);
-    const { tasks, setTasks } = useTaskStore();
+    const { tasks, setTasks, deleteTasks } = useTaskStore();
 
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -34,14 +34,16 @@ function useDeleteTask() {
                 await Promise.all(deletePromises);
 
                 // Update the state to remove the deleted tasks
-                setTasks(
-                    tasks.filter(
-                        (task) =>
-                            !tasksToDelete.some(
-                                (delTask) => delTask.id === task.id
-                            )
-                    )
-                );
+                // setTasks(
+                //     tasks.filter(
+                //         (task) =>
+                //             !tasksToDelete.some(
+                //                 (delTask) => delTask.id === task.id
+                //             )
+                //     )
+                // );
+
+                deleteTasks(tasksToDelete);
 
                 showToast("Success", "Tasks deleted successfully", "success");
             } catch (error) {

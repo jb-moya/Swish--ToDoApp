@@ -19,6 +19,7 @@ import useEditProfile from "../../hooks/useEditProfile";
 import useShowToast from "../../hooks/useShowToast";
 import useAuthStore from "../../store/authStore";
 import { PiMinusCircleLight } from "react-icons/pi";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 const CategorySelector = ({ task, setEditTaskInfo }) => {
     const showToast = useShowToast();
@@ -108,6 +109,7 @@ const CategorySelector = ({ task, setEditTaskInfo }) => {
                         "rgba(0, 163, 196, 0.2)"
                     )}`}
                     leftIcon={<LiaHashtagSolid />}
+                    rightIcon={<ChevronDownIcon />}
                 >
                     {task.category !== undefined && task.category !== null
                         ? authUser.categories?.[task.category] ?? "add category"

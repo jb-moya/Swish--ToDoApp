@@ -45,7 +45,7 @@ function useAddTask() {
 
             await updateDoc(userDocRef, { tasks: arrayUnion(taskDocRef.id) });
 
-            setTasks([...tasks, { ...newTask, id: taskDocRef.id }]);
+            setTasks([{ ...newTask, id: taskDocRef.id }, ...tasks]);
 
             showToast("Success", "Task created successfully", "success");
         } catch (error) {

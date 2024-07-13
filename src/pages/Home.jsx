@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Navbar from "../components/NavBar";
 import {
     Button,
     Box,
     Container,
+    HStack,
     Spinner,
     useBreakpointValue,
     Modal,
@@ -13,6 +14,13 @@ import {
     ModalContent,
     Icon,
     useColorModeValue,
+    Text,
+    Divider,
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    IconButton,
 } from "@chakra-ui/react";
 import TaskContainer from "../components/Task/TaskContainer";
 import TaskEditable from "../components/Task/TaskEditable";
@@ -22,21 +30,32 @@ import useTaskStore from "../store/taskStore";
 import { RiDeleteBin3Line } from "react-icons/ri";
 import { FaPlus } from "react-icons/fa6";
 import useDeleteTask from "../hooks/useDeleteTask";
+import useDateFormat from "../components/utils/dateFormat";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import { BiSort } from "react-icons/bi";
+import { BsSortDown, BsSortUp } from "react-icons/bs";
 
 const Home = () => {
+    const dateFormat = useDateFormat();
+
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { handleAddTask, isAddTaskLoading } = useAddTask();
     const { isDeleting, handleDeleteTasks } = useDeleteTask();
-
     const { isLoading: isLoadingTasks } = useGetAllTasks();
     const [isAllTasksUncompleted, setIsAllTasksUncompleted] = useState(true);
-    const { tasks } = useTaskStore();
+    const { tasks, sortConfig, sortTasks, setSortConfig } = useTaskStore();
 
     useEffect(() => {
         if (tasks.length > 0) {
             setIsAllTasksUncompleted(tasks.every((task) => !task.isCompleted));
         }
     }, [tasks]);
+
+    // problem with sorting :)
+
+    useEffect(() => {
+        sortTasks(); // Sort tasks whenever the component mounts or sorting configuration changes
+    }, [sortConfig]);
 
     const handleAddingTask = async (task) => {
         try {
@@ -61,6 +80,21 @@ const Home = () => {
     });
 
     const isSmallScreen = useBreakpointValue({ base: true, sm: false });
+
+    const groupTasksByDueDate = (tasks) => {
+        return tasks.reduce((groups, task) => {
+            const dueDate = dateFormat(task.dueDate);
+
+            if (!groups[dueDate]) {
+                groups[dueDate] = [];
+            }
+
+            groups[dueDate].push(task);
+            return groups;
+        }, {});
+    };
+
+    const groupedTasks = groupTasksByDueDate(tasks);
 
     return (
         <>
@@ -134,10 +168,11 @@ const Home = () => {
                     </Box>
                 )}
 
-                <Box
+                <HStack
                     position={"relative"}
                     width={"full"}
-                    py={2}
+                    height={"50px"}
+                    py={3}
                     borderBottom={`1px solid ${useColorModeValue(
                         "rgba(126, 132, 144, 0.3)",
                         "rgba(126, 132, 144, 0.3)"
@@ -146,6 +181,8 @@ const Home = () => {
                     <Button
                         size={"sm"}
                         ml={-3}
+                        py={0}
+                        my={0}
                         leftIcon={<Icon as={RiDeleteBin3Line} boxSize={5} />}
                         variant="ghost"
                         isDisabled={
@@ -158,12 +195,93 @@ const Home = () => {
                     >
                         Clear Completed
                     </Button>
-                </Box>
+                    <Divider orientation="vertical" />
+                    <Menu>
+                        <MenuButton
+                            ml={2}
+                            px={1}
+                            as={Button}
+                            variant={"outline"}
+                            border={`1px solid ${useColorModeValue(
+                                "rgba(0, 163, 196, 0.2)",
+                                "rgba(0, 163, 196, 0.2)"
+                            )}`}
+                            size={"sm"}
+                            rightIcon={<ChevronDownIcon />}
+                        >
+                            <HStack>
+                                <Box
+                                    textColor={useColorModeValue(
+                                        "gray.700",
+                                        "gray.100"
+                                    )}
+                                    opacity={0.5}
+                                >
+                                    Sort By
+                                </Box>
+                                <Box>
+                                    {sortConfig.key === "dueDate"
+                                        ? "Due date"
+                                        : sortConfig.key === "priority"
+                                        ? "Priority"
+                                        : "Task Name"}
+                                </Box>
+                            </HStack>
+                        </MenuButton>
+                        <MenuList>
+                            <MenuItem
+                                as={Button}
+                                onClick={() => setSortConfig("taskName")}
+                            >
+                                Task Name
+                            </MenuItem>
+                            <MenuItem
+                                as={Button}
+                                onClick={() => setSortConfig("dueDate")}
+                            >
+                                Due date
+                            </MenuItem>
+                            <MenuItem
+                                as={Button}
+                                onClick={() => setSortConfig("priority")}
+                            >
+                                Priority
+                            </MenuItem>
+                        </MenuList>
+                    </Menu>
+                    <Button
+                        px={1}
+                        variant={"ghost"}
+                        size={"sm"}
+                        rightIcon={
+                            sortConfig.direction === "ascending" ? (
+                                <Icon as={BsSortDown} />
+                            ) : (
+                                <Icon as={BsSortUp} />
+                            )
+                        }
+                        onClick={() => setSortConfig(sortConfig.key)}
+                    >
+                        {sortConfig.direction === "ascending" ? "asc" : "desc"}
+                    </Button>
+                </HStack>
 
                 {!isLoadingTasks &&
-                    tasks.map((task) => (
-                        <TaskContainer key={task.id} task={task} />
-                    ))}
+                    tasks
+                        .map((task) => (
+                            <TaskContainer key={task.id} task={task} />
+                        ))
+                        .sort((a, b) => b.dueDate - a.dueDate)}
+
+                {/* {!isLoadingTasks &&
+                    Object.keys(groupedTasks).map((dueDate) => (
+                        <Box key={dueDate} w="full">
+                            <Text fontSize="lg" mt={5}>{dueDate}</Text>
+                            {groupedTasks[dueDate].map((task) => (
+                                <TaskContainer key={task.id} task={task} />
+                            ))}
+                        </Box>
+                    ))} */}
 
                 {!isLoadingTasks && tasks.length === 0 && (
                     <Box

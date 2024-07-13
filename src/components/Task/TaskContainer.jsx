@@ -11,6 +11,7 @@ import {
     Tag,
     TagLabel,
     Text,
+    Icon,
     Portal,
     TagRightIcon,
     TagLeftIcon,
@@ -22,7 +23,7 @@ import useDeleteTask from "../../hooks/useDeleteTask";
 import useTaskStore from "../../store/taskStore";
 import useEditTask from "../../hooks/useEditTask";
 import useDateFormat from "../utils/dateFormat";
-import { IoCalendarClearOutline, IoFlagOutline } from "react-icons/io5";
+import { IoCalendarClearOutline, IoFlag } from "react-icons/io5";
 import { LiaHashtagSolid } from "react-icons/lia";
 import useAuthStore from "../../store/authStore";
 
@@ -102,6 +103,28 @@ const TaskContainer = React.memo(({ task }) => {
         setIsHovered(false);
     }, []);
 
+    const tagPriorityColor = (priority) => {
+        switch (priority) {
+            case "critical":
+                return "#ff7e61";
+            case "high":
+                return "#ffbd61";
+            case "medium":
+                return "#faf682";
+            case "low":
+                return "#cefa82";
+            default:
+                return "gray";
+        }
+    };
+
+    const borderColor = useColorModeValue(
+        "rgba(0, 163, 196, 0.2)",
+        "rgba(0, 163, 196, 0.2)"
+    );
+
+    const tagColor = useColorModeValue("gray.400", "gray.700");
+
     return (
         <Box
             position={"relative"}
@@ -175,12 +198,37 @@ const TaskContainer = React.memo(({ task }) => {
 
                     <Flex
                         justifyContent={"start"}
-                        opacity={.75}
+                        // opacity={0.75}
                         mt={1}
                         ml={7}
                         gap={3}
                         minHeight={"20px"}
                     >
+                        {task.priority !== 0 && (
+                            <Tag
+                                px={1}
+                                rounded={"sm"}
+                                width={"69px"}
+
+                                // opacity={.75}
+                                // variant={"outline"}
+                                bg={tagPriorityColor(priority[task.priority])}
+                                size={"sm"}
+                                // shadow={"sm"}
+                                // border={`1px solid ${borderColor}`}
+                                color={"gray.700"}
+                            >
+                                <Icon
+                                    as={IoFlag}
+                                    mr={1}
+                                    // color={tagPriorityColor(
+                                    //     priority[task.priority]
+                                    // )}
+                                />
+                                <TagLabel width={"full"} textAlign={"center"}>{priority[task.priority]}</TagLabel>
+                            </Tag>
+                        )}
+
                         {task.dueDate && (
                             <Tag p={0} bg={"transparent"} size={"sm"}>
                                 <TagLeftIcon
@@ -191,12 +239,6 @@ const TaskContainer = React.memo(({ task }) => {
                             </Tag>
                         )}
 
-                        {task.priority !== 0 && (
-                            <Tag p={0} bg={"transparent"} size={"sm"}>
-                                <TagLeftIcon as={IoFlagOutline} mr={1} />
-                                <TagLabel>{priority[task.priority]}</TagLabel>
-                            </Tag>
-                        )}
                         <Spacer />
                         {task.category !== undefined &&
                             task.category !== null && (
