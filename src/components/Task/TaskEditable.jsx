@@ -4,17 +4,13 @@ import {
     Input,
     Button,
     Flex,
-    Text,
     useColorModeValue,
-    Stack,
     Menu,
     MenuButton,
     IconButton,
     MenuList,
-    MenuDivider,
     MenuItem,
     Divider,
-    Portal,
     ButtonGroup,
 } from "@chakra-ui/react";
 import { IoCalendarClearOutline, IoFlagOutline } from "react-icons/io5";
@@ -26,7 +22,6 @@ import CategorySelector from "./CategorySelector";
 const priority = ["none", "low", "medium", "high", "critical"];
 
 const TaskEditable = React.memo(
-    // work with category ///////
     ({
         taskInfo = {
             taskName: "",

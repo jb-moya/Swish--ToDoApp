@@ -7,7 +7,6 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
-    Portal,
     Input,
     Text,
     IconButton,
@@ -20,8 +19,6 @@ import useEditProfile from "../../hooks/useEditProfile";
 import useShowToast from "../../hooks/useShowToast";
 import useAuthStore from "../../store/authStore";
 import { PiMinusCircleLight } from "react-icons/pi";
-
-import { auth } from "../../firebase/firebase";
 
 const CategorySelector = ({ task, setEditTaskInfo }) => {
     const showToast = useShowToast();

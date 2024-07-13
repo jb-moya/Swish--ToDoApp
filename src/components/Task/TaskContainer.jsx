@@ -4,6 +4,7 @@ import {
     useColorModeValue,
     Checkbox,
     IconButton,
+    Spacer,
     Stack,
     HStack,
     Flex,
@@ -12,6 +13,7 @@ import {
     Text,
     Portal,
     TagRightIcon,
+    TagLeftIcon,
 } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import TaskEditable from "./TaskEditable";
@@ -20,9 +22,14 @@ import useDeleteTask from "../../hooks/useDeleteTask";
 import useTaskStore from "../../store/taskStore";
 import useEditTask from "../../hooks/useEditTask";
 import useDateFormat from "../utils/dateFormat";
-import { IoCalendarClearOutline } from "react-icons/io5";
+import { IoCalendarClearOutline, IoFlagOutline } from "react-icons/io5";
+import { LiaHashtagSolid } from "react-icons/lia";
+import useAuthStore from "../../store/authStore";
+
+const priority = ["none", "low", "medium", "high", "critical"];
 
 const TaskContainer = React.memo(({ task }) => {
+    const authUser = useAuthStore((state) => state.user);
     const dateFormat = useDateFormat();
 
     const formattedDate = useMemo(
@@ -178,24 +185,47 @@ const TaskContainer = React.memo(({ task }) => {
                         </Stack>
                     </Flex>
 
-                    <HStack spacing={4} mt={1} minHeight={"20px"}>
+                    <Flex
+                        justifyContent={"start"}
+                        mt={1}
+                        ml={7}
+                        gap={3}
+                        minHeight={"20px"}
+                    >
                         {task.dueDate && (
-                            <Tag p={0} bg={"transparent"} ml={7} size={"sm"}>
-                                <TagRightIcon
+                            <Tag p={0} bg={"transparent"} size={"sm"}>
+                                <TagLeftIcon
                                     as={IoCalendarClearOutline}
-                                    ml={0}
                                     mr={1}
                                 />
                                 <TagLabel>{formattedDate}</TagLabel>
                             </Tag>
                         )}
-                    </HStack>
+
+                        {task.priority !== 0 && (
+                            <Tag p={0} bg={"transparent"} size={"sm"}>
+                                <TagLeftIcon as={IoFlagOutline} mr={1} />
+                                <TagLabel>{priority[task.priority]}</TagLabel>
+                            </Tag>
+                        )}
+                        <Spacer />
+                        {task.category !== undefined &&
+                            task.category !== null && (
+                                <Tag p={0} bg={"transparent"} size={"sm"}>
+                                    <TagLabel>
+                                        {authUser.categories?.[task.category] ??
+                                            "no category"}
+                                    </TagLabel>
+                                    <TagRightIcon as={LiaHashtagSolid} />
+                                </Tag>
+                            )}
+                    </Flex>
 
                     {isHovered && (
                         <Box
                             position={"absolute"}
-                            right={3}
-                            top={3}
+                            right={0}
+                            top={1}
                             bg={taskButtonStyle}
                             backdropBlur={15}
                         >
