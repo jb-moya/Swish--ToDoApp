@@ -23,9 +23,14 @@ import useDeleteTask from "../../hooks/useDeleteTask";
 import useTaskStore from "../../store/taskStore";
 import useEditTask from "../../hooks/useEditTask";
 import useDateFormat from "../utils/dateFormat";
-import { IoCalendarClearOutline, IoFlag } from "react-icons/io5";
+import {
+    IoCalendarClearOutline,
+    IoFlag,
+    IoAlertCircleSharp,
+} from "react-icons/io5";
 import { LiaHashtagSolid } from "react-icons/lia";
 import useAuthStore from "../../store/authStore";
+import { isDateOverDue } from "../utils/dateFormat";
 
 const priority = ["none", "low", "medium", "high", "critical"];
 
@@ -201,7 +206,7 @@ const TaskContainer = React.memo(({ task }) => {
                         // opacity={0.75}
                         mt={1}
                         ml={7}
-                        gap={3}
+                        gap={1}
                         minHeight={"20px"}
                     >
                         {task.priority !== 0 && (
@@ -209,7 +214,6 @@ const TaskContainer = React.memo(({ task }) => {
                                 px={1}
                                 rounded={"sm"}
                                 width={"69px"}
-
                                 // opacity={.75}
                                 // variant={"outline"}
                                 bg={tagPriorityColor(priority[task.priority])}
@@ -225,17 +229,39 @@ const TaskContainer = React.memo(({ task }) => {
                                     //     priority[task.priority]
                                     // )}
                                 />
-                                <TagLabel width={"full"} textAlign={"center"}>{priority[task.priority]}</TagLabel>
+                                <TagLabel width={"full"} textAlign={"center"}>
+                                    {priority[task.priority]}
+                                </TagLabel>
                             </Tag>
                         )}
 
                         {task.dueDate && (
-                            <Tag p={0} bg={"transparent"} size={"sm"}>
+                            <Tag
+                                px={1}
+                                bg={"transparent"}
+                                size={"sm"}
+                                rounded={"sm"}
+                                border={`1px solid ${borderColor}`}
+                            >
                                 <TagLeftIcon
                                     as={IoCalendarClearOutline}
                                     mr={1}
                                 />
                                 <TagLabel>{formattedDate}</TagLabel>
+                            </Tag>
+                        )}
+
+                        {task.dueDate && isDateOverDue(task.dueDate) && (
+                            <Tag
+                                px={1}
+                                bg={"transparent"}
+                                size={"sm"}
+                                color={"#ff7e61"}
+                                rounded={"sm"}
+                                border={`1px solid #ff7e61`}
+                            >
+                                <TagLeftIcon as={IoAlertCircleSharp} mr={1} />
+                                <TagLabel>overdue</TagLabel>
                             </Tag>
                         )}
 

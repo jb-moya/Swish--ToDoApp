@@ -40,6 +40,14 @@ export const useDateFormat = () => {
     }, []);
 };
 
+export const isDateOverDue = (date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to midnight
+    const targetDate = new Date(date);
+    targetDate.setHours(0, 0, 0, 0);
+    return targetDate < today;
+};
+
 const convertFirestoreTimestampToDate = (timestamp) => {
     if (!timestamp) return null;
 
