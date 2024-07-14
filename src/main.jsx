@@ -40,6 +40,7 @@ const checkBoxBaseStyle = definePartsStyle({
 });
 
 
+
 const checkboxTheme = defineMultiStyleConfig({ baseStyle: checkBoxBaseStyle });
 
 const theme = extendTheme(

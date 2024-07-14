@@ -12,6 +12,7 @@ import {
     MenuItem,
     Divider,
     ButtonGroup,
+    Tooltip,
 } from "@chakra-ui/react";
 import { IoCalendarClearOutline, IoFlagOutline } from "react-icons/io5";
 import { CloseIcon } from "@chakra-ui/icons";
@@ -138,39 +139,49 @@ const TaskEditable = React.memo(
                         // zIndex={"popover"}
                     >
                         <Menu>
-                            <ButtonGroup size="sm" isAttached variant="outline">
-                                <MenuButton
-                                    as={Button}
-                                    color={borderStyle}
-                                    border={`1px solid ${borderColor}`}
-                                    onClick={() =>
-                                        setShowDatePicker(!showDatePicker)
-                                    }
-                                    ref={calendarButtonRef}
-                                    leftIcon={<IoCalendarClearOutline />}
+                            <Tooltip
+                                label="Select Due Date"
+                                placement="top"
+                                openDelay={500}
+                            >
+                                <ButtonGroup
+                                    size="sm"
+                                    isAttached
+                                    variant="outline"
                                 >
-                                    {editTaskInfo.dueDate !== null
-                                        ? dateFormat(editTaskInfo.dueDate)
-                                        : "No Date"}
-                                </MenuButton>
-
-                                {editTaskInfo.dueDate && (
-                                    <IconButton
-                                        border={`1px solid ${borderColor}`}
+                                    <MenuButton
+                                        as={Button}
                                         color={borderStyle}
-                                        icon={<CloseIcon />}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
+                                        border={`1px solid ${borderColor}`}
+                                        onClick={() =>
+                                            setShowDatePicker(!showDatePicker)
+                                        }
+                                        ref={calendarButtonRef}
+                                        leftIcon={<IoCalendarClearOutline />}
+                                    >
+                                        {editTaskInfo.dueDate !== null
+                                            ? dateFormat(editTaskInfo.dueDate)
+                                            : "No Date"}
+                                    </MenuButton>
 
-                                            setEditTaskInfo({
-                                                ...editTaskInfo,
-                                                dueDate: null,
-                                            });
-                                        }}
-                                        _hover={{ color: "red" }}
-                                    />
-                                )}
-                            </ButtonGroup>
+                                    {editTaskInfo.dueDate && (
+                                        <IconButton
+                                            border={`1px solid ${borderColor}`}
+                                            color={borderStyle}
+                                            icon={<CloseIcon />}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+
+                                                setEditTaskInfo({
+                                                    ...editTaskInfo,
+                                                    dueDate: null,
+                                                });
+                                            }}
+                                            _hover={{ color: "red" }}
+                                        />
+                                    )}
+                                </ButtonGroup>
+                            </Tooltip>
 
                             <MenuList p={0}>
                                 <DatePicker
@@ -191,43 +202,53 @@ const TaskEditable = React.memo(
                         </Menu>
 
                         <Menu>
-                            <ButtonGroup size="sm" isAttached variant="outline">
-                                <MenuButton
-                                    as={Button}
-                                    display={"flex"}
-                                    px={2}
-                                    color={useColorModeValue(
-                                        "gray.500",
-                                        "gray.500"
-                                    )}
-                                    border={`1px solid ${useColorModeValue(
-                                        "rgba(0, 163, 196, 0.2)",
-                                        "rgba(0, 163, 196, 0.2)"
-                                    )}`}
-                                    leftIcon={<IoFlagOutline />}
-                                    rightIcon={<ChevronDownIcon />}
+                            <Tooltip
+                                label="Select Priority"
+                                placement="top"
+                                openDelay={500}
+                            >
+                                <ButtonGroup
+                                    size="sm"
+                                    isAttached
+                                    variant="outline"
                                 >
-                                    {priority[editTaskInfo.priority || 0]}
-                                </MenuButton>
+                                    <MenuButton
+                                        as={Button}
+                                        display={"flex"}
+                                        px={2}
+                                        color={useColorModeValue(
+                                            "gray.500",
+                                            "gray.500"
+                                        )}
+                                        border={`1px solid ${useColorModeValue(
+                                            "rgba(0, 163, 196, 0.2)",
+                                            "rgba(0, 163, 196, 0.2)"
+                                        )}`}
+                                        leftIcon={<IoFlagOutline />}
+                                        rightIcon={<ChevronDownIcon />}
+                                    >
+                                        {priority[editTaskInfo.priority || 0]}
+                                    </MenuButton>
 
-                                {editTaskInfo.priority !== 0 && (
-                                    <IconButton
-                                        variant={"ghost"}
-                                        color={borderStyle}
-                                        border={`1px solid ${borderColor}`}
-                                        icon={<CloseIcon />}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
+                                    {editTaskInfo.priority !== 0 && (
+                                        <IconButton
+                                            variant={"ghost"}
+                                            color={borderStyle}
+                                            border={`1px solid ${borderColor}`}
+                                            icon={<CloseIcon />}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
 
-                                            setEditTaskInfo({
-                                                ...editTaskInfo,
-                                                priority: 0,
-                                            });
-                                        }}
-                                        _hover={{ color: "red" }}
-                                    />
-                                )}
-                            </ButtonGroup>
+                                                setEditTaskInfo({
+                                                    ...editTaskInfo,
+                                                    priority: 0,
+                                                });
+                                            }}
+                                            _hover={{ color: "red" }}
+                                        />
+                                    )}
+                                </ButtonGroup>
+                            </Tooltip>
 
                             <MenuList>
                                 {priority.map((item, index) => (

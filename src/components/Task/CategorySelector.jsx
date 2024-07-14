@@ -9,6 +9,7 @@ import {
     MenuList,
     Input,
     Text,
+    Tooltip,
     IconButton,
     useColorModeValue,
 } from "@chakra-ui/react";
@@ -99,22 +100,29 @@ const CategorySelector = ({ task, setEditTaskInfo }) => {
     return (
         <Menu>
             <ButtonGroup size="sm" isAttached variant="outline">
-                <MenuButton
-                    as={Button}
-                    display={"flex"}
-                    px={2}
-                    color={useColorModeValue("gray.500", "gray.500")}
-                    border={`1px solid ${useColorModeValue(
-                        "rgba(0, 163, 196, 0.2)",
-                        "rgba(0, 163, 196, 0.2)"
-                    )}`}
-                    leftIcon={<LiaHashtagSolid />}
-                    rightIcon={<ChevronDownIcon />}
+                <Tooltip
+                    label="Select Category"
+                    placement="top"
+                    openDelay={500}
                 >
-                    {task.category !== undefined && task.category !== null
-                        ? authUser.categories?.[task.category] ?? "add category"
-                        : "no category"}
-                </MenuButton>
+                    <MenuButton
+                        as={Button}
+                        display={"flex"}
+                        px={2}
+                        color={useColorModeValue("gray.500", "gray.500")}
+                        border={`1px solid ${useColorModeValue(
+                            "rgba(0, 163, 196, 0.2)",
+                            "rgba(0, 163, 196, 0.2)"
+                        )}`}
+                        leftIcon={<LiaHashtagSolid />}
+                        rightIcon={<ChevronDownIcon />}
+                    >
+                        {task.category !== undefined && task.category !== null
+                            ? authUser.categories?.[task.category] ??
+                              "add category"
+                            : "no category"}
+                    </MenuButton>
+                </Tooltip>
 
                 {task.category !== undefined && task.category !== null && (
                     <IconButton

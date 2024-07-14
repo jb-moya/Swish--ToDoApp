@@ -13,6 +13,7 @@ import {
     Text,
     Icon,
     Portal,
+    Tooltip,
     TagRightIcon,
     TagLeftIcon,
 } from "@chakra-ui/react";
@@ -320,22 +321,24 @@ const TaskContainer = React.memo(({ task }) => {
                                 isLoading={isDeleting}
                             />
 
-                            <IconButton
-                                size={"sm"}
-                                backdropBlur={15}
-                                left={0}
-                                variant={"ghost"}
-                                aria-label="complete task"
-                                icon={<BsFillPinAngleFill />}
-                                onClick={() => {
-                                    setCurrentTaskInfo({
-                                        ...currentTaskInfo,
-                                        isPinned: !currentTaskInfo.isPinned,
-                                    });
+                            <Tooltip label="pin on top" placement="top" openDelay={500}>
+                                <IconButton
+                                    size={"sm"}
+                                    backdropBlur={15}
+                                    left={0}
+                                    variant={"ghost"}
+                                    aria-label="complete task"
+                                    icon={<BsFillPinAngleFill />}
+                                    onClick={() => {
+                                        setCurrentTaskInfo({
+                                            ...currentTaskInfo,
+                                            isPinned: !currentTaskInfo.isPinned,
+                                        });
 
-                                    handlePinTask();
-                                }}
-                            />
+                                        handlePinTask();
+                                    }}
+                                />
+                            </Tooltip>
                         </Box>
                     )}
                 </Box>
