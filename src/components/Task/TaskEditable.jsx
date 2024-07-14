@@ -27,6 +27,7 @@ const TaskEditable = React.memo(
             taskName: "",
             description: "",
             isCompleted: false,
+            isPinned: false,
             dueDate: null,
             category: null,
             priority: 0,

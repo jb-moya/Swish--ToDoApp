@@ -36,6 +36,9 @@ function useEditTask() {
             if (task.category !== undefined) {
                 updatedTaskInfo.category = task.category;
             }
+            if (task.isPinned !== undefined) {
+                updatedTaskInfo.isPinned = task.isPinned;
+            }
 
             await updateDoc(taskRef, updatedTaskInfo);
 

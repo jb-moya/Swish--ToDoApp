@@ -19,6 +19,7 @@ import {
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import TaskEditable from "./TaskEditable";
 import PropTypes from "prop-types";
+import "../../index.css";
 import useDeleteTask from "../../hooks/useDeleteTask";
 import useTaskStore from "../../store/taskStore";
 import useEditTask from "../../hooks/useEditTask";
@@ -30,6 +31,8 @@ import {
 } from "react-icons/io5";
 import { LiaHashtagSolid } from "react-icons/lia";
 import useAuthStore from "../../store/authStore";
+import { BsFillPinAngleFill } from "react-icons/bs";
+
 import { isDateOverDue } from "../utils/dateFormat";
 
 const priority = ["none", "low", "medium", "high", "critical"];
@@ -53,6 +56,7 @@ const TaskContainer = React.memo(({ task }) => {
         taskName: task.taskName,
         description: task.description,
         isCompleted: task.isCompleted,
+        isPinned: task.isPinned,
         category: task.category,
         dueDate: task.dueDate,
         priority: task.priority,
@@ -86,23 +90,18 @@ const TaskContainer = React.memo(({ task }) => {
         });
     };
 
+    const handlePinTask = () => {
+        handleEditTask({
+            ...currentTaskInfo,
+            isPinned: !currentTaskInfo.isPinned,
+        });
+    };
+
     const handleSave = useCallback((updatedTaskInfo) => {
         console.log("rerererender", updatedTaskInfo);
         setCurrentTaskInfo(updatedTaskInfo);
 
         handleEditTask(updatedTaskInfo);
-
-        // setTasks(
-        //     tasks.map((oldTask) => {
-        //         if (oldTask.id === task.id) {
-        //             console.log("updated", oldTask, updatedTaskInfo);
-        //             return { ...oldTask, ...updatedTaskInfo };
-        //         }
-
-        //         console.log("return current", oldTask);
-        //         return oldTask;
-        //     })
-        // );
 
         setEditMode(false);
         setIsHovered(false);
@@ -142,6 +141,8 @@ const TaskContainer = React.memo(({ task }) => {
     );
 
     const tagColor = useColorModeValue("gray.400", "gray.700");
+
+    const pinColor = useColorModeValue("cyan.500", "cyan.200");
 
     return (
         <Box
@@ -282,6 +283,18 @@ const TaskContainer = React.memo(({ task }) => {
                         )}
                     </Flex>
 
+                    {currentTaskInfo.isPinned && (
+                        <Icon
+                            as={BsFillPinAngleFill}
+                            boxSize={5}
+                            color={pinColor}
+                            position={"absolute"}
+                            className="flip-horizontal"
+                            top={0}
+                            left={-6}
+                        />
+                    )}
+
                     {isHovered && (
                         <Box
                             position={"absolute"}
@@ -297,6 +310,7 @@ const TaskContainer = React.memo(({ task }) => {
                                 icon={<EditIcon />}
                                 onClick={() => setEditMode(true)}
                             />
+
                             <IconButton
                                 size={"sm"}
                                 variant={"ghost"}
@@ -304,6 +318,23 @@ const TaskContainer = React.memo(({ task }) => {
                                 icon={<DeleteIcon />}
                                 onClick={handleDeletingTask}
                                 isLoading={isDeleting}
+                            />
+
+                            <IconButton
+                                size={"sm"}
+                                backdropBlur={15}
+                                left={0}
+                                variant={"ghost"}
+                                aria-label="complete task"
+                                icon={<BsFillPinAngleFill />}
+                                onClick={() => {
+                                    setCurrentTaskInfo({
+                                        ...currentTaskInfo,
+                                        isPinned: !currentTaskInfo.isPinned,
+                                    });
+
+                                    handlePinTask();
+                                }}
                             />
                         </Box>
                     )}

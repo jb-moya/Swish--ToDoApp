@@ -312,9 +312,24 @@ const Home = () => {
                 )}
 
                 {!isLoadingTasks &&
+                    (() => {
+                        const pinnedTasks = tasks.filter(
+                            (task) => task.isPinned
+                        );
+                        const nonPinnedTasks = tasks.filter(
+                            (task) => !task.isPinned
+                        );
+                        const sortedTasks = [...pinnedTasks, ...nonPinnedTasks];
+
+                        return sortedTasks.map((task) => (
+                            <TaskContainer key={task.id} task={task} />
+                        ));
+                    })()}
+
+                {/* {!isLoadingTasks &&
                     tasks.map((task) => (
                         <TaskContainer key={task.id} task={task} />
-                    ))}
+                    ))} */}
 
                 {/* {!isLoadingTasks &&
                     Object.keys(groupedTasks).map((dueDate) => (
