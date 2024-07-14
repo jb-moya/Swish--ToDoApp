@@ -38,7 +38,7 @@ const CategorySelector = ({ task, setEditTaskInfo }) => {
     );
 
     useEffect(() => {
-        console.log("AuthUser", authUser);
+        // console.log("AuthUser", authUser);
     }, [authUser]);
 
     useEffect(() => {

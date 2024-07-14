@@ -11,7 +11,7 @@ export const useDateFormat = () => {
         const targetDate = new Date(date);
         targetDate.setHours(0, 0, 0, 0);
 
-        const diffTime = Math.abs(targetDate - today);
+        const diffTime = targetDate - today;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
         const daysOfWeek = [
@@ -28,8 +28,12 @@ export const useDateFormat = () => {
             return "Today";
         } else if (diffDays === 1) {
             return "Tomorrow";
-        } else if (diffDays < 7) {
+        } else if (diffDays === -1) {
+            return "Yesterday";
+        } else if (diffDays < 7 && diffDays > 1) {
             return daysOfWeek[targetDate.getDay()];
+        } else if (diffDays > -7 && diffDays < -1) {
+            return `Last ${daysOfWeek[targetDate.getDay()]}`;
         } else {
             const options = { month: "long", day: "numeric" };
             if (targetDate.getFullYear() !== today.getFullYear()) {

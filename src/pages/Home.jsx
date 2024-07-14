@@ -55,7 +55,11 @@ const Home = () => {
 
     useEffect(() => {
         sortTasks(); // Sort tasks whenever the component mounts or sorting configuration changes
-    }, [sortConfig]);
+    }, [sortTasks, sortConfig]);
+
+    useEffect(() => {
+        console.log("task", tasks);
+    }, [tasks]);
 
     const handleAddingTask = async (task) => {
         try {
@@ -211,6 +215,7 @@ const Home = () => {
                         >
                             <HStack>
                                 <Box
+                                    pl={1}
                                     textColor={useColorModeValue(
                                         "gray.700",
                                         "gray.100"
@@ -267,11 +272,9 @@ const Home = () => {
                 </HStack>
 
                 {!isLoadingTasks &&
-                    tasks
-                        .map((task) => (
-                            <TaskContainer key={task.id} task={task} />
-                        ))
-                        .sort((a, b) => b.dueDate - a.dueDate)}
+                    tasks.map((task) => (
+                        <TaskContainer key={task.id} task={task} />
+                    ))}
 
                 {/* {!isLoadingTasks &&
                     Object.keys(groupedTasks).map((dueDate) => (

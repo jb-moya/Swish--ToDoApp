@@ -7,7 +7,7 @@ import useTaskStore from "../store/taskStore";
 function useEditTask() {
     const showToast = useShowToast();
     const [isEditing, setIsEditing] = useState(false);
-    const { tasks: oldTasks, setTasks } = useTaskStore();
+    const { tasks, editTask } = useTaskStore();
 
     const handleEditTask = async (task) => {
         if (isEditing) return;
@@ -39,14 +39,12 @@ function useEditTask() {
 
             await updateDoc(taskRef, updatedTaskInfo);
 
-            setTasks(
-                oldTasks.map((oldTask) => {
-                    if (oldTask.id === task.id) {
-                        return { ...oldTask, ...updatedTaskInfo };
-                    }
-                    return oldTask;
-                })
-            );
+            console.log("oldTasks", tasks);
+
+            editTask({ ...task, ...updatedTaskInfo });
+
+            console.log("newTasks", tasks);
+            // sortTasks();
 
             showToast("Success", "Task Updated successfully", "success");
         } catch (error) {

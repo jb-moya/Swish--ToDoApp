@@ -54,7 +54,7 @@ const useGetAllTasks = () => {
     };
 
     useEffect(() => {
-        console.log("getting on load");
+        // console.log("getting on load");
         getAllTasks();
     }, []);
 

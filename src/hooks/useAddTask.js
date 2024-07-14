@@ -16,7 +16,7 @@ function useAddTask() {
     const [isLoading, setIsLoading] = useState(false);
     const authUser = useAuthStore((state) => state.user);
     const setAuthUser = useAuthStore((state) => state.setUser);
-    const { tasks, setTasks } = useTaskStore();
+    const { tasks, setTasks, addTask } = useTaskStore();
 
     const handleAddTask = async (task) => {
         if (isLoading) return;
@@ -45,7 +45,7 @@ function useAddTask() {
 
             await updateDoc(userDocRef, { tasks: arrayUnion(taskDocRef.id) });
 
-            setTasks([{ ...newTask, id: taskDocRef.id }, ...tasks]);
+            addTask({ ...newTask, id: taskDocRef.id });
 
             showToast("Success", "Task created successfully", "success");
         } catch (error) {

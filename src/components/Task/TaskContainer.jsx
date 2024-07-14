@@ -91,6 +91,19 @@ const TaskContainer = React.memo(({ task }) => {
         setCurrentTaskInfo(updatedTaskInfo);
 
         handleEditTask(updatedTaskInfo);
+
+        // setTasks(
+        //     tasks.map((oldTask) => {
+        //         if (oldTask.id === task.id) {
+        //             console.log("updated", oldTask, updatedTaskInfo);
+        //             return { ...oldTask, ...updatedTaskInfo };
+        //         }
+
+        //         console.log("return current", oldTask);
+        //         return oldTask;
+        //     })
+        // );
+
         setEditMode(false);
         setIsHovered(false);
     }, []);
@@ -169,7 +182,7 @@ const TaskContainer = React.memo(({ task }) => {
                                 }}
                                 isChecked={currentTaskInfo.isCompleted}
                                 isDisabled={isEditing}
-                                isLoading={isEditing}
+                                // isLoading={isEditing}
                             ></Checkbox>
 
                             <Box pl={7}>
@@ -206,35 +219,9 @@ const TaskContainer = React.memo(({ task }) => {
                         // opacity={0.75}
                         mt={1}
                         ml={7}
-                        gap={1}
+                        gap={2}
                         minHeight={"20px"}
                     >
-                        {task.priority !== 0 && (
-                            <Tag
-                                px={1}
-                                rounded={"sm"}
-                                width={"69px"}
-                                // opacity={.75}
-                                // variant={"outline"}
-                                bg={tagPriorityColor(priority[task.priority])}
-                                size={"sm"}
-                                // shadow={"sm"}
-                                // border={`1px solid ${borderColor}`}
-                                color={"gray.700"}
-                            >
-                                <Icon
-                                    as={IoFlag}
-                                    mr={1}
-                                    // color={tagPriorityColor(
-                                    //     priority[task.priority]
-                                    // )}
-                                />
-                                <TagLabel width={"full"} textAlign={"center"}>
-                                    {priority[task.priority]}
-                                </TagLabel>
-                            </Tag>
-                        )}
-
                         {task.dueDate && (
                             <Tag
                                 px={1}
@@ -266,9 +253,10 @@ const TaskContainer = React.memo(({ task }) => {
                         )}
 
                         <Spacer />
+
                         {task.category !== undefined &&
                             task.category !== null && (
-                                <Tag p={0} bg={"transparent"} size={"sm"}>
+                                <Tag bg={"transparent"} size={"sm"}>
                                     <TagLabel>
                                         {authUser.categories?.[task.category] ??
                                             "no category"}
@@ -276,6 +264,22 @@ const TaskContainer = React.memo(({ task }) => {
                                     <TagRightIcon as={LiaHashtagSolid} />
                                 </Tag>
                             )}
+
+                        {task.priority !== 0 && (
+                            <Tag
+                                px={1}
+                                rounded={"sm"}
+                                width={"69px"}
+                                bg={tagPriorityColor(priority[task.priority])}
+                                size={"sm"}
+                                color={"gray.700"}
+                            >
+                                <Icon as={IoFlag} mr={1} />
+                                <TagLabel width={"full"} textAlign={"center"}>
+                                    {priority[task.priority]}
+                                </TagLabel>
+                            </Tag>
+                        )}
                     </Flex>
 
                     {isHovered && (

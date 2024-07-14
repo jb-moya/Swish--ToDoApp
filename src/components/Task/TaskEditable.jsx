@@ -97,6 +97,7 @@ const TaskEditable = React.memo(
                         type="text"
                         height={"22px"}
                         px={0}
+                        autoFocus
                         variant={"ghost"}
                         fontWeight={"bold"}
                         bg={"transparent"}

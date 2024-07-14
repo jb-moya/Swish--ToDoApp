@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 const useTaskStore = create((set) => ({
     tasks: [],
-    sortConfig: { key: "dueDate", direction: "ascending" },
+    sortConfig: { key: "taskName", direction: "ascending" },
 
     addTask: (task) => set((state) => ({ tasks: [task, ...state.tasks] })),
     deleteTasks: (tasksToDelete) =>
@@ -12,10 +12,18 @@ const useTaskStore = create((set) => ({
                     !tasksToDelete.some((delTask) => delTask.id === task.id)
             ),
         })),
+    editTask: (editedTask) => {
+        set((state) => ({
+            tasks: state.tasks.map((task) =>
+                task.id === editedTask.id ? editedTask : task
+            ),
+        }));
+    },
     setTasks: (tasks) => set({ tasks }),
 
     sortTasks: () =>
         set((state) => {
+            console.log("statee e", state);
             const sortedTasks = [...state.tasks];
             const { key, direction } = state.sortConfig;
             sortedTasks.sort((a, b) => {
@@ -42,6 +50,8 @@ const useTaskStore = create((set) => ({
                 }
                 return 0;
             });
+
+            console.log("sortedTasks", sortedTasks);
             return { tasks: sortedTasks };
         }),
 
@@ -54,6 +64,7 @@ const useTaskStore = create((set) => ({
             ) {
                 direction = "descending";
             }
+            console.log("keyy", key, direction);
             return { sortConfig: { key, direction } };
         }),
 }));
