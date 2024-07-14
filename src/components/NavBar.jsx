@@ -9,6 +9,8 @@ import {
     MenuItem,
     Input,
     InputGroup,
+    Spacer,
+    Box,
     InputLeftElement,
     IconButton,
     useDisclosure,
@@ -27,73 +29,76 @@ const Navbar = () => {
     const [authUser] = useAuthStore((state) => [state.user]);
 
     return (
-        <Flex align="center" justify="center">
+        <Flex width="full" mt={4}>
             <EditProfile isOpen={isOpen} onClose={onClose} />
-            <Flex
-                width="fit-content"
-                mx="auto"
+            {/* <Flex
+                justify="space-between"
+                width="full"
+                // mx="auto"
                 position="fixed"
                 top="2"
                 zIndex="50"
-                px="2"
+                // px="2"
                 transition="all 0.5s ease-in-out"
-            >
-                <InputGroup width={"300px"}>
-                    <InputLeftElement pointerEvents="none">
-                        <SearchIcon opacity={0.4} />
-                    </InputLeftElement>
-                    <Input type="tel" placeholder="Search" />
-                </InputGroup>
+            > */}
+            <InputGroup width={"300px"}>
+                <InputLeftElement pointerEvents="none">
+                    <SearchIcon opacity={0.4} />
+                </InputLeftElement>
+                <Input type="tel" placeholder="Search" />
+            </InputGroup>
 
-                <Menu>
-                    <MenuButton
-                        as={Button}
-                        mx={3}
-                        variant={"ghost"}
-                        leftIcon={
-                            user?.profilePicURL ? (
-                                <Avatar
-                                    mr={2}
-                                    size={"sm"}
-                                    name={user?.username}
-                                    src={user?.profilePicURL}
-                                />
-                            ) : (
-                                <MdPerson size={"24"} />
-                            )
-                        }
-                    >
-                        {user?.username}
-                        <ChevronDownIcon ml={1} />
-                    </MenuButton>
-                    <MenuList>
-                        <MenuItem as={Button} onClick={onOpen}>
-                            Edit Profile
-                        </MenuItem>
-                        <MenuItem
-                            as={Button}
-                            onClick={handleLogout}
-                            isDisabled={isLoggingOut}
-                            color={"red.500"}
-                        >
-                            Logout
-                        </MenuItem>
-                    </MenuList>
-                </Menu>
+            <Spacer />
 
-                <IconButton
+            <Menu>
+                <MenuButton
+                    as={Button}
+                    mx={3}
                     variant={"ghost"}
-                    aria-label="Toggle color mode"
-                    icon={
-                        colorMode === "light" ? (
-                            <MdDarkMode />
+                    leftIcon={
+                        user?.profilePicURL ? (
+                            <Avatar
+                                mr={2}
+                                size={"sm"}
+                                name={user?.username}
+                                src={user?.profilePicURL}
+                            />
                         ) : (
-                            <MdOutlineLightMode />
+                            <MdPerson size={"24"} />
                         )
                     }
-                    onClick={toggleColorMode}
-                />
-            </Flex>
+                >
+                    {user?.username}
+                    <ChevronDownIcon ml={1} />
+                </MenuButton>
+                <MenuList>
+                    <MenuItem as={Button} onClick={onOpen}>
+                        Edit Profile
+                    </MenuItem>
+                    <MenuItem
+                        as={Button}
+                        onClick={handleLogout}
+                        isDisabled={isLoggingOut}
+                        color={"red.500"}
+                    >
+                        Logout
+                    </MenuItem>
+                </MenuList>
+            </Menu>
+
+            <IconButton
+                variant={"ghost"}
+                aria-label="Toggle color mode"
+                icon={
+                    colorMode === "light" ? (
+                        <MdDarkMode />
+                    ) : (
+                        <MdOutlineLightMode />
+                    )
+                }
+                onClick={toggleColorMode}
+            />
+            {/* </Flex> */}
         </Flex>
     );
 };

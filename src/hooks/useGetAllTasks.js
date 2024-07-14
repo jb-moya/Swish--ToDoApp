@@ -44,7 +44,7 @@ const useGetAllTasks = () => {
                 task.dueDate = convertFirestoreTimestampToDate(task.dueDate);
             });
             
-            tasks.sort((a, b) => b.createdAt - a.createdAt);
+            // tasks.sort((a, b) => b.createdAt - a.createdAt);
             setTasks(tasks);
         } catch (error) {
             showToast("Error", error.message, "error");
