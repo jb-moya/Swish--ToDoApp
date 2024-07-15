@@ -154,7 +154,7 @@ const CategorySelector = ({ task, setEditTaskInfo }) => {
                     />
                 </FocusLock>
 
-                {openAddCategoryButton && (
+                {openAddCategoryButton && searchText && filteredCategories.length === 0 && (
                     <MenuItem
                         closeOnSelect={false}
                         as={Button}

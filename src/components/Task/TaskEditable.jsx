@@ -270,7 +270,9 @@ const TaskEditable = React.memo(
                         <CategorySelector
                             task={editTaskInfo}
                             setEditTaskInfo={setEditTaskInfo}
+                            
                         />
+
                     </Flex>
                     <Divider />
                     <Flex

@@ -30,6 +30,7 @@ import TaskEditable from "../components/Task/TaskEditable";
 import useAddTask from "../hooks/useAddTask";
 import useGetAllTasks from "../hooks/useGetAllTasks";
 import useTaskStore from "../store/taskStore";
+import useFilterScheduleStore from "../store/filterScheduleStore";
 import { RiDeleteBin3Line } from "react-icons/ri";
 import { FaPlus } from "react-icons/fa6";
 import useDeleteTask from "../hooks/useDeleteTask";
@@ -37,6 +38,7 @@ import useDateFormat from "../components/utils/dateFormat";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { BiSort } from "react-icons/bi";
 import { BsSortDown, BsSortUp } from "react-icons/bs";
+import useCategoryStore from "../store/categoryStore";
 
 const messages = [
     "Enjoy the calm and take some time for yourself. You've earned this moment of relaxation!",
@@ -58,9 +60,9 @@ const getRandomMessage = () => {
 };
 
 const Home = () => {
-    const dateFormat = useDateFormat();
     const randomMessage = useMemo(() => getRandomMessage(), []);
-
+    const { filter } = useFilterScheduleStore();
+    const { selectedCategoryIndex } = useCategoryStore();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { handleAddTask, isAddTaskLoading } = useAddTask();
     const { isDeleting, handleDeleteTasks } = useDeleteTask();
@@ -73,8 +75,6 @@ const Home = () => {
             setIsAllTasksUncompleted(tasks.every((task) => !task.isCompleted));
         }
     }, [tasks]);
-
-    // problem with sorting :)
 
     useEffect(() => {
         sortTasks(); // Sort tasks whenever the component mounts or sorting configuration changes
@@ -108,20 +108,46 @@ const Home = () => {
 
     const isSmallScreen = useBreakpointValue({ base: true, sm: false });
 
-    // const groupTasksByDueDate = (tasks) => {
-    //     return tasks.reduce((groups, task) => {
-    //         const dueDate = dateFormat(task.dueDate);
+    const pinnedTasks = tasks.filter((task) => task.isPinned);
+    const nonPinnedTasks = tasks.filter((task) => !task.isPinned);
+    const sortedTasks = [...pinnedTasks, ...nonPinnedTasks];
 
-    //         if (!groups[dueDate]) {
-    //             groups[dueDate] = [];
-    //         }
+    const filteredCategoryTasks = sortedTasks.filter((task) => {
+        if (selectedCategoryIndex !== -1) {
+            return task.category === selectedCategoryIndex;
+        } else {
+            return !task.category;
+        }
+    });
 
-    //         groups[dueDate].push(task);
-    //         return groups;
-    //     }, {});
-    // };
+    const filteredScheduleTasks = filteredCategoryTasks.filter((task) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
 
-    // const groupedTasks = groupTasksByDueDate(tasks);
+        if (filter.value === "all") {
+            return true;
+        } else if (filter.value === "overdue") {
+            return task.dueDate && new Date(task.dueDate) < today;
+        } else if (filter.value === "today") {
+            return task.dueDate
+                ? new Date(task.dueDate).setHours(0, 0, 0, 0) ===
+                      today.getTime()
+                : false;
+        } else if (filter.value === "tomorrow") {
+            return task.dueDate
+                ? new Date(task.dueDate).setHours(0, 0, 0, 0) ===
+                      tomorrow.getTime()
+                : false;
+        } else if (filter.value === "upcoming") {
+            return task.dueDate
+                ? new Date(task.dueDate).setHours(0, 0, 0, 0) > today.getTime()
+                : false;
+        } else if (filter.value === "unscheduled") {
+            return !task.dueDate;
+        }
+    });
 
     const noTaskHeadingStyle = useColorModeValue(
         "rgba(0, 163, 196, 0.8)",
@@ -130,7 +156,7 @@ const Home = () => {
 
     return (
         <>
-            <Container maxW="5xl" centerContent>
+            <Container maxW="5xl" px={9} centerContent>
                 {/* <Box width={"full"} h="60px"> */}
                 <Navbar />
                 {/* </Box> */}
@@ -312,36 +338,11 @@ const Home = () => {
                 )}
 
                 {!isLoadingTasks &&
-                    (() => {
-                        const pinnedTasks = tasks.filter(
-                            (task) => task.isPinned
-                        );
-                        const nonPinnedTasks = tasks.filter(
-                            (task) => !task.isPinned
-                        );
-                        const sortedTasks = [...pinnedTasks, ...nonPinnedTasks];
-
-                        return sortedTasks.map((task) => (
-                            <TaskContainer key={task.id} task={task} />
-                        ));
-                    })()}
-
-                {/* {!isLoadingTasks &&
-                    tasks.map((task) => (
+                    filteredScheduleTasks.map((task) => (
                         <TaskContainer key={task.id} task={task} />
-                    ))} */}
+                    ))}
 
-                {/* {!isLoadingTasks &&
-                    Object.keys(groupedTasks).map((dueDate) => (
-                        <Box key={dueDate} w="full">
-                            <Text fontSize="lg" mt={5}>{dueDate}</Text>
-                            {groupedTasks[dueDate].map((task) => (
-                                <TaskContainer key={task.id} task={task} />
-                            ))}
-                        </Box>
-                    ))} */}
-
-                {!isLoadingTasks && tasks.length === 0 && (
+                {!isLoadingTasks && filteredScheduleTasks.length === 0 && (
                     <Flex
                         position={"fixed"}
                         display="flex"
