@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 const useCategoryStore = create((set) => ({
-    selectedCategoryIndex: 0,
+    selectedCategoryIndex: -1,
 
     setSelectedCategoryIndex: (index) => set({ selectedCategoryIndex: index }),
 }));

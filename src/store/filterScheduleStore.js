@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 const useFilterScheduleStore = create((set) => ({
-    filter: { name: "Today", value: "today" },
+    filter: { name: "All", value: "all" },
     setFilter: (filter) => set({ filter }),
 }));
 

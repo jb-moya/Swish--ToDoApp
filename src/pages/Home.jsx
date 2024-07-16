@@ -24,6 +24,7 @@ import {
     MenuList,
     MenuItem,
     IconButton,
+    Tooltip,
 } from "@chakra-ui/react";
 import TaskContainer from "../components/Task/TaskContainer";
 import TaskEditable from "../components/Task/TaskEditable";
@@ -39,6 +40,9 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { BiSort } from "react-icons/bi";
 import { BsSortDown, BsSortUp } from "react-icons/bs";
 import useCategoryStore from "../store/categoryStore";
+import CategorySelector from "../components/Task/CategorySelector";
+import useAuthStore from "../store/authStore";
+import { LiaHashtagSolid } from "react-icons/lia";
 
 const messages = [
     "Enjoy the calm and take some time for yourself. You've earned this moment of relaxation!",
@@ -62,13 +66,20 @@ const getRandomMessage = () => {
 const Home = () => {
     const randomMessage = useMemo(() => getRandomMessage(), []);
     const { filter } = useFilterScheduleStore();
-    const { selectedCategoryIndex } = useCategoryStore();
+    const { selectedCategoryIndex, setSelectedCategoryIndex } =
+        useCategoryStore();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { handleAddTask, isAddTaskLoading } = useAddTask();
     const { isDeleting, handleDeleteTasks } = useDeleteTask();
     const { isLoading: isLoadingTasks } = useGetAllTasks();
     const [isAllTasksUncompleted, setIsAllTasksUncompleted] = useState(true);
-    const { tasks, sortConfig, sortTasks, setSortConfig } = useTaskStore();
+    const { tasks, sortConfig, sortTasks, setSortConfig, getTasks } =
+        useTaskStore();
+    const authUser = useAuthStore((state) => state.user);
+
+    const userCategories = Array.isArray(authUser.categories)
+        ? authUser.categories
+        : [];
 
     useEffect(() => {
         if (tasks.length > 0) {
@@ -95,7 +106,11 @@ const Home = () => {
 
     const handleDeletingCompletedTasks = async () => {
         try {
-            await handleDeleteTasks(tasks.filter((task) => task.isCompleted));
+            await handleDeleteTasks(
+                getTasks(filter.value, selectedCategoryIndex).filter(
+                    (task) => task.isCompleted
+                )
+            );
         } catch (error) {
             console.log(error);
         }
@@ -116,7 +131,7 @@ const Home = () => {
         if (selectedCategoryIndex !== -1) {
             return task.category === selectedCategoryIndex;
         } else {
-            return !task.category;
+            return true;
         }
     });
 
@@ -210,7 +225,59 @@ const Home = () => {
 
                     <Divider orientation="vertical" />
 
+                    <Menu>
+                        <Tooltip
+                            label="Filter By Category"
+                            placement="top"
+                            openDelay={500}
+                        >
+                            <MenuButton
+                                as={Button}
+                                leftIcon={<LiaHashtagSolid />}
+                                px={4}
+                                py={2}
+                                size={"sm"}
+                                border={`1px solid ${useColorModeValue(
+                                    "rgba(0, 163, 196, 0.2)",
+                                    "rgba(0, 163, 196, 0.2)"
+                                )}`}
+                                variant={"outline"}
+                                transition="all 0.2s"
+                            >
+                                {selectedCategoryIndex === -1
+                                    ? "All"
+                                    : userCategories[
+                                          selectedCategoryIndex
+                                      ]}{" "}
+                                <ChevronDownIcon />
+                            </MenuButton>
+                        </Tooltip>
+                        <Portal>
+                            <MenuList>
+                                <MenuItem
+                                    onClick={() => {
+                                        setSelectedCategoryIndex(-1);
+                                    }}
+                                >
+                                    All
+                                </MenuItem>
+
+                                {userCategories.map((category, index) => (
+                                    <MenuItem
+                                        key={index}
+                                        onClick={() => {
+                                            setSelectedCategoryIndex(index);
+                                        }}
+                                    >
+                                        {category}
+                                    </MenuItem>
+                                ))}
+                            </MenuList>
+                        </Portal>
+                    </Menu>
+
                     <Spacer />
+
                     <Menu>
                         <MenuButton
                             ml={2}
@@ -348,6 +415,7 @@ const Home = () => {
                         display="flex"
                         flexDirection={"column"}
                         height={"100vh"}
+                        zIndex={-1}
                         justifyContent="center"
                         alignItems="center"
                     >
@@ -358,6 +426,7 @@ const Home = () => {
                         >
                             All Caught Up!
                         </Box>
+
                         <Box>{randomMessage}</Box>
                     </Flex>
                 )}

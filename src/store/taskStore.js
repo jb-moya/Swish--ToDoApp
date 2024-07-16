@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-const useTaskStore = create((set) => ({
+const useTaskStore = create((set, get) => ({
     tasks: [],
     sortConfig: { key: "taskName", direction: "ascending" },
 
@@ -19,6 +19,55 @@ const useTaskStore = create((set) => ({
             ),
         }));
     },
+
+    getTasks: (schedule = "all", category = -1, isCompleted = false) => {
+        let tasks = get().tasks;
+
+        if (isCompleted) {
+            tasks = tasks.filter((task) => task.isCompleted);
+        }
+
+        if (category !== -1) {
+            tasks = tasks.filter((task) => task.category === category);
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        tasks = tasks.filter((task) => {
+            if (schedule === "all") {
+                return true;
+            } else if (schedule === "overdue") {
+                return task.dueDate && new Date(task.dueDate) < today;
+            } else if (schedule === "today") {
+                return (
+                    task.dueDate &&
+                    new Date(task.dueDate).setHours(0, 0, 0, 0) ===
+                        today.getTime()
+                );
+            } else if (schedule === "tomorrow") {
+                const tomorrow = new Date(today);
+                tomorrow.setDate(today.getDate() + 1);
+                return (
+                    task.dueDate &&
+                    new Date(task.dueDate).setHours(0, 0, 0, 0) ===
+                        tomorrow.getTime()
+                );
+            } else if (schedule === "upcoming") {
+                return (
+                    task.dueDate &&
+                    new Date(task.dueDate).setHours(0, 0, 0, 0) >
+                        today.getTime()
+                );
+            } else if (schedule === "unscheduled") {
+                return !task.dueDate;
+            }
+            return false; // Default case to handle unexpected values
+        });
+
+        return tasks;
+    },
+
     setTasks: (tasks) => set({ tasks }),
 
     sortTasks: () =>

@@ -8,41 +8,44 @@ import {
     MenuButton,
     MenuList,
     MenuItem,
-    Input,
-    InputGroup,
-    useColorModeValue,
     Spacer,
-    Box,
-    InputLeftElement,
     IconButton,
     Tooltip,
     Portal,
+    CircularProgress,
+    Stat,
+    StatLabel,
+    StatNumber,
+    Box,
+    Icon,
+    Text,
+    StatHelpText,
+    StatArrow,
+    StatGroup,
+    CircularProgressLabel,
     useDisclosure,
+    useColorModeValue,
 } from "@chakra-ui/react";
 import EditProfile from "./AuthForm/Profile/EditProfile";
 import { MdPerson, MdDarkMode, MdOutlineLightMode } from "react-icons/md";
 import useLogout from "../hooks/useLogout";
 import useAuthStore from "../store/authStore";
-import { SearchIcon, ChevronDownIcon } from "@chakra-ui/icons";
-import CategorySelector from "./Task/CategorySelector";
-import useCategoryStore from "../store/categoryStore";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import useFilterScheduleStore from "../store/filterScheduleStore";
+import useTaskStore from "../store/taskStore";
 import { IoCalendarClearOutline } from "react-icons/io5";
-import { LiaHashtagSolid } from "react-icons/lia";
+import useCategoryStore from "../store/categoryStore";
 
 const Navbar = () => {
     const { colorMode, toggleColorMode } = useColorMode();
-    const { selectedCategoryIndex, setSelectedCategoryIndex } =
-        useCategoryStore();
+    const { selectedCategoryIndex } = useCategoryStore();
     const { filter, setFilter } = useFilterScheduleStore();
     const { handleLogout, isLoggingOut, error } = useLogout();
+    const { getTasks } = useTaskStore();
+
     const user = useAuthStore((state) => state.user);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const authUser = useAuthStore((state) => state.user);
-
-    const userCategories = Array.isArray(authUser.categories)
-        ? authUser.categories
-        : [];
 
     const filterSchedule = [
         {
@@ -71,44 +74,57 @@ const Navbar = () => {
         },
     ];
 
-    return (
-        <Flex width="full" mt={4}>
-            <EditProfile isOpen={isOpen} onClose={onClose} />
-            {/* <Flex
-                justify="space-between"
-                width="full"
-                // mx="auto"
-                position="fixed"
-                top="2"
-                zIndex="50"
-                // px="2"
-                transition="all 0.5s ease-in-out"
-            > */}
-            {/* <InputGroup width={"300px"}>
-                <InputLeftElement pointerEvents="none">
-                    <SearchIcon opacity={0.4} />
-                </InputLeftElement>
-                <Input type="tel" placeholder="Search" />
-            </InputGroup> */}
+    const tasksCount = getTasks(filter.value, selectedCategoryIndex).length;
+    const completedTaskCount = getTasks(
+        filter.value,
+        selectedCategoryIndex,
+        true
+    ).length;
 
+    return (
+        <Flex width="full" mt={4} zIndex={2} alignItems={"center"}>
+            <EditProfile isOpen={isOpen} onClose={onClose} />
             <Menu>
-                <Tooltip
-                    label="Filter By Due Date"
-                    placement="top"
-                    openDelay={500}
-                >
-                    <MenuButton
-                        as={Button}
-                        leftIcon={<IoCalendarClearOutline />}
-                        px={4}
-                        py={2}
-                        mr={2}
-                        // variant={"ghost"}
-                        transition="all 0.2s"
-                    >
-                        {filter.name}
-                        <ChevronDownIcon />
-                    </MenuButton>
+                <Tooltip label="Filter By Due Date" placement="top">
+                    <Stat>
+                        <MenuButton
+                            as={Button}
+                            color={useColorModeValue("cyan.500", "cyan.300")}
+                            boxSizing="border-box"
+                            boxSize={6}
+                            minWidth={"fit-content"}
+                            pr={10}
+                            textAlign={"left"}
+                            height={"42px"}
+                            variant={"unstyled"}
+                            transition="all 0.2s"
+                        >
+                            <Box fontWeight={"bold"}>
+                                {filter.name} <Icon as={ChevronDownIcon} />
+                            </Box>
+                            <StatHelpText
+                                fontWeight={"normal"}
+                                color={useColorModeValue("black", "white")}
+                            >
+                                <Flex>
+                                    {tasksCount === completedTaskCount ? (
+                                        <Box fontWeight={"bold"}>
+                                            All Tasks Completed
+                                        </Box>
+                                    ) : (
+                                        <>
+                                            <Box fontWeight={"bold"}>
+                                                {completedTaskCount}
+                                            </Box>
+                                            <Box ml={1}>
+                                                of {tasksCount} Tasks Completed
+                                            </Box>
+                                        </>
+                                    )}
+                                </Flex>
+                            </StatHelpText>
+                        </MenuButton>
+                    </Stat>
                 </Tooltip>
                 <Portal>
                     <MenuList>
@@ -126,49 +142,9 @@ const Navbar = () => {
                 </Portal>
             </Menu>
 
-            <Menu>
-                <Tooltip
-                    label="Filter By Category"
-                    placement="top"
-                    openDelay={500}
-                >
-                    <MenuButton
-                        as={Button}
-                        leftIcon={<LiaHashtagSolid />}
-                        px={4}
-                        py={2}
-                        variant={"ghost"}
-                        transition="all 0.2s"
-                    >
-                        {selectedCategoryIndex === -1
-                            ? "All"
-                            : userCategories[selectedCategoryIndex]}{" "}
-                        <ChevronDownIcon />
-                    </MenuButton>
-                </Tooltip>
-                <Portal>
-                    <MenuList>
-                        <MenuItem
-                            onClick={() => {
-                                setSelectedCategoryIndex(-1);
-                            }}
-                        >
-                            All
-                        </MenuItem>
-
-                        {userCategories.map((category, index) => (
-                            <MenuItem
-                                key={index}
-                                onClick={() => {
-                                    setSelectedCategoryIndex(index);
-                                }}
-                            >
-                                {category}
-                            </MenuItem>
-                        ))}
-                    </MenuList>
-                </Portal>
-            </Menu>
+            {/* <CircularProgress value={40} color="green.400" thickness="15px">
+                <CircularProgressLabel>59 / 599</CircularProgressLabel>
+            </CircularProgress> */}
 
             <Spacer />
 
