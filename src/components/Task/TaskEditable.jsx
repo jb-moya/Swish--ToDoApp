@@ -20,6 +20,8 @@ import DatePicker from "../../components/DatePicker";
 import useDateFormat from "../utils/dateFormat";
 import CategorySelector from "./CategorySelector";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import useFilterScheduleStore from "../../store/filterScheduleStore";
+import useCategoryStore from "../../store/categoryStore";
 const priority = ["none", "low", "medium", "high", "critical"];
 
 const TaskEditable = React.memo(
@@ -40,15 +42,47 @@ const TaskEditable = React.memo(
     }) => {
         const calendarButtonRef = useRef(null);
         const dateFormat = useDateFormat();
+
+        const { filter } = useFilterScheduleStore();
+        const { selectedCategoryIndex } = useCategoryStore();
+
+        const initialSetSchedule = () => {
+            if (isAddingNewTask) {
+                const now = new Date();
+                const startOfDay = new Date(now.setHours(0, 0, 0, 0));
+                const tomorrow = new Date(startOfDay);
+
+                switch (filter.value) {
+                    case "all":
+                    case "unscheduled":
+                    case "overdue":
+                        return null;
+                    case "today":
+                        return startOfDay;
+                    case "tomorrow":
+                    case "upcoming":
+                        tomorrow.setDate(startOfDay.getDate() + 1);
+                        return tomorrow;
+                    default:
+                        return null;
+                }
+            } else {
+                return taskInfo.dueDate === null
+                    ? null
+                    : new Date(taskInfo.dueDate);
+            }
+        };
+
         const [editTaskInfo, setEditTaskInfo] = useState({
             id: taskInfo.id,
             taskName: taskInfo.taskName,
             description: taskInfo.description,
             isCompleted: taskInfo.isCompleted,
-            dueDate:
-                taskInfo.dueDate === null ? null : new Date(taskInfo.dueDate),
+            dueDate: initialSetSchedule(),
             priority: taskInfo.priority,
-            category: taskInfo.category,
+            category: isAddingNewTask
+                ? selectedCategoryIndex
+                : taskInfo.category,
             createdBy: taskInfo.createdBy,
             createdAt: taskInfo.createdAt,
         });
@@ -134,6 +168,7 @@ const TaskEditable = React.memo(
                     <Flex
                         gap={2}
                         pt={2}
+                        wrap={"wrap"}
                         mb={2}
                         position={"relative"}
                         // zIndex={"popover"}
@@ -270,9 +305,7 @@ const TaskEditable = React.memo(
                         <CategorySelector
                             task={editTaskInfo}
                             setEditTaskInfo={setEditTaskInfo}
-                            
                         />
-
                     </Flex>
                     <Divider />
                     <Flex

@@ -28,6 +28,7 @@ function useAddTask() {
             description: task.description || "",
             dueDate: task.dueDate || null,
             priority: task.priority || 0,
+            category: task.category || null,
             isCompleted: false,
             createdAt: Date.now(),
             createdBy: authUser.uid,

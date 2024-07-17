@@ -47,6 +47,10 @@ const TaskContainer = React.memo(({ task }) => {
         [dateFormat, task.dueDate]
     );
 
+    useEffect(() => {
+        console.log(task);
+    }, [task]);
+
     const { isDeleting, handleDeleteTasks } = useDeleteTask();
     const { tasks, setTasks } = useTaskStore();
 
@@ -121,7 +125,7 @@ const TaskContainer = React.memo(({ task }) => {
         setIsHovered(false);
     }, []);
 
-    const tagPriorityColor = (priority) => {
+    const tagPriorityBorderColor = (priority) => {
         switch (priority) {
             case "critical":
                 return "#ff7e61";
@@ -135,6 +139,8 @@ const TaskContainer = React.memo(({ task }) => {
                 return "gray";
         }
     };
+
+    const tagPriorityTextColor = useColorModeValue("black", "white");
 
     const borderColor = useColorModeValue(
         "rgba(0, 163, 196, 0.2)",
@@ -272,12 +278,21 @@ const TaskContainer = React.memo(({ task }) => {
                                 px={1}
                                 rounded={"sm"}
                                 width={"69px"}
-                                bg={tagPriorityColor(priority[task.priority])}
+                                borderBottom={`2px solid ${tagPriorityBorderColor(
+                                    priority[task.priority]
+                                )}`}
+                                bg="transparent"
                                 size={"sm"}
-                                color={"gray.700"}
+                                // color={"gray.700"}
                             >
-                                <Icon as={IoFlag} mr={1} />
-                                <TagLabel width={"full"} textAlign={"center"}>
+                                <Icon
+                                    as={IoFlag}
+                                    mr={1}
+                                    color={tagPriorityBorderColor(
+                                        priority[task.priority]
+                                    )}
+                                />
+                                <TagLabel width={"full"} textAlign={"right"}>
                                     {priority[task.priority]}
                                 </TagLabel>
                             </Tag>
@@ -321,7 +336,11 @@ const TaskContainer = React.memo(({ task }) => {
                                 isLoading={isDeleting}
                             />
 
-                            <Tooltip label="pin on top" placement="top" openDelay={500}>
+                            <Tooltip
+                                label="pin on top"
+                                placement="top"
+                                openDelay={500}
+                            >
                                 <IconButton
                                     size={"sm"}
                                     backdropBlur={15}

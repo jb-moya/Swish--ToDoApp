@@ -35,6 +35,8 @@ import useFilterScheduleStore from "../store/filterScheduleStore";
 import useTaskStore from "../store/taskStore";
 import { IoCalendarClearOutline } from "react-icons/io5";
 import useCategoryStore from "../store/categoryStore";
+import useGetAllTasks from "../hooks/useGetAllTasks";
+import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 
 const Navbar = () => {
     const { colorMode, toggleColorMode } = useColorMode();
@@ -42,7 +44,7 @@ const Navbar = () => {
     const { filter, setFilter } = useFilterScheduleStore();
     const { handleLogout, isLoggingOut, error } = useLogout();
     const { getTasks } = useTaskStore();
-
+    const { isLoading: isGettingTasksLoading } = useGetAllTasks();
     const user = useAuthStore((state) => state.user);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const authUser = useAuthStore((state) => state.user);
@@ -81,6 +83,8 @@ const Navbar = () => {
         true
     ).length;
 
+    const tasksCompletionCountStyle = useColorModeValue("black", "white");
+
     return (
         <Flex width="full" mt={4} zIndex={2} alignItems={"center"}>
             <EditProfile isOpen={isOpen} onClose={onClose} />
@@ -102,27 +106,44 @@ const Navbar = () => {
                             <Box fontWeight={"bold"}>
                                 {filter.name} <Icon as={ChevronDownIcon} />
                             </Box>
-                            <StatHelpText
-                                fontWeight={"normal"}
-                                color={useColorModeValue("black", "white")}
-                            >
-                                <Flex>
-                                    {tasksCount === completedTaskCount ? (
-                                        <Box fontWeight={"bold"}>
-                                            All Tasks Completed
-                                        </Box>
-                                    ) : (
-                                        <>
-                                            <Box fontWeight={"bold"}>
-                                                {completedTaskCount}
-                                            </Box>
-                                            <Box ml={1}>
-                                                of {tasksCount} Tasks Completed
-                                            </Box>
-                                        </>
-                                    )}
-                                </Flex>
-                            </StatHelpText>
+                            {!isGettingTasksLoading && (
+                                <StatHelpText
+                                    fontWeight={"normal"}
+                                    color={tasksCompletionCountStyle}
+                                >
+                                    <Flex>
+                                        {tasksCount === completedTaskCount ? (
+                                            <Flex
+                                                fontWeight={"bold"}
+                                                alignItems={"center"}
+                                            >
+                                                <Icon
+                                                    as={
+                                                        IoIosCheckmarkCircleOutline
+                                                    }
+                                                    mr={1}
+                                                />
+                                                All
+                                            </Flex>
+                                        ) : (
+                                            <Flex alignItems={"center"}>
+                                                <Icon
+                                                    as={
+                                                        IoIosCheckmarkCircleOutline
+                                                    }
+                                                    mr={1}
+                                                />
+                                                <Box fontWeight={"bold"}>
+                                                    {completedTaskCount}
+                                                </Box>
+                                                <Box ml={1}>
+                                                    of {tasksCount}{" "}
+                                                </Box>
+                                            </Flex>
+                                        )}
+                                    </Flex>
+                                </StatHelpText>
+                            )}
                         </MenuButton>
                     </Stat>
                 </Tooltip>

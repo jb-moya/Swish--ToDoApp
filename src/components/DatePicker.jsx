@@ -25,7 +25,7 @@ const DatePicker = ({
                 todayButton="Today"
                 isClearable={isClearable}
                 onClickOutside={() => setCalendarIsOpen(false)}
-                disabledKeyboardNavigation
+                // disabledKeyboardNavigation
                 dateFormat="MMM d, yyyy h:mm aa"
                 showPopperArrow={showPopperArrow}
                 className="react-datapicker__input-text" //input is white by default and there is no already defined class for it so I created a new one

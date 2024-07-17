@@ -43,6 +43,7 @@ import useCategoryStore from "../store/categoryStore";
 import CategorySelector from "../components/Task/CategorySelector";
 import useAuthStore from "../store/authStore";
 import { LiaHashtagSolid } from "react-icons/lia";
+import Footer from "../components/Footer";
 
 const messages = [
     "Enjoy the calm and take some time for yourself. You've earned this moment of relaxation!",
@@ -121,7 +122,7 @@ const Home = () => {
         sm: "Add New Task",
     });
 
-    const isSmallScreen = useBreakpointValue({ base: true, sm: false });
+    const isSmallScreen = useBreakpointValue({ base: true, md: false });
 
     const pinnedTasks = tasks.filter((task) => task.isPinned);
     const nonPinnedTasks = tasks.filter((task) => !task.isPinned);
@@ -171,28 +172,15 @@ const Home = () => {
 
     return (
         <>
-            <Container maxW="5xl" px={9} centerContent>
-                {/* <Box width={"full"} h="60px"> */}
+            <Flex
+                maxW="5xl"
+                px={9}
+                minH={"100vh"}
+                direction={"column"}
+                mx="auto"
+                centerContent
+            >
                 <Navbar />
-                {/* </Box> */}
-
-                {isLoadingTasks && (
-                    <Box
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
-                        mt="10"
-                    >
-                        <Spinner
-                            thickness="4px"
-                            speed="0.65s"
-                            emptyColor="gray.200"
-                            color="brand.300"
-                            size="xl"
-                        />
-                        <Box ml="3">Loading tasks...</Box>
-                    </Box>
-                )}
 
                 <HStack
                     position={"relative"}
@@ -220,7 +208,7 @@ const Home = () => {
                         onClick={handleDeletingCompletedTasks}
                         isLoading={isDeleting}
                     >
-                        {isSmallScreen ? "Delete" : "Delete Completed Tasks"}
+                        {isSmallScreen ? "" : "Delete Completed Tasks"}
                     </Button>
 
                     <Divider orientation="vertical" />
@@ -341,16 +329,22 @@ const Home = () => {
                         px={1}
                         variant={"ghost"}
                         size={"sm"}
-                        rightIcon={
-                            sortConfig.direction === "ascending" ? (
-                                <Icon as={BsSortDown} />
-                            ) : (
-                                <Icon as={BsSortUp} />
-                            )
-                        }
                         onClick={() => setSortConfig(sortConfig.key)}
                     >
-                        {sortConfig.direction === "ascending" ? "asc" : "desc"}
+                        {!isSmallScreen && (
+                            <Box mr={1}>
+                                {sortConfig.direction === "ascending"
+                                    ? "asc"
+                                    : "desc"}
+                            </Box>
+                        )}
+                        <Icon
+                            as={
+                                sortConfig.direction === "ascending"
+                                    ? BsSortDown
+                                    : BsSortUp
+                            }
+                        />
                     </Button>
                 </HStack>
 
@@ -404,21 +398,41 @@ const Home = () => {
                     </Button>
                 )}
 
+                {isLoadingTasks && (
+                    <Box
+                        mt="10"
+                        textAlign={"center"}
+                        width={"100%"}
+                    >
+                        <Spinner
+                            thickness="4px"
+                            speed="0.65s"
+                            emptyColor="gray.200"
+                            color="brand.300"
+                            size="xl"
+                        />
+                        <Box>Loading tasks...</Box>
+                    </Box>
+                )}
+
                 {!isLoadingTasks &&
                     filteredScheduleTasks.map((task) => (
                         <TaskContainer key={task.id} task={task} />
                     ))}
 
                 {!isLoadingTasks && filteredScheduleTasks.length === 0 && (
-                    <Flex
-                        position={"fixed"}
-                        display="flex"
-                        flexDirection={"column"}
-                        height={"100vh"}
-                        zIndex={-1}
-                        justifyContent="center"
-                        alignItems="center"
-                    >
+                    // <Flex
+                    //     position={"fixed"}
+                    //     display="flex"
+                    //     flexDirection={"column"}
+                    //     width={"100%"}
+                    //     mx="auto"
+                    //     height={"100vh"}
+                    //     zIndex={-1}
+                    //     justifyContent="center"
+                    //     alignItems="center"
+                    // >
+                    <Box textAlign={"center"} mt={40}>
                         <Box
                             fontSize="lg"
                             fontWeight="bold"
@@ -426,11 +440,15 @@ const Home = () => {
                         >
                             All Caught Up!
                         </Box>
-
                         <Box>{randomMessage}</Box>
-                    </Flex>
+                    </Box>
+
+                    // {/* </♦Flex> */}
                 )}
-            </Container>
+
+                <Spacer />
+                <Footer />
+            </Flex>
         </>
     );
 };

@@ -8,7 +8,7 @@ import { convertFirestoreTimestampToDate } from "../components/utils/dateFormat"
 
 const useGetAllTasks = () => {
     const [isLoading, setIsLoading] = useState(true);
-    const { tasks, setTasks } = useTaskStore();
+    const { tasks, setTasks, sortTasks } = useTaskStore();
     const setAuthUser = useAuthStore((state) => state.setUser);
     const authUser = useAuthStore((state) => state.user);
     const showToast = useShowToast();
@@ -38,14 +38,13 @@ const useGetAllTasks = () => {
             localStorage.setItem("user-info", JSON.stringify(updatedUserInfo));
             setAuthUser(updatedUserInfo);
 
-            console.log("Task", tasks)
             
             tasks.forEach((task) => {
                 task.dueDate = convertFirestoreTimestampToDate(task.dueDate);
             });
             
-            // tasks.sort((a, b) => b.createdAt - a.createdAt);
             setTasks(tasks);
+            sortTasks();
         } catch (error) {
             showToast("Error", error.message, "error");
         } finally {
@@ -54,7 +53,6 @@ const useGetAllTasks = () => {
     };
 
     useEffect(() => {
-        // console.log("getting on load");
         getAllTasks();
     }, []);
 
