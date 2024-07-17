@@ -1,3 +1,7 @@
 .flip-horizontal {
   transform: scaleX(-1);
 }
+
+.resize-disable {
+  resize: none;
+}

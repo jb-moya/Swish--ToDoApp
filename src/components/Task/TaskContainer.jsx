@@ -77,7 +77,6 @@ const TaskContainer = React.memo(({ task }) => {
     const handleDeletingTask = async () => {
         try {
             await handleDeleteTasks([task]);
-            // setTasks(tasks.filter((t) => t.id !== task.id));
         } catch (error) {
             console.log(error);
         }
@@ -211,7 +210,7 @@ const TaskContainer = React.memo(({ task }) => {
                                 <Box
                                     opacity={0.8}
                                     fontSize={"15px"}
-                                    noOfLines={[1, 2]}
+                                    noOfLines={2}
                                 >
                                     {" "}
                                     {currentTaskInfo.description

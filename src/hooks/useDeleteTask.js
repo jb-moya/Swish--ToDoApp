@@ -43,10 +43,6 @@ function useDeleteTask() {
                     )
                 );
 
-                // deleteTasks(tasksToDelete);
-                // sortTasks();
-
-
                 showToast("Success", "Tasks deleted successfully", "success");
             } catch (error) {
                 showToast("Error", error.message, "error");

@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
     Box,
-    Input,
     Button,
     Flex,
     useColorModeValue,
@@ -11,8 +10,11 @@ import {
     MenuList,
     MenuItem,
     Divider,
+    Textarea,
     ButtonGroup,
     Tooltip,
+    Spacer,
+    Portal,
 } from "@chakra-ui/react";
 import { IoCalendarClearOutline, IoFlagOutline } from "react-icons/io5";
 import { CloseIcon } from "@chakra-ui/icons";
@@ -22,7 +24,15 @@ import CategorySelector from "./CategorySelector";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import useFilterScheduleStore from "../../store/filterScheduleStore";
 import useCategoryStore from "../../store/categoryStore";
+import { BsFillPinAngleFill } from "react-icons/bs";
+import { DeleteIcon } from "@chakra-ui/icons";
+import "../../index.css";
+import useDeleteTask from "../../hooks/useDeleteTask";
+
 const priority = ["none", "low", "medium", "high", "critical"];
+
+const taskNameCharLimit = 500;
+const descriptionCharLimit = 1500;
 
 const TaskEditable = React.memo(
     ({
@@ -42,6 +52,7 @@ const TaskEditable = React.memo(
     }) => {
         const calendarButtonRef = useRef(null);
         const dateFormat = useDateFormat();
+        const { isDeleting, handleDeleteTasks } = useDeleteTask();
 
         const { filter } = useFilterScheduleStore();
         const { selectedCategoryIndex } = useCategoryStore();
@@ -79,6 +90,7 @@ const TaskEditable = React.memo(
             description: taskInfo.description,
             isCompleted: taskInfo.isCompleted,
             dueDate: initialSetSchedule(),
+            isPinned: taskInfo.isPinned,
             priority: taskInfo.priority,
             category: isAddingNewTask
                 ? selectedCategoryIndex
@@ -86,13 +98,25 @@ const TaskEditable = React.memo(
             createdBy: taskInfo.createdBy,
             createdAt: taskInfo.createdAt,
         });
+        const [characterLimit, setCharacterLimit] = useState({
+            taskName: editTaskInfo.taskName.length >= taskNameCharLimit,
+            description: editTaskInfo.taskName.length >= descriptionCharLimit,
+        });
         const [saveButtonDisable, setSaveButtonDisable] = useState(true);
         const inputTitleRef = useRef(null);
         const [showDatePicker, setShowDatePicker] = useState(false);
 
-        useEffect(() => {
-            setSaveButtonDisable(!editTaskInfo.taskName);
-        }, [editTaskInfo]);
+        // useEffect(() => {
+        //     if (!editTaskInfo.taskName) {
+        //         setSaveButtonDisable(true);
+        //     } else {
+        //         setSaveButtonDisable(false);
+        //     }
+        // }, [editTaskInfo]);
+
+        // useEffect(() => {
+        //     console.log("rerendering");
+        // }, []);
 
         const handleSave = () => {
             onSave(editTaskInfo);
@@ -101,6 +125,14 @@ const TaskEditable = React.memo(
 
             if (inputTitleRef.current) {
                 inputTitleRef.current.focus();
+            }
+        };
+
+        const handleDeletingTask = async () => {
+            try {
+                await handleDeleteTasks([editTaskInfo]);
+            } catch (error) {
+                console.log(error);
             }
         };
 
@@ -116,6 +148,38 @@ const TaskEditable = React.memo(
             "rgba(0, 163, 196, 0.2)"
         );
 
+        const txHeight = 12;
+        useEffect(() => {
+            const tx = document.getElementsByTagName("textarea");
+
+            for (let i = 0; i < tx.length; i++) {
+                console.log("tite");
+                if (tx[i].value == "") {
+                    tx[i].setAttribute(
+                        "style",
+                        "height:" + 0 + "px;overflow-y:hidden;"
+                    );
+                } else {
+                    tx[i].setAttribute(
+                        "style",
+                        "height:" + tx[i].scrollHeight + "px;overflow-y:hidden;"
+                    );
+                }
+                tx[i].addEventListener("input", OnInput, false);
+            }
+
+            function OnInput(e) {
+                this.style.height = "auto";
+                this.style.height = this.scrollHeight + "px";
+            }
+
+            return () => {
+                for (let i = 0; i < tx.length; i++) {
+                    tx[i].removeEventListener("input", OnInput);
+                }
+            };
+        }, [editTaskInfo]);
+
         return (
             <Flex flexDir={"column"} width={"100%"}>
                 <Box
@@ -129,41 +193,85 @@ const TaskEditable = React.memo(
                     )}`}
                     width="100%"
                 >
-                    <Input
+                    <Textarea
+                        // className="resize-disable"
                         type="text"
-                        height={"22px"}
-                        px={0}
-                        autoFocus
-                        variant={"ghost"}
+                        px={3}
+                        mb={2}
+                        py={0}
+                        minH={txHeight}
+                        // autoFocus
+                        variant={"unstyled"}
                         fontWeight={"bold"}
                         bg={"transparent"}
                         placeholder="task name"
                         value={editTaskInfo.taskName}
                         onKeyDown={handleKeyDown}
                         onChange={(e) => {
+                            if (e.target.value.length > taskNameCharLimit) {
+                                setCharacterLimit({
+                                    ...characterLimit,
+                                    taskName: true,
+                                });
+                                return;
+                            } else {
+                                setCharacterLimit({
+                                    ...characterLimit,
+                                    taskName: false,
+                                });
+                            }
+
                             setEditTaskInfo({
                                 ...editTaskInfo,
                                 taskName: e.target.value,
                             });
                         }}
                         ref={inputTitleRef}
-                    ></Input>
+                    ></Textarea>
 
-                    <Input
+                    {characterLimit.taskName && (
+                        <Box px={3} fontSize={"xs"} color={"red.400"}>
+                            Task name character limit reached
+                        </Box>
+                    )}
+
+                    <Textarea
+                        // className="resize-disable"
                         type="text"
-                        height={"22px"}
-                        px={0}
+                        minH={txHeight}
+                        py={0}
+                        px={3}
+                        mb={2}
                         variant={"ghost"}
                         bg={"transparent"}
                         placeholder="description"
                         value={editTaskInfo.description}
-                        onChange={(e) =>
+                        onChange={(e) => {
+                            if (e.target.value.length > descriptionCharLimit) {
+                                setCharacterLimit({
+                                    ...characterLimit,
+                                    description: true,
+                                });
+                                return;
+                            } else {
+                                setCharacterLimit({
+                                    ...characterLimit,
+                                    description: false,
+                                });
+                            }
+
                             setEditTaskInfo({
                                 ...editTaskInfo,
                                 description: e.target.value,
-                            })
-                        }
-                    ></Input>
+                            });
+                        }}
+                    ></Textarea>
+
+                    {characterLimit.description && (
+                        <Box px={3} fontSize={"xs"} color={"red.400"}>
+                            Description character limit reached
+                        </Box>
+                    )}
 
                     <Flex
                         gap={2}
@@ -218,22 +326,24 @@ const TaskEditable = React.memo(
                                 </ButtonGroup>
                             </Tooltip>
 
-                            <MenuList p={0}>
-                                <DatePicker
-                                    selected={editTaskInfo.dueDate}
-                                    onChange={(date) => {
-                                        setEditTaskInfo({
-                                            ...editTaskInfo,
-                                            dueDate: date,
-                                        });
-                                        setShowDatePicker(false);
-                                    }}
-                                    isCalendarOpen={showDatePicker}
-                                    setCalendarIsOpen={setShowDatePicker}
-                                    wrapperRef={calendarButtonRef}
-                                    inline
-                                />
-                            </MenuList>
+                            <Portal>
+                                <MenuList p={0}>
+                                    <DatePicker
+                                        selected={editTaskInfo.dueDate}
+                                        onChange={(date) => {
+                                            setEditTaskInfo({
+                                                ...editTaskInfo,
+                                                dueDate: date,
+                                            });
+                                            setShowDatePicker(false);
+                                        }}
+                                        isCalendarOpen={showDatePicker}
+                                        setCalendarIsOpen={setShowDatePicker}
+                                        wrapperRef={calendarButtonRef}
+                                        inline
+                                    />
+                                </MenuList>
+                            </Portal>
                         </Menu>
 
                         <Menu>
@@ -285,26 +395,54 @@ const TaskEditable = React.memo(
                                 </ButtonGroup>
                             </Tooltip>
 
-                            <MenuList>
-                                {priority.map((item, index) => (
-                                    <MenuItem
-                                        key={item}
-                                        onClick={() =>
-                                            setEditTaskInfo({
-                                                ...editTaskInfo,
-                                                priority: index,
-                                            })
-                                        }
-                                    >
-                                        {item}
-                                    </MenuItem>
-                                ))}
-                            </MenuList>
+                            <Portal>
+                                <MenuList>
+                                    {priority.map((item, index) => (
+                                        <MenuItem
+                                            key={item}
+                                            onClick={() =>
+                                                setEditTaskInfo({
+                                                    ...editTaskInfo,
+                                                    priority: index,
+                                                })
+                                            }
+                                        >
+                                            {item}
+                                        </MenuItem>
+                                    ))}
+                                </MenuList>
+                            </Portal>
                         </Menu>
 
                         <CategorySelector
                             task={editTaskInfo}
                             setEditTaskInfo={setEditTaskInfo}
+                        />
+
+                        <Spacer />
+
+                        <IconButton
+                            size={"sm"}
+                            backdropBlur={15}
+                            left={0}
+                            variant={editTaskInfo.isPinned ? "solid" : "ghost"}
+                            aria-label="complete task"
+                            icon={<BsFillPinAngleFill />}
+                            onClick={() => {
+                                setEditTaskInfo({
+                                    ...editTaskInfo,
+                                    isPinned: !editTaskInfo.isPinned,
+                                });
+                            }}
+                        />
+
+                        <IconButton
+                            size={"sm"}
+                            variant={"ghost"}
+                            aria-label="delete task"
+                            icon={<DeleteIcon />}
+                            onClick={handleDeletingTask}
+                            isLoading={isDeleting}
                         />
                     </Flex>
                     <Divider />

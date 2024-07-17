@@ -10,6 +10,7 @@ import {
     Input,
     Text,
     Tooltip,
+    Portal,
     IconButton,
     useColorModeValue,
 } from "@chakra-ui/react";
@@ -37,10 +38,6 @@ const CategorySelector = ({ task, setEditTaskInfo }) => {
         "rgba(0, 163, 196, 0.2)",
         "rgba(0, 163, 196, 0.2)"
     );
-
-    useEffect(() => {
-        // console.log("AuthUser", authUser);
-    }, [authUser]);
 
     useEffect(() => {
         if (searchText) {
@@ -143,80 +140,86 @@ const CategorySelector = ({ task, setEditTaskInfo }) => {
                 )}
             </ButtonGroup>
 
-            <MenuList width={"100px"}>
-                <FocusLock>
-                    <Input
-                        placeholder="Type Category"
-                        px={2}
-                        mb={1}
-                        variant={"flushed"}
-                        onChange={(e) => setSearchText(e.target.value)}
-                    />
-                </FocusLock>
+            <Portal>
+                <MenuList width={"100px"}>
+                    <FocusLock>
+                        <Input
+                            placeholder="Type Category"
+                            px={2}
+                            mb={1}
+                            variant={"flushed"}
+                            onChange={(e) => setSearchText(e.target.value)}
+                        />
+                    </FocusLock>
 
-                {openAddCategoryButton && searchText && filteredCategories.length === 0 && (
+                    {openAddCategoryButton &&
+                        searchText &&
+                        filteredCategories.length === 0 && (
+                            <MenuItem
+                                closeOnSelect={false}
+                                as={Button}
+                                autoFocus="false"
+                                mt={1}
+                                variant={"unstyled"}
+                                width={"100%"}
+                                leftIcon={<IoAddSharp />}
+                                onClick={handleAddNewCategory}
+                            >
+                                Create &quot;
+                                <Text
+                                    overflow="hidden"
+                                    whiteSpace="nowrap"
+                                    textOverflow="ellipsis"
+                                    maxWidth="100%"
+                                >
+                                    {searchText}
+                                </Text>
+                                &quot;
+                            </MenuItem>
+                        )}
+
                     <MenuItem
-                        closeOnSelect={false}
                         as={Button}
-                        autoFocus="false"
-                        mt={1}
                         variant={"unstyled"}
-                        width={"100%"}
-                        leftIcon={<IoAddSharp />}
-                        onClick={handleAddNewCategory}
-                    >
-                        Create &quot;
-                        <Text
-                            overflow="hidden"
-                            whiteSpace="nowrap"
-                            textOverflow="ellipsis"
-                            maxWidth="100%"
-                        >
-                            {searchText}
-                        </Text>
-                        &quot;
-                    </MenuItem>
-                )}
-
-                <MenuItem
-                    as={Button}
-                    variant={"unstyled"}
-                    leftIcon={<PiMinusCircleLight />}
-                    onClick={() => {
-                        setEditTaskInfo({
-                            ...task,
-                            category: null,
-                        });
-                    }}
-                >
-                    {task.category !== undefined && task.category !== null
-                        ? "Remove Category"
-                        : "No Category"}
-                </MenuItem>
-
-                {filteredCategories.map((obj) => (
-                    <MenuItem
-                        key={obj.item}
+                        leftIcon={<PiMinusCircleLight />}
                         onClick={() => {
-                            let categoryIndex = authUser.categories?.indexOf(
-                                obj.item
-                            );
-                            if (categoryIndex === -1 || !authUser.categories) {
-                                categoryIndex = null;
-                            }
-
-                            console.log("categoryIndex", categoryIndex);
-
                             setEditTaskInfo({
                                 ...task,
-                                category: categoryIndex,
+                                category: null,
                             });
                         }}
                     >
-                        {obj.item}
+                        {task.category !== undefined && task.category !== null
+                            ? "Remove Category"
+                            : "No Category"}
                     </MenuItem>
-                ))}
-            </MenuList>
+
+                    {filteredCategories.map((obj) => (
+                        <MenuItem
+                            key={obj.item}
+                            onClick={() => {
+                                let categoryIndex =
+                                    authUser.categories?.indexOf(obj.item);
+                                if (
+                                    categoryIndex === -1 ||
+                                    !authUser.categories
+                                ) {
+                                    categoryIndex = null;
+                                }
+
+                                console.log("categoryIndex", categoryIndex);
+
+                                setEditTaskInfo({
+                                    ...task,
+                                    category: categoryIndex,
+                                });
+                            }}
+                        >
+                            {obj.item}
+                        </MenuItem>
+                    ))}
+                </MenuList>
+            </Portal>
         </Menu>
     );
 };

@@ -380,6 +380,24 @@ const Home = () => {
                     )
                 )}
 
+                {isLoadingTasks && (
+                    <Box mt="10" textAlign={"center"} width={"100%"}>
+                        <Spinner
+                            thickness="4px"
+                            speed="0.65s"
+                            emptyColor="gray.200"
+                            color="brand.300"
+                            size="xl"
+                        />
+                        <Box>Loading tasks...</Box>
+                    </Box>
+                )}
+
+                {!isLoadingTasks &&
+                    filteredScheduleTasks.map((task) => (
+                        <TaskContainer key={task.id} task={task} />
+                    ))}
+
                 {!isOpen && (
                     <Button
                         zIndex={1} // 2
@@ -397,28 +415,6 @@ const Home = () => {
                         {buttonText}
                     </Button>
                 )}
-
-                {isLoadingTasks && (
-                    <Box
-                        mt="10"
-                        textAlign={"center"}
-                        width={"100%"}
-                    >
-                        <Spinner
-                            thickness="4px"
-                            speed="0.65s"
-                            emptyColor="gray.200"
-                            color="brand.300"
-                            size="xl"
-                        />
-                        <Box>Loading tasks...</Box>
-                    </Box>
-                )}
-
-                {!isLoadingTasks &&
-                    filteredScheduleTasks.map((task) => (
-                        <TaskContainer key={task.id} task={task} />
-                    ))}
 
                 {!isLoadingTasks && filteredScheduleTasks.length === 0 && (
                     // <Flex
