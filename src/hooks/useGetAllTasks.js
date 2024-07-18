@@ -29,15 +29,6 @@ const useGetAllTasks = () => {
             querySnapshot.forEach((doc) => {
                 tasks.push({ id: doc.id, ...doc.data() });
             });
-
-            // const updatedUserInfo = {
-            //     ...authUser,
-            //     tasks: tasks.map((task) => task.id),
-            // };
-
-            // localStorage.setItem("user-info", JSON.stringify(updatedUserInfo));
-            // setAuthUser(updatedUserInfo);
-
             
             tasks.forEach((task) => {
                 task.dueDate = convertFirestoreTimestampToDate(task.dueDate);

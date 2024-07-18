@@ -27,10 +27,6 @@ const Login = () => {
         login(inputs);
     };
 
-    useEffect(() => {
-        console.log("inputs", inputs);
-    }, [inputs]);
-
     return (
         <form onSubmit={handleSubmit}>
             <Stack

@@ -14,10 +14,10 @@ import useSignUpWithEmailAndPassword from "../../hooks/useSignUpWithEmailAndPass
 
 const SignUp = () => {
     const [inputs, setInputs] = useState({
-        username: "joebloggs",
-        email: "joebloggs@me.com",
-        password: "123456",
-        confirmPassword: "123456",
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
     });
 
     const [showPassword, setShowPassword] = useState({

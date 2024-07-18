@@ -50,6 +50,7 @@ function useAddTask() {
 
             showToast("Success", "Task created successfully", "success");
         } catch (error) {
+            console.log("error", error)
             showToast("Error", error.message, "error");
         } finally {
             setIsLoading(false);
