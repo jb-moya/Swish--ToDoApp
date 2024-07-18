@@ -9,7 +9,7 @@ import { convertFirestoreTimestampToDate } from "../components/utils/dateFormat"
 const useGetAllTasks = () => {
     const [isLoading, setIsLoading] = useState(true);
     const { tasks, setTasks, sortTasks } = useTaskStore();
-    const setAuthUser = useAuthStore((state) => state.setUser);
+    // const setAuthUser = useAuthStore((state) => state.setUser);
     const authUser = useAuthStore((state) => state.user);
     const showToast = useShowToast();
 
@@ -30,13 +30,13 @@ const useGetAllTasks = () => {
                 tasks.push({ id: doc.id, ...doc.data() });
             });
 
-            const updatedUserInfo = {
-                ...authUser,
-                tasks: tasks.map((task) => task.id),
-            };
+            // const updatedUserInfo = {
+            //     ...authUser,
+            //     tasks: tasks.map((task) => task.id),
+            // };
 
-            localStorage.setItem("user-info", JSON.stringify(updatedUserInfo));
-            setAuthUser(updatedUserInfo);
+            // localStorage.setItem("user-info", JSON.stringify(updatedUserInfo));
+            // setAuthUser(updatedUserInfo);
 
             
             tasks.forEach((task) => {

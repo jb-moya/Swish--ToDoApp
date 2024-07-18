@@ -67,8 +67,7 @@ const getRandomMessage = () => {
 const Home = () => {
     const randomMessage = useMemo(() => getRandomMessage(), []);
     const { filter } = useFilterScheduleStore();
-    const { selectedCategoryIndex, setSelectedCategoryIndex } =
-        useCategoryStore();
+    const { selectedCategoryId, setSelectedCategoryId } = useCategoryStore();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { handleAddTask, isAddTaskLoading } = useAddTask();
     const { isDeleting, handleDeleteTasks } = useDeleteTask();
@@ -105,10 +104,14 @@ const Home = () => {
         }
     };
 
+    const handleCategoryChange = (value) => {
+        setSelectedCategoryId(value);
+    };
+
     const handleDeletingCompletedTasks = async () => {
         try {
             await handleDeleteTasks(
-                getTasks(filter.value, selectedCategoryIndex).filter(
+                getTasks(filter.value, selectedCategoryId).filter(
                     (task) => task.isCompleted
                 )
             );
@@ -129,8 +132,8 @@ const Home = () => {
     const sortedTasks = [...pinnedTasks, ...nonPinnedTasks];
 
     const filteredCategoryTasks = sortedTasks.filter((task) => {
-        if (selectedCategoryIndex !== -1) {
-            return task.category === selectedCategoryIndex;
+        if (selectedCategoryId !== -1) {
+            return task.category === selectedCategoryId;
         } else {
             return true;
         }
@@ -210,59 +213,13 @@ const Home = () => {
                     >
                         {isSmallScreen ? "" : "Delete Completed Tasks"}
                     </Button>
-
                     <Divider orientation="vertical" />
 
-                    <Menu>
-                        <Tooltip
-                            label="Filter By Category"
-                            placement="top"
-                            openDelay={500}
-                        >
-                            <MenuButton
-                                as={Button}
-                                leftIcon={<LiaHashtagSolid />}
-                                px={4}
-                                py={2}
-                                size={"sm"}
-                                border={`1px solid ${useColorModeValue(
-                                    "rgba(0, 163, 196, 0.2)",
-                                    "rgba(0, 163, 196, 0.2)"
-                                )}`}
-                                variant={"outline"}
-                                transition="all 0.2s"
-                            >
-                                {selectedCategoryIndex === -1
-                                    ? "All"
-                                    : userCategories[
-                                          selectedCategoryIndex
-                                      ]}{" "}
-                                <ChevronDownIcon />
-                            </MenuButton>
-                        </Tooltip>
-                        <Portal>
-                            <MenuList>
-                                <MenuItem
-                                    onClick={() => {
-                                        setSelectedCategoryIndex(-1);
-                                    }}
-                                >
-                                    All
-                                </MenuItem>
-
-                                {userCategories.map((category, index) => (
-                                    <MenuItem
-                                        key={index}
-                                        onClick={() => {
-                                            setSelectedCategoryIndex(index);
-                                        }}
-                                    >
-                                        {category}
-                                    </MenuItem>
-                                ))}
-                            </MenuList>
-                        </Portal>
-                    </Menu>
+                    <CategorySelector
+                        currentCategory={selectedCategoryId}
+                        onCategoryChange={handleCategoryChange}
+                        isEditMode={false}
+                    />
 
                     <Spacer />
 
@@ -404,10 +361,8 @@ const Home = () => {
                         position={{ base: "fixed", sm: "static" }}
                         mt={4}
                         width={{ base: "auto", sm: "full" }}
-                        // width={"100%"}
                         bottom={{ base: 10, sm: "auto" }}
                         right={{ base: 10, sm: "auto" }}
-                        // variant={{ base: "solid", sm: "ghost" }}
                         variant={"ghost"}
                         onClick={onOpen}
                         isLoading={isAddTaskLoading}
@@ -417,17 +372,6 @@ const Home = () => {
                 )}
 
                 {!isLoadingTasks && filteredScheduleTasks.length === 0 && (
-                    // <Flex
-                    //     position={"fixed"}
-                    //     display="flex"
-                    //     flexDirection={"column"}
-                    //     width={"100%"}
-                    //     mx="auto"
-                    //     height={"100vh"}
-                    //     zIndex={-1}
-                    //     justifyContent="center"
-                    //     alignItems="center"
-                    // >
                     <Box textAlign={"center"} mt={40}>
                         <Box
                             fontSize="lg"
@@ -438,8 +382,6 @@ const Home = () => {
                         </Box>
                         <Box>{randomMessage}</Box>
                     </Box>
-
-                    // {/* </♦Flex> */}
                 )}
 
                 <Spacer />

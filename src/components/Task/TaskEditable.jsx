@@ -50,12 +50,11 @@ const TaskEditable = React.memo(
         isLoading,
         isAddingNewTask = false,
     }) => {
-        const calendarButtonRef = useRef(null);
         const dateFormat = useDateFormat();
         const { isDeleting, handleDeleteTasks } = useDeleteTask();
 
         const { filter } = useFilterScheduleStore();
-        const { selectedCategoryIndex } = useCategoryStore();
+        const { selectedCategoryId } = useCategoryStore();
 
         const initialSetSchedule = () => {
             if (isAddingNewTask) {
@@ -93,7 +92,7 @@ const TaskEditable = React.memo(
             isPinned: taskInfo.isPinned,
             priority: taskInfo.priority,
             category: isAddingNewTask
-                ? selectedCategoryIndex
+                ? selectedCategoryId
                 : taskInfo.category,
             createdBy: taskInfo.createdBy,
             createdAt: taskInfo.createdAt,
@@ -106,17 +105,17 @@ const TaskEditable = React.memo(
         const inputTitleRef = useRef(null);
         const [showDatePicker, setShowDatePicker] = useState(false);
 
-        // useEffect(() => {
-        //     if (!editTaskInfo.taskName) {
-        //         setSaveButtonDisable(true);
-        //     } else {
-        //         setSaveButtonDisable(false);
-        //     }
-        // }, [editTaskInfo]);
+        useEffect(() => {
+            if (!editTaskInfo.taskName) {
+                setSaveButtonDisable(true);
+            } else {
+                setSaveButtonDisable(false);
+            }
+        }, [editTaskInfo]);
 
-        // useEffect(() => {
-        //     console.log("rerendering");
-        // }, []);
+        useEffect(() => {
+            console.log("rerendering");
+        }, []);
 
         const handleSave = () => {
             onSave(editTaskInfo);
@@ -142,6 +141,10 @@ const TaskEditable = React.memo(
             }
         };
 
+        const handleCategoryChange = (value) => {
+            setEditTaskInfo({ ...editTaskInfo, category: value });
+        };
+
         const borderStyle = useColorModeValue("gray.500", "gray.500");
         const borderColor = useColorModeValue(
             "rgba(0, 163, 196, 0.2)",
@@ -149,6 +152,7 @@ const TaskEditable = React.memo(
         );
 
         const txHeight = 12;
+        
         useEffect(() => {
             const tx = document.getElementsByTagName("textarea");
 
@@ -181,7 +185,7 @@ const TaskEditable = React.memo(
         }, [editTaskInfo]);
 
         return (
-            <Flex flexDir={"column"} width={"100%"}>
+            <Flex flexDir={"column"} width={"100%"} >
                 <Box
                     bg={useColorModeValue("white", "#1a202c")}
                     shadow={{ base: "2xl", sm: "none" }}
@@ -299,7 +303,6 @@ const TaskEditable = React.memo(
                                         onClick={() =>
                                             setShowDatePicker(!showDatePicker)
                                         }
-                                        ref={calendarButtonRef}
                                         leftIcon={<IoCalendarClearOutline />}
                                     >
                                         {editTaskInfo.dueDate !== null
@@ -339,8 +342,6 @@ const TaskEditable = React.memo(
                                         }}
                                         isCalendarOpen={showDatePicker}
                                         setCalendarIsOpen={setShowDatePicker}
-                                        wrapperRef={calendarButtonRef}
-                                        inline
                                     />
                                 </MenuList>
                             </Portal>
@@ -415,8 +416,9 @@ const TaskEditable = React.memo(
                         </Menu>
 
                         <CategorySelector
-                            task={editTaskInfo}
-                            setEditTaskInfo={setEditTaskInfo}
+                            currentCategory={editTaskInfo.category}
+                            onCategoryChange={handleCategoryChange}
+                            isEditMode
                         />
 
                         <Spacer />

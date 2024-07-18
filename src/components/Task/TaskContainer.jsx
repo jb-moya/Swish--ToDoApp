@@ -261,12 +261,10 @@ const TaskContainer = React.memo(({ task }) => {
 
                         <Spacer />
 
-                        {task.category !== undefined &&
-                            task.category !== null && (
+                        {task.category !== -1 && (
                                 <Tag bg={"transparent"} size={"sm"}>
                                     <TagLabel>
-                                        {authUser.categories?.[task.category] ??
-                                            "no category"}
+                                        {authUser.categories?.[task.category]}
                                     </TagLabel>
                                     <TagRightIcon as={LiaHashtagSolid} />
                                 </Tag>

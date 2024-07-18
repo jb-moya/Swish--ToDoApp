@@ -10,14 +10,11 @@ const DatePicker = ({
     isClearable = false,
     showPopperArrow = true,
     setCalendarIsOpen,
-    ...props
 }) => {
     const isLight = useColorMode().colorMode === "light"; //you can check what theme you are using right now however you want
 
     return (
-        <Box
-            className={isLight ? "light-theme" : "dark-theme"}
-        >
+        <Box className={isLight ? "light-theme" : "dark-theme"}>
             <ReactDatePicker
                 minDate={new Date()}
                 selected={selectedDate}
@@ -29,7 +26,7 @@ const DatePicker = ({
                 dateFormat="MMM d, yyyy h:mm aa"
                 showPopperArrow={showPopperArrow}
                 className="react-datapicker__input-text" //input is white by default and there is no already defined class for it so I created a new one
-                {...props}
+                inline
             />
         </Box>
     );

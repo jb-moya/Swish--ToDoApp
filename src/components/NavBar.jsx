@@ -40,7 +40,7 @@ import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 
 const Navbar = () => {
     const { colorMode, toggleColorMode } = useColorMode();
-    const { selectedCategoryIndex } = useCategoryStore();
+    const { selectedCategoryId } = useCategoryStore();
     const { filter, setFilter } = useFilterScheduleStore();
     const { handleLogout, isLoggingOut, error } = useLogout();
     const { getTasks } = useTaskStore();
@@ -76,10 +76,10 @@ const Navbar = () => {
         },
     ];
 
-    const tasksCount = getTasks(filter.value, selectedCategoryIndex).length;
+    const tasksCount = getTasks(filter.value, selectedCategoryId).length;
     const completedTaskCount = getTasks(
         filter.value,
-        selectedCategoryIndex,
+        selectedCategoryId,
         true
     ).length;
 

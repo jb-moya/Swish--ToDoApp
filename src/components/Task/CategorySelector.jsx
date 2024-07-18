@@ -8,30 +8,82 @@ import {
     MenuItem,
     MenuList,
     Input,
+    Spacer,
+    Box,
     Text,
+    useDisclosure,
     Tooltip,
+    Flex,
     Portal,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    MenuDivider,
+    ModalCloseButton,
     IconButton,
+    Icon,
     useColorModeValue,
 } from "@chakra-ui/react";
 import { LiaHashtagSolid } from "react-icons/lia";
 import { IoAddSharp } from "react-icons/io5";
-import FocusLock from "react-focus-lock";
 import useEditProfile from "../../hooks/useEditProfile";
 import useShowToast from "../../hooks/useShowToast";
 import useAuthStore from "../../store/authStore";
 import { PiMinusCircleLight } from "react-icons/pi";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-
-const CategorySelector = ({ task, setEditTaskInfo }) => {
+import { RiDeleteBin7Line } from "react-icons/ri";
+import useDeleteTask from "../../hooks/useDeleteTask";
+import FocusLock from "react-focus-lock";
+import { v4 as uuidv4 } from "uuid";
+import useTaskStore from "../../store/taskStore";
+const CategorySelector = ({
+    currentCategory,
+    onCategoryChange,
+    isEditMode = true,
+}) => {
     const showToast = useShowToast();
+    const {
+        isOpen: isOpenDeleteConfirm,
+        onOpen: openDeleteConfirm,
+        onClose: closeDeleteConfirm,
+    } = useDisclosure();
+
     const [searchText, setSearchText] = React.useState("");
+    const [visible, setVisible] = React.useState(true);
+    const { tasks } = useTaskStore((state) => state);
+    const [category, setCategory] = React.useState(currentCategory);
     const { isProfileUpdating, editProfile } = useEditProfile();
     const authUser = useAuthStore((state) => state.user);
-    const setAuthUser = useAuthStore((state) => state.setUser);
+    const { isDeleting, handleDeleteTasks } = useDeleteTask();
 
-    const [openAddCategoryButton, setOpenAddCategoryButton] = useState(false);
-    const inputRef = useRef(null);
+    const searchInputRef = useRef(null);
+
+    useEffect(() => {
+        const handleBlur = () => {
+            setTimeout(() => {
+                searchInputRef.current.focus();
+            }, 0);
+        };
+
+        if (searchInputRef.current) {
+            searchInputRef.current.addEventListener("blur", handleBlur);
+        }
+
+        return () => {
+            if (searchInputRef.current) {
+                searchInputRef.current.removeEventListener("blur", handleBlur);
+            }
+        };
+    }, [searchText]);
+
+    useEffect(() => {
+        if (searchInputRef.current) {
+            searchInputRef.current.focus();
+        }
+    }, [searchText]);
 
     const borderStyle = useColorModeValue("gray.500", "gray.500");
     const borderColor = useColorModeValue(
@@ -40,53 +92,45 @@ const CategorySelector = ({ task, setEditTaskInfo }) => {
     );
 
     useEffect(() => {
-        if (searchText) {
-            setOpenAddCategoryButton(true);
-        } else {
-            setOpenAddCategoryButton(false);
-        }
-    }, [searchText]);
+        console.log("rerendeinrg g g g gg");
+    }, []);
 
-    useEffect(() => {
-        if (inputRef.current) {
-            inputRef.current.focus();
-        }
-    }, [openAddCategoryButton, inputRef]);
+    const filteredCategories =
+        typeof authUser.categories === "object" &&
+        !Array.isArray(authUser.categories)
+            ? Object.entries(authUser.categories).reduce(
+                  (acc, [id, category]) => {
+                      if (
+                          category
+                              .toLowerCase()
+                              .includes(searchText.toLowerCase())
+                      ) {
+                          acc.push({ id, category });
+                      }
+                      return acc;
+                  },
+                  []
+              )
+            : [];
 
-    useEffect(() => {
-        if (inputRef.current) {
-            inputRef.current.focus();
-        }
-    }, [openAddCategoryButton, searchText]);
-
-    const filteredCategories = Array.isArray(authUser.categories)
-        ? authUser.categories.reduce((acc, item, index) => {
-              if (item.toLowerCase().includes(searchText.toLowerCase())) {
-                  acc.push({ item, index });
-              }
-              return acc;
-          }, [])
-        : [];
+    console.log("filteredCategories", filteredCategories);
 
     const handleAddNewCategory = async () => {
         try {
             if (searchText) {
-                let newCategories = [];
+                const newCategoryUUID = uuidv4();
 
-                if (Array.isArray(authUser.categories)) {
-                    newCategories = [...authUser.categories, searchText];
-                } else {
-                    newCategories = [searchText];
-                }
+                let newCategories = {
+                    ...authUser.categories,
+                    [newCategoryUUID]: searchText,
+                };
 
                 await editProfile({
                     categories: newCategories,
                 });
 
-                setEditTaskInfo({
-                    ...task,
-                    category: (authUser.categories?.length ?? 0) + 1,
-                });
+                setCategory(newCategoryUUID);
+                onCategoryChange(newCategoryUUID);
                 setSearchText("");
             }
         } catch (error) {
@@ -94,8 +138,78 @@ const CategorySelector = ({ task, setEditTaskInfo }) => {
         }
     };
 
+    const handleDeleteCategory = async (categoryId) => {
+        try {
+            const newCategories = { ...authUser.categories };
+            delete newCategories[categoryId];
+
+            await editProfile({
+                categories: newCategories,
+            });
+
+            const tasksToBeDeleted = tasks.filter((task) => {
+                console.log("task.category", task.category, categoryId);
+                return task.category === categoryId;
+            });
+
+            if (tasksToBeDeleted.length > 0) {
+                console.log("LMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                await handleDeleteTasks(tasksToBeDeleted);
+            }
+
+            setCategory(-1);
+            onCategoryChange(-1);
+            closeDeleteConfirm();
+        } catch (error) {
+            showToast("Error", error.message, "error");
+        }
+    };
+
+    const isCategoryTitleExists = (searchText) => {
+        return (
+            typeof authUser.categories === "object" &&
+            !Array.isArray(authUser.categories) &&
+            Object.values(authUser.categories).includes(searchText)
+        );
+    };
+
     return (
         <Menu>
+            <Modal
+                autoSelect
+                isOpen={isOpenDeleteConfirm}
+                onClose={closeDeleteConfirm}
+            >
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Delete?</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        This will permanently delete &apos;
+                        {authUser.categories[category]}&apos; and all its tasks.
+                        This can&apos;t be undone.
+                    </ModalBody>
+
+                    <ModalFooter>
+                        <Button
+                            colorScheme="blue"
+                            mr={3}
+                            onClick={closeDeleteConfirm}
+                        >
+                            Close
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            onClick={() => {
+                                handleDeleteCategory(category);
+                            }}
+                        >
+                            Delete Category
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
             <ButtonGroup size="sm" isAttached variant="outline">
                 <Tooltip
                     label="Select Category"
@@ -114,14 +228,19 @@ const CategorySelector = ({ task, setEditTaskInfo }) => {
                         leftIcon={<LiaHashtagSolid />}
                         rightIcon={<ChevronDownIcon />}
                     >
-                        {task.category !== undefined && task.category !== null
-                            ? authUser.categories?.[task.category] ??
+                        {isEditMode
+                            ? category != null
+                                ? authUser.categories?.[category] ??
+                                  "add category"
+                                : "no category"
+                            : category !== -1
+                            ? authUser.categories?.[category] ??
                               "add category"
-                            : "no category"}
+                            : "All"}
                     </MenuButton>
                 </Tooltip>
 
-                {task.category !== undefined && task.category !== null && (
+                {isEditMode && category !== -1 && (
                     <IconButton
                         variant={"ghost"}
                         color={borderStyle}
@@ -130,10 +249,7 @@ const CategorySelector = ({ task, setEditTaskInfo }) => {
                         onClick={(e) => {
                             e.stopPropagation();
 
-                            setEditTaskInfo({
-                                ...task,
-                                category: null,
-                            });
+                            onCategoryChange(-1);
                         }}
                         _hover={{ color: "red" }}
                     />
@@ -141,81 +257,94 @@ const CategorySelector = ({ task, setEditTaskInfo }) => {
             </ButtonGroup>
 
             <Portal>
-                <MenuList width={"100px"}>
-                    <FocusLock>
-                        <Input
-                            placeholder="Type Category"
-                            px={2}
-                            mb={1}
-                            variant={"flushed"}
-                            onChange={(e) => setSearchText(e.target.value)}
-                        />
-                    </FocusLock>
+                <MenuList width={"100px"} as={Box}>
+                    <Input
+                        ref={searchInputRef}
+                        placeholder="Search or Create New"
+                        px={2}
+                        mb={1}
+                        variant={"flushed"}
+                        // value={searchText}
+                        onChange={(e) => {
+                            setSearchText(e.target.value);
+                        }}
+                    />
 
-                    {openAddCategoryButton &&
-                        searchText &&
-                        filteredCategories.length === 0 && (
-                            <MenuItem
-                                closeOnSelect={false}
-                                as={Button}
-                                autoFocus="false"
-                                mt={1}
-                                variant={"unstyled"}
-                                width={"100%"}
-                                leftIcon={<IoAddSharp />}
-                                onClick={handleAddNewCategory}
-                            >
-                                Create &quot;
-                                <Text
+                    <MenuItem
+                        my={1}
+                        width={"100%"}
+                        isDisabled={
+                            !searchText || isCategoryTitleExists(searchText)
+                        }
+                        _disabled={{ opacity: 0.3, cursor: "not-allowed" }}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleAddNewCategory();
+                        }}
+                    >
+                        <Icon as={IoAddSharp} mr={1} />
+                        {searchText ? (
+                            <Flex overflow="hidden" gap={1}>
+                                <Box>Create</Box>
+                                <Box
+                                    fontWeight={"bold"}
+                                    color={"cyan.500"}
                                     overflow="hidden"
                                     whiteSpace="nowrap"
                                     textOverflow="ellipsis"
                                     maxWidth="100%"
                                 >
                                     {searchText}
-                                </Text>
-                                &quot;
-                            </MenuItem>
+                                </Box>
+                            </Flex>
+                        ) : (
+                            <Text>Type to create</Text>
                         )}
-
-                    <MenuItem
-                        as={Button}
-                        variant={"unstyled"}
-                        leftIcon={<PiMinusCircleLight />}
-                        onClick={() => {
-                            setEditTaskInfo({
-                                ...task,
-                                category: null,
-                            });
-                        }}
-                    >
-                        {task.category !== undefined && task.category !== null
-                            ? "Remove Category"
-                            : "No Category"}
                     </MenuItem>
 
-                    {filteredCategories.map((obj) => (
+                    <MenuItem
+                        autoFocus="false"
+                        // variant={"unstyled"}
+                        my={1}
+                        leftIcon={isEditMode && <PiMinusCircleLight />}
+                        onClick={() => {
+                            setCategory(-1);
+                            onCategoryChange(-1);
+                        }}
+                    >
+                        {isEditMode && currentCategory !== -1
+                            ? "Remove Category"
+                            : isEditMode
+                            ? "No Category"
+                            : "All"}
+                    </MenuItem>
+
+                    <MenuDivider />
+
+                    {filteredCategories.map((category) => (
                         <MenuItem
-                            key={obj.item}
+                            as={Flex}
+                            key={category.id}
                             onClick={() => {
-                                let categoryIndex =
-                                    authUser.categories?.indexOf(obj.item);
-                                if (
-                                    categoryIndex === -1 ||
-                                    !authUser.categories
-                                ) {
-                                    categoryIndex = null;
-                                }
-
-                                console.log("categoryIndex", categoryIndex);
-
-                                setEditTaskInfo({
-                                    ...task,
-                                    category: categoryIndex,
-                                });
+                                setCategory(category.id);
+                                onCategoryChange(category.id);
                             }}
                         >
-                            {obj.item}
+                            <Box>{category.category}</Box>
+                            <Spacer />
+                            <IconButton
+                                variant={"ghost"}
+                                size={"10px"}
+                                as={RiDeleteBin7Line}
+                                color={"red.400"}
+                                onClick={(e) => {
+                                    console.log("category", category);
+                                    e.stopPropagation();
+                                    setCategory(category.id);
+                                    openDeleteConfirm();
+                                }}
+                            />
                         </MenuItem>
                     ))}
                 </MenuList>
