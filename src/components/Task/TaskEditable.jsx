@@ -14,12 +14,14 @@ import {
     ButtonGroup,
     Tooltip,
     Spacer,
+    MenuDivider,
     Portal,
+    Icon,
 } from "@chakra-ui/react";
 import { IoCalendarClearOutline, IoFlagOutline } from "react-icons/io5";
 import { CloseIcon } from "@chakra-ui/icons";
 import DatePicker from "../../components/DatePicker";
-import useDateFormat from "../utils/dateFormat";
+import useDateFormat, { getDayOfWeek } from "../utils/dateFormat";
 import CategorySelector from "./CategorySelector";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import useFilterScheduleStore from "../../store/filterScheduleStore";
@@ -28,6 +30,12 @@ import { BsFillPinAngleFill } from "react-icons/bs";
 import { DeleteIcon } from "@chakra-ui/icons";
 import "../../index.css";
 import useDeleteTask from "../../hooks/useDeleteTask";
+import {
+    FaCalendarDay,
+    FaArrowRight,
+    FaCalendarWeek,
+    FaSun,
+} from "react-icons/fa";
 
 const priority = ["none", "low", "medium", "high", "critical"];
 
@@ -91,9 +99,7 @@ const TaskEditable = React.memo(
             dueDate: initialSetSchedule(),
             isPinned: taskInfo.isPinned,
             priority: taskInfo.priority,
-            category: isAddingNewTask
-                ? selectedCategoryId
-                : taskInfo.category,
+            category: isAddingNewTask ? selectedCategoryId : taskInfo.category,
             createdBy: taskInfo.createdBy,
             createdAt: taskInfo.createdAt,
         });
@@ -104,6 +110,19 @@ const TaskEditable = React.memo(
         const [saveButtonDisable, setSaveButtonDisable] = useState(true);
         const inputTitleRef = useRef(null);
         const [showDatePicker, setShowDatePicker] = useState(false);
+
+        const updateDueDate = (daysToAdd) => {
+            const newDate = new Date();
+            newDate.setDate(newDate.getDate() + daysToAdd);
+            // console.log(`New date with ${daysToAdd} days added:`, newDate);
+
+            setEditTaskInfo({
+                ...editTaskInfo,
+                dueDate: newDate,
+            });
+
+            setShowDatePicker(false);
+        };
 
         useEffect(() => {
             if (!editTaskInfo.taskName) {
@@ -116,6 +135,11 @@ const TaskEditable = React.memo(
         useEffect(() => {
             console.log("rerendering");
         }, []);
+
+        // console editTaskinfo duedate
+        useEffect(() => {
+            console.log("editTaskInfo.dueDate", editTaskInfo.dueDate);
+        }, [editTaskInfo.dueDate]);
 
         const handleSave = () => {
             onSave(editTaskInfo);
@@ -151,8 +175,15 @@ const TaskEditable = React.memo(
             "rgba(0, 163, 196, 0.2)"
         );
 
+        const getDaysUntilWeekend = () => {
+            const today = new Date();
+            const dayOfWeek = today.getDay(); // 0 (Sun) to 6 (Sat)
+            const daysUntilSaturday = (6 - dayOfWeek) % 7;
+            return daysUntilSaturday;
+        };
+
         const txHeight = 12;
-        
+
         useEffect(() => {
             const tx = document.getElementsByTagName("textarea");
 
@@ -185,7 +216,7 @@ const TaskEditable = React.memo(
         }, [editTaskInfo]);
 
         return (
-            <Flex flexDir={"column"} width={"100%"} >
+            <Flex flexDir={"column"} width={"100%"}>
                 <Box
                     bg={useColorModeValue("white", "#1a202c")}
                     shadow={{ base: "2xl", sm: "none" }}
@@ -331,9 +362,102 @@ const TaskEditable = React.memo(
 
                             <Portal>
                                 <MenuList p={0}>
+                                    <MenuItem
+                                        flex
+                                        justifyContent={"space-between"}
+                                        onClick={() => updateDueDate(0)}
+                                    >
+                                        <Box>
+                                            <Icon
+                                                as={FaCalendarDay}
+                                                mr={2}
+                                                opacity={0.5}
+                                            />{" "}
+                                            Today
+                                        </Box>
+                                        <Box fontSize={"xs"} opacity={0.5}>
+                                            {getDayOfWeek(new Date())}
+                                        </Box>
+                                    </MenuItem>
+                                    <MenuItem
+                                        flex
+                                        justifyContent={"space-between"}
+                                        onClick={() => updateDueDate(1)}
+                                    >
+                                        <Box>
+                                            <Icon
+                                                as={FaArrowRight}
+                                                mr={2}
+                                                opacity={0.5}
+                                            />{" "}
+                                            Tomorrow
+                                        </Box>
+                                        <Box fontSize={"xs"} opacity={0.5}>
+                                            {getDayOfWeek(
+                                                new Date(
+                                                    new Date().setDate(
+                                                        new Date().getDate() + 1
+                                                    )
+                                                )
+                                            )}
+                                        </Box>
+                                    </MenuItem>
+                                    <MenuItem
+                                        flex
+                                        justifyContent={"space-between"}
+                                        onClick={() => updateDueDate(7)}
+                                    >
+                                        <Box>
+                                            <Icon
+                                                as={FaCalendarWeek}
+                                                mr={2}
+                                                opacity={0.5}
+                                            />{" "}
+                                            Next Week
+                                        </Box>
+                                        <Box fontSize={"xs"} opacity={0.5}>
+                                            {dateFormat(
+                                                new Date(
+                                                    new Date().setDate(
+                                                        new Date().getDate() + 7
+                                                    )
+                                                )
+                                            )}
+                                        </Box>
+                                    </MenuItem>
+                                    <MenuItem
+                                        flex
+                                        justifyContent={"space-between"}
+                                        onClick={() =>
+                                            updateDueDate(getDaysUntilWeekend())
+                                        }
+                                    >
+                                        <Box>
+                                            <Icon
+                                                as={FaSun}
+                                                mr={2}
+                                                opacity={0.5}
+                                            />{" "}
+                                            This Weekend
+                                        </Box>
+                                        <Box fontSize={"xs"} opacity={0.5}>
+                                            {getDayOfWeek(
+                                                new Date(
+                                                    new Date().setDate(
+                                                        new Date().getDate() +
+                                                            getDaysUntilWeekend()
+                                                    )
+                                                )
+                                            )}
+                                        </Box>
+                                    </MenuItem>
+
+                                    <MenuDivider />
                                     <DatePicker
-                                        selected={editTaskInfo.dueDate}
+                                        selectedDate={editTaskInfo.dueDate}
                                         onChange={(date) => {
+                                            console.log("date picker", date);
+
                                             setEditTaskInfo({
                                                 ...editTaskInfo,
                                                 dueDate: date,

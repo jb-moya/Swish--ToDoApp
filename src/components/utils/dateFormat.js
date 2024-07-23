@@ -44,6 +44,19 @@ export const useDateFormat = () => {
     }, []);
 };
 
+export const getDayOfWeek = (date) => {
+    const daysOfWeek = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+    ];
+    return daysOfWeek[new Date(date).getDay()];
+};
+
 export const isDateOverDue = (date) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set to midnight

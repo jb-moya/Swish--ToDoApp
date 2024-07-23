@@ -113,7 +113,7 @@ const CategorySelector = ({
               )
             : [];
 
-    console.log("filteredCategories", filteredCategories);
+    // console.log("filteredCategories", filteredCategories);
 
     const handleAddNewCategory = async () => {
         try {

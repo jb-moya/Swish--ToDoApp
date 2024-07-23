@@ -11,7 +11,9 @@ const DatePicker = ({
     showPopperArrow = true,
     setCalendarIsOpen,
 }) => {
-    const isLight = useColorMode().colorMode === "light"; //you can check what theme you are using right now however you want
+    const isLight = useColorMode().colorMode === "light";
+
+    console.log("selected", selectedDate);
 
     return (
         <Box className={isLight ? "light-theme" : "dark-theme"}>
@@ -19,13 +21,12 @@ const DatePicker = ({
                 minDate={new Date()}
                 selected={selectedDate}
                 onChange={onChange}
-                todayButton="Today"
+                // todayButton="Today"
                 isClearable={isClearable}
                 onClickOutside={() => setCalendarIsOpen(false)}
-                // disabledKeyboardNavigation
                 dateFormat="MMM d, yyyy h:mm aa"
                 showPopperArrow={showPopperArrow}
-                className="react-datapicker__input-text" //input is white by default and there is no already defined class for it so I created a new one
+                className="react-datapicker__input-text"
                 inline
             />
         </Box>
