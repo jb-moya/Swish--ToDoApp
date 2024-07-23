@@ -134,6 +134,10 @@ const TaskEditable = React.memo(
 
         useEffect(() => {
             console.log("rerendering");
+
+            if (inputTitleRef.current) {
+                inputTitleRef.current.focus();
+            }
         }, []);
 
         // console editTaskinfo duedate
@@ -314,7 +318,6 @@ const TaskEditable = React.memo(
                         wrap={"wrap"}
                         mb={2}
                         position={"relative"}
-                        // zIndex={"popover"}
                     >
                         <Menu>
                             <Tooltip

@@ -37,8 +37,10 @@ import { IoCalendarClearOutline } from "react-icons/io5";
 import useCategoryStore from "../store/categoryStore";
 import useGetAllTasks from "../hooks/useGetAllTasks";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
+import { redirect, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+    const navigate = useNavigate();
     const { colorMode, toggleColorMode } = useColorMode();
     const { selectedCategoryId } = useCategoryStore();
     const { filter, setFilter } = useFilterScheduleStore();
@@ -47,7 +49,10 @@ const Navbar = () => {
     const { isLoading: isGettingTasksLoading } = useGetAllTasks();
     const user = useAuthStore((state) => state.user);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const authUser = useAuthStore((state) => state.user);
+    const { authUser, isLoggedIn } = useAuthStore((state) => ({
+        authUser: state.user,
+        isLoggedIn: state.isLoggedIn,
+    }));
 
     const filterSchedule = [
         {
@@ -106,6 +111,7 @@ const Navbar = () => {
                             <Box fontWeight={"bold"}>
                                 {filter.name} <Icon as={ChevronDownIcon} />
                             </Box>
+
                             {!isGettingTasksLoading && (
                                 <StatHelpText
                                     fontWeight={"normal"}
@@ -169,41 +175,52 @@ const Navbar = () => {
 
             <Spacer />
 
-            <Menu>
-                <MenuButton
-                    as={Button}
-                    mx={3}
-                    variant={"ghost"}
-                    leftIcon={
-                        user?.profilePicURL ? (
-                            <Avatar
-                                mr={2}
-                                size={"sm"}
-                                name={user?.username}
-                                src={user?.profilePicURL}
-                            />
-                        ) : (
-                            <MdPerson size={"24"} />
-                        )
-                    }
-                >
-                    {user?.username}
-                    <ChevronDownIcon ml={1} />
-                </MenuButton>
-                <MenuList>
-                    <MenuItem as={Button} onClick={onOpen}>
-                        Edit Profile
-                    </MenuItem>
-                    <MenuItem
+            {isLoggedIn ? (
+                <Menu>
+                    <MenuButton
                         as={Button}
-                        onClick={handleLogout}
-                        isDisabled={isLoggingOut}
-                        color={"red.500"}
+                        mx={3}
+                        variant={"ghost"}
+                        leftIcon={
+                            user?.profilePicURL ? (
+                                <Avatar
+                                    mr={2}
+                                    size={"sm"}
+                                    name={user?.username}
+                                    src={user?.profilePicURL}
+                                />
+                            ) : (
+                                <MdPerson size={"24"} />
+                            )
+                        }
                     >
-                        Logout
-                    </MenuItem>
-                </MenuList>
-            </Menu>
+                        {user?.username}
+                        <ChevronDownIcon ml={1} />
+                    </MenuButton>
+                    <MenuList>
+                        <MenuItem as={Button} onClick={onOpen}>
+                            Edit Profile
+                        </MenuItem>
+                        <MenuItem
+                            as={Button}
+                            onClick={handleLogout}
+                            isDisabled={isLoggingOut}
+                            color={"red.500"}
+                        >
+                            Logout
+                        </MenuItem>
+                    </MenuList>
+                </Menu>
+            ) : (
+                <Button
+                    mr={3}
+                    onClick={() => {
+                        navigate("/auth");
+                    }}
+                >
+                    Login
+                </Button>
+            )}
 
             <IconButton
                 variant={"ghost"}
@@ -217,7 +234,6 @@ const Navbar = () => {
                 }
                 onClick={toggleColorMode}
             />
-            {/* </Flex> */}
         </Flex>
     );
 };

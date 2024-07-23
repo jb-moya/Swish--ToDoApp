@@ -3,19 +3,21 @@ import { firestore } from "../firebase/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import useShowToast from "./useShowToast";
 import useTaskStore from "../store/taskStore";
+import useAuthStore from "../store/authStore";
 
 function useEditTask() {
     const showToast = useShowToast();
     const [isEditing, setIsEditing] = useState(false);
     const { tasks, editTask } = useTaskStore();
+    const { isLoggedIn } = useAuthStore((state) => ({
+        isLoggedIn: state.isLoggedIn,
+    }));
 
     const handleEditTask = async (task) => {
         if (isEditing) return;
         setIsEditing(true);
 
         try {
-            const taskRef = doc(firestore, "tasks", task.id);
-
             // Prepare an object with only the fields that are provided in the task parameter
             const updatedTaskInfo = {};
             if (task.taskName !== undefined) {
@@ -40,13 +42,26 @@ function useEditTask() {
                 updatedTaskInfo.isPinned = task.isPinned;
             }
 
-            await updateDoc(taskRef, updatedTaskInfo);
-
-            console.log("oldTasks", tasks);
+            if (isLoggedIn) {
+                const taskRef = doc(firestore, "tasks", task.id);
+                await updateDoc(taskRef, updatedTaskInfo);
+            } else {
+                // edit local storage
+                const storedTasks = JSON.parse(localStorage.getItem("tasks"));
+                const updatedTasks = storedTasks.map((storedTask) => {
+                    if (storedTask.id === task.id) {
+                        return { ...storedTask, ...updatedTaskInfo };
+                    }
+                    return storedTask;
+                });
+                localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+            }
 
             editTask({ ...task, ...updatedTaskInfo });
 
-            console.log("newTasks", tasks);
+            // console.log("oldTasks", tasks);
+
+            // console.log("newTasks", tasks);
             // sortTasks();
 
             showToast("Success", "Task Updated successfully", "success");

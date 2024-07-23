@@ -10,32 +10,46 @@ const useGetAllTasks = () => {
     const [isLoading, setIsLoading] = useState(true);
     const { tasks, setTasks, sortTasks } = useTaskStore();
     // const setAuthUser = useAuthStore((state) => state.setUser);
-    const authUser = useAuthStore((state) => state.user);
+    const { authUser, isLoggedIn } = useAuthStore((state) => ({
+        authUser: state.user,
+        isLoggedIn: state.isLoggedIn,
+    }));
+
     const showToast = useShowToast();
 
     const getAllTasks = async () => {
         setIsLoading(true);
         setTasks([]);
 
-        const q = query(
-            collection(firestore, "tasks"),
-            where("createdBy", "==", authUser.uid)
-        );
-
         try {
-            const querySnapshot = await getDocs(q);
-            const tasks = [];
+            if (isLoggedIn) {
+                const q = query(
+                    collection(firestore, "tasks"),
+                    where("createdBy", "==", authUser.uid)
+                );
 
-            querySnapshot.forEach((doc) => {
-                tasks.push({ id: doc.id, ...doc.data() });
-            });
-            
-            tasks.forEach((task) => {
-                task.dueDate = convertFirestoreTimestampToDate(task.dueDate);
-            });
-            
-            setTasks(tasks);
-            sortTasks();
+                const querySnapshot = await getDocs(q);
+                const tasks = [];
+
+                querySnapshot.forEach((doc) => {
+                    tasks.push({ id: doc.id, ...doc.data() });
+                });
+
+                tasks.forEach((task) => {
+                    task.dueDate = convertFirestoreTimestampToDate(
+                        task.dueDate
+                    );
+                });
+
+                setTasks(tasks);
+                sortTasks();
+            } else {
+                console.log("HINID LOGIN SO KUHA SA LOCAL HOST")
+                const storedTasks = JSON.parse(localStorage.getItem("tasks"));
+                if (storedTasks) {
+                    setTasks(storedTasks);
+                }
+            }
         } catch (error) {
             showToast("Error", error.message, "error");
         } finally {

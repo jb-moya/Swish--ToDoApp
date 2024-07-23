@@ -75,7 +75,12 @@ const Home = () => {
     const [isAllTasksUncompleted, setIsAllTasksUncompleted] = useState(true);
     const { tasks, sortConfig, sortTasks, setSortConfig, getTasks } =
         useTaskStore();
-    const authUser = useAuthStore((state) => state.user);
+    const { authUser, isLoggedIn } = useAuthStore((state) => ({
+        authUser: state.user,
+        isLoggedIn: state.isLoggedIn,
+    }));
+
+    console.log("authUserrrrrrrrr", authUser);
 
     const userCategories = Array.isArray(authUser.categories)
         ? authUser.categories
@@ -90,10 +95,6 @@ const Home = () => {
     useEffect(() => {
         sortTasks(); // Sort tasks whenever the component mounts or sorting configuration changes
     }, [sortTasks, sortConfig]);
-
-    useEffect(() => {
-        console.log("task", tasks);
-    }, [tasks]);
 
     const handleAddingTask = async (task) => {
         try {
@@ -184,7 +185,6 @@ const Home = () => {
                 centerContent
             >
                 <Navbar />
-
                 <HStack
                     position={"relative"}
                     width={"full"}
@@ -304,7 +304,6 @@ const Home = () => {
                         />
                     </Button>
                 </HStack>
-
                 {isSmallScreen ? (
                     <Modal
                         p={0}
@@ -336,8 +335,7 @@ const Home = () => {
                         />
                     )
                 )}
-
-                {isLoadingTasks && (
+                {isLoadingTasks && isLoggedIn && (
                     <Box mt="10" textAlign={"center"} width={"100%"}>
                         <Spinner
                             thickness="4px"
@@ -349,12 +347,10 @@ const Home = () => {
                         <Box>Loading tasks...</Box>
                     </Box>
                 )}
-
                 {!isLoadingTasks &&
                     filteredScheduleTasks.map((task) => (
                         <TaskContainer key={task.id} task={task} />
                     ))}
-
                 {!isOpen && (
                     <Button
                         zIndex={1} // 2
@@ -370,7 +366,6 @@ const Home = () => {
                         {buttonText}
                     </Button>
                 )}
-
                 {!isLoadingTasks && filteredScheduleTasks.length === 0 && (
                     <Box textAlign={"center"} mt={40}>
                         <Box
@@ -383,7 +378,6 @@ const Home = () => {
                         <Box>{randomMessage}</Box>
                     </Box>
                 )}
-
                 <Spacer />
                 <Footer />
             </Flex>

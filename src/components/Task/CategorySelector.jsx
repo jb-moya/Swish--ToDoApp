@@ -186,7 +186,7 @@ const CategorySelector = ({
                     <ModalCloseButton />
                     <ModalBody>
                         This will permanently delete &apos;
-                        {authUser.categories[category]}&apos; and all its tasks.
+                        {authUser.categories?.[category]}&apos; and all its tasks.
                         This can&apos;t be undone.
                     </ModalBody>
 
@@ -248,7 +248,7 @@ const CategorySelector = ({
                         icon={<CloseIcon />}
                         onClick={(e) => {
                             e.stopPropagation();
-
+                            setCategory(-1);
                             onCategoryChange(-1);
                         }}
                         _hover={{ color: "red" }}

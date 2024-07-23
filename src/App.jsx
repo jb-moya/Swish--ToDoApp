@@ -58,13 +58,13 @@ function App() {
             <Routes>
                 <Route
                     path="/"
-                    element={authUser ? <Home /> : <Navigate to="/auth" />}
+                    element={<Home />}
                     // element={<Home />}
                 />
                 <Route
                     path="/auth"
                     element={
-                        !authUser ? <Authentication /> : <Navigate to="/" />
+                        <Authentication />
                     }
                 />
             </Routes>
