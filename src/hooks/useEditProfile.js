@@ -9,9 +9,9 @@ import useUserProfileStore from "../store/userProfileStore";
 const useEditProfile = () => {
     const [isProfileUpdating, setIsProfileUpdating] = useState(false);
 
-    const { authUser, isLoggedIn } = useAuthStore((state) => ({
+    const { authUser, isGuest } = useAuthStore((state) => ({
         authUser: state.user,
-        isLoggedIn: state.isLoggedIn,
+        isGuest: state.isGuest,
     }));
     const setAuthUser = useAuthStore((state) => state.setUser);
     const setUserProfile = useUserProfileStore((state) => state.setUserProfile);
@@ -28,7 +28,7 @@ const useEditProfile = () => {
                 categories: inputs.categories || authUser.categories,
             };
 
-            if (isLoggedIn) {
+            if (!isGuest) {
                 const storageRef = ref(storage, `profilePics/${authUser.uid}`);
                 const userDocRef = doc(firestore, "users", authUser.uid);
 

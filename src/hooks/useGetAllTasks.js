@@ -10,9 +10,9 @@ const useGetAllTasks = () => {
     const [isLoading, setIsLoading] = useState(true);
     const { tasks, setTasks, sortTasks } = useTaskStore();
     // const setAuthUser = useAuthStore((state) => state.setUser);
-    const { authUser, isLoggedIn } = useAuthStore((state) => ({
+    const { authUser, isGuest } = useAuthStore((state) => ({
         authUser: state.user,
-        isLoggedIn: state.isLoggedIn,
+        isGuest: state.isGuest,
     }));
 
     const showToast = useShowToast();
@@ -22,7 +22,7 @@ const useGetAllTasks = () => {
         setTasks([]);
 
         try {
-            if (isLoggedIn) {
+            if (!isGuest) {
                 const q = query(
                     collection(firestore, "tasks"),
                     where("createdBy", "==", authUser.uid)
@@ -44,7 +44,7 @@ const useGetAllTasks = () => {
                 setTasks(tasks);
                 sortTasks();
             } else {
-                console.log("HINID LOGIN SO KUHA SA LOCAL HOST")
+                console.log("HINID LOGIN SO KUHA SA LOCAL HOST");
                 const storedTasks = JSON.parse(localStorage.getItem("tasks"));
                 if (storedTasks) {
                     setTasks(storedTasks);

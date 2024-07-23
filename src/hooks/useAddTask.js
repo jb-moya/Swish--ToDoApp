@@ -14,9 +14,9 @@ import { firestore } from "../firebase/firebase";
 function useAddTask() {
     const showToast = useShowToast();
     const [isLoading, setIsLoading] = useState(false);
-    const { authUser, isLoggedIn } = useAuthStore((state) => ({
+    const { authUser, isGuest } = useAuthStore((state) => ({
         authUser: state.user,
-        isLoggedIn: state.isLoggedIn,
+        isGuest: state.isGuest,
     }));
     const setAuthUser = useAuthStore((state) => state.setUser);
     const { tasks, setTasks, addTask } = useTaskStore();
@@ -38,7 +38,7 @@ function useAddTask() {
         };
 
         try {
-            if (isLoggedIn) {
+            if (!isGuest) {
                 // User is logged in, save to Firestore
                 const taskDocRef = await addDoc(
                     collection(firestore, "tasks"),

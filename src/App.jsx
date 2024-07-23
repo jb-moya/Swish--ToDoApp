@@ -48,8 +48,10 @@ function App() {
     // minor problem: there's split-second that the login page can be seen before the user goes to the home page
     // const [authUser] = useAuthState(auth);
 
-
-    const authUser = useAuthStore((state) => state.user);
+    const { isLoggedIn, isGuest } = useAuthStore((state) => ({
+        isLoggedIn: state.isLoggedIn,
+        isGuest: state.isGuest,
+    }));
 
     const gradient = colorMode === "light" ? lightGradient : darkGradient;
 
@@ -58,13 +60,22 @@ function App() {
             <Routes>
                 <Route
                     path="/"
-                    element={<Home />}
-                    // element={<Home />}
+                    element={
+                        isGuest || isLoggedIn ? (
+                            <Home />
+                        ) : (
+                            <Navigate to="/auth" />
+                        )
+                    }
                 />
                 <Route
                     path="/auth"
                     element={
-                        <Authentication />
+                        isGuest || !isLoggedIn ? (
+                            <Authentication />
+                        ) : (
+                            <Navigate to="/" />
+                        )
                     }
                 />
             </Routes>

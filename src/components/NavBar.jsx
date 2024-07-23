@@ -49,9 +49,9 @@ const Navbar = () => {
     const { isLoading: isGettingTasksLoading } = useGetAllTasks();
     const user = useAuthStore((state) => state.user);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { authUser, isLoggedIn } = useAuthStore((state) => ({
+    const { authUser, isGuest } = useAuthStore((state) => ({
         authUser: state.user,
-        isLoggedIn: state.isLoggedIn,
+        isGuest: state.isGuest,
     }));
 
     const filterSchedule = [
@@ -169,13 +169,9 @@ const Navbar = () => {
                 </Portal>
             </Menu>
 
-            {/* <CircularProgress value={40} color="green.400" thickness="15px">
-                <CircularProgressLabel>59 / 599</CircularProgressLabel>
-            </CircularProgress> */}
-
             <Spacer />
 
-            {isLoggedIn ? (
+            {!isGuest ? (
                 <Menu>
                     <MenuButton
                         as={Button}

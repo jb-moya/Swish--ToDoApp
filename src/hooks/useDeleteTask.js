@@ -8,9 +8,9 @@ import useTaskStore from "../store/taskStore";
 function useDeleteTask() {
     const showToast = useShowToast();
 
-    const { authUser, isLoggedIn } = useAuthStore((state) => ({
+    const { authUser, isGuest } = useAuthStore((state) => ({
         authUser: state.user,
-        isLoggedIn: state.isLoggedIn,
+        isGuest: state.isGuest,
     }));
     const { tasks, setTasks, deleteTasks, sortTasks } = useTaskStore();
 
@@ -25,7 +25,7 @@ function useDeleteTask() {
             setIsDeleting(true);
 
             try {
-                if (isLoggedIn) {
+                if (!isGuest) {
                     const userRef = doc(firestore, "users", authUser.uid);
 
                     // Delete each task and update the user's tasks array

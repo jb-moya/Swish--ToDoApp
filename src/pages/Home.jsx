@@ -3,7 +3,6 @@ import Navbar from "../components/NavBar";
 import {
     Button,
     Box,
-    Container,
     HStack,
     Spinner,
     useBreakpointValue,
@@ -14,7 +13,6 @@ import {
     ModalContent,
     Icon,
     useColorModeValue,
-    Text,
     Divider,
     Menu,
     Flex,
@@ -23,8 +21,6 @@ import {
     Spacer,
     MenuList,
     MenuItem,
-    IconButton,
-    Tooltip,
 } from "@chakra-ui/react";
 import TaskContainer from "../components/Task/TaskContainer";
 import TaskEditable from "../components/Task/TaskEditable";
@@ -35,14 +31,11 @@ import useFilterScheduleStore from "../store/filterScheduleStore";
 import { RiDeleteBin3Line } from "react-icons/ri";
 import { FaPlus } from "react-icons/fa6";
 import useDeleteTask from "../hooks/useDeleteTask";
-import useDateFormat from "../components/utils/dateFormat";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { BiSort } from "react-icons/bi";
 import { BsSortDown, BsSortUp } from "react-icons/bs";
 import useCategoryStore from "../store/categoryStore";
 import CategorySelector from "../components/Task/CategorySelector";
 import useAuthStore from "../store/authStore";
-import { LiaHashtagSolid } from "react-icons/lia";
 import Footer from "../components/Footer";
 
 const messages = [
@@ -75,9 +68,9 @@ const Home = () => {
     const [isAllTasksUncompleted, setIsAllTasksUncompleted] = useState(true);
     const { tasks, sortConfig, sortTasks, setSortConfig, getTasks } =
         useTaskStore();
-    const { authUser, isLoggedIn } = useAuthStore((state) => ({
+    const { authUser, isGuest } = useAuthStore((state) => ({
         authUser: state.user,
-        isLoggedIn: state.isLoggedIn,
+        isGuest: state.isGuest,
     }));
 
     console.log("authUserrrrrrrrr", authUser);
@@ -335,7 +328,8 @@ const Home = () => {
                         />
                     )
                 )}
-                {isLoadingTasks && isLoggedIn && (
+                
+                {isLoadingTasks && (
                     <Box mt="10" textAlign={"center"} width={"100%"}>
                         <Spinner
                             thickness="4px"
@@ -347,6 +341,7 @@ const Home = () => {
                         <Box>Loading tasks...</Box>
                     </Box>
                 )}
+
                 {!isLoadingTasks &&
                     filteredScheduleTasks.map((task) => (
                         <TaskContainer key={task.id} task={task} />

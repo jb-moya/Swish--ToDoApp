@@ -9,8 +9,8 @@ function useEditTask() {
     const showToast = useShowToast();
     const [isEditing, setIsEditing] = useState(false);
     const { tasks, editTask } = useTaskStore();
-    const { isLoggedIn } = useAuthStore((state) => ({
-        isLoggedIn: state.isLoggedIn,
+    const { isGuest } = useAuthStore((state) => ({
+        isGuest: state.isGuest,
     }));
 
     const handleEditTask = async (task) => {
@@ -42,7 +42,7 @@ function useEditTask() {
                 updatedTaskInfo.isPinned = task.isPinned;
             }
 
-            if (isLoggedIn) {
+            if (!isGuest) {
                 const taskRef = doc(firestore, "tasks", task.id);
                 await updateDoc(taskRef, updatedTaskInfo);
             } else {
