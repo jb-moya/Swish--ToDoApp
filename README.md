@@ -39,7 +39,6 @@ Before you begin, ensure you have the following installed on your machine:
 3. Install Dependencies
 
     ```bash
-    cd readrave
     npm install // or yarn install
     ```
 
