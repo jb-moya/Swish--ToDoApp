@@ -16,8 +16,7 @@
 
 ## Recommended Future Features
 
-1. **Time Scheduling**: Enhance task management by allowing users to set specific times for their tasks.
-2. **SubTasks**: Introduce the ability to add and manage subtasks for better task organization and hierarchy.
+- **SubTasks**: Introduce the ability to add and manage subtasks for better task organization and hierarchy.
 
 ## ReadRave Project Setup Guide
 

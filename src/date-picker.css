@@ -9,10 +9,12 @@
     --cyan200: var(--chakra-colors-gray-200);
     --cyan100: var(--chakra-colors-gray-100);
     --monthBackground: var(--chakra-colors-white);
+    
     --text: var(--chakra-colors-black);
     --negative-text: var(--chakra-colors-white);
 }
 .dark-theme {
+    
     --light-gray: var(--chakra-colors-gray-600);
     --gray: var(--chakra-colors-gray-500);
     --cyan700: var(--chakra-colors-cyan-600);
@@ -39,6 +41,74 @@
     --cyan200: #edf2f7;
     --cyan100: #f7fafc;
 }
+
+:root[data-theme="dark"] {
+    --background: rgb(45, 55, 72);
+    --text: white;
+    --border-color: rgba(255, 255, 255, .2)
+
+}
+
+:root[data-theme="light"] {
+    --background: white;
+    --text: black;
+    --border-color: rgba(15, 15, 15, .2)
+
+}
+
+.react-datepicker__header {
+    border: none;
+    border-radius: 0%;
+}
+
+.react-datepicker__time-list-item--disabled {
+    opacity: .5;
+}
+
+.react-datepicker-popper {
+    background-color: var(--background);
+    border: 1px;
+    border: solid 1px var(--border-color);
+    border-radius: 5px;
+}
+
+.react-datepicker__time-container {
+    width: 100%;
+}
+
+.react-datepicker__time-container * {
+    background-color: var(--background);
+    color: var(--text);
+}
+
+.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box {
+    width: auto;
+}
+
+.react-datepicker__time-list-item {
+    width: 98%; /* prevent horizontal scroll bar */
+}
+
+.react-datepicker {
+    background-color: var(--gray);
+}
+
+.react-datepicker__day-name {
+    opacity: .5;
+    font-weight: 100;
+    font-size: smaller;
+}
+
+.react-datepicker-wrapper {
+    padding: 0;
+    background: none;
+}
+
+.react-datepicker__input-container > input {
+    padding: 0;
+    background: none;
+}
+
 .react-datepicker {
     font-family: unset;
     font-size: 0.9rem;
@@ -55,8 +125,8 @@
 .react-datepicker__input-container {
     font-size: 1rem;
     padding-left: 1rem;
-    padding-right: 1rem;
     height: 2.5rem;
+    padding-right: 1rem;
     /* border-radius: 0.25rem; */
     /* border: 1px solid; */
     /* border-color: var(--light-gray); */

@@ -24,7 +24,7 @@ import "../../index.css";
 import useDeleteTask from "../../hooks/useDeleteTask";
 import useTaskStore from "../../store/taskStore";
 import useEditTask from "../../hooks/useEditTask";
-import useDateFormat from "../utils/dateFormat";
+import useDateFormat, { formatTime } from "../utils/dateFormat";
 import {
     IoCalendarClearOutline,
     IoFlag,
@@ -33,6 +33,8 @@ import {
 import { LiaHashtagSolid } from "react-icons/lia";
 import useAuthStore from "../../store/authStore";
 import { BsFillPinAngleFill } from "react-icons/bs";
+import { CiClock2 } from "react-icons/ci";
+
 
 import { isDateOverDue } from "../utils/dateFormat";
 
@@ -47,12 +49,13 @@ const TaskContainer = React.memo(({ task }) => {
         [dateFormat, task.dueDate]
     );
 
+    const formattedTime = formatTime(task.dueTime);
+
     useEffect(() => {
         console.log(task);
     }, [task]);
 
     const { isDeleting, handleDeleteTasks } = useDeleteTask();
-    const { tasks, setTasks } = useTaskStore();
 
     const taskNameColor = useColorModeValue("cyan.500", "cyan.200");
 
@@ -64,6 +67,7 @@ const TaskContainer = React.memo(({ task }) => {
         isPinned: task.isPinned,
         category: task.category,
         dueDate: task.dueDate,
+        dueTime: task.dueTime,
         priority: task.priority,
         createdBy: task.createdBy,
         createdAt: task.createdAt,
@@ -139,14 +143,10 @@ const TaskContainer = React.memo(({ task }) => {
         }
     };
 
-    const tagPriorityTextColor = useColorModeValue("black", "white");
-
     const borderColor = useColorModeValue(
         "rgba(0, 163, 196, 0.2)",
         "rgba(0, 163, 196, 0.2)"
     );
-
-    const tagColor = useColorModeValue("gray.400", "gray.700");
 
     const pinColor = useColorModeValue("cyan.500", "cyan.200");
 
@@ -245,6 +245,19 @@ const TaskContainer = React.memo(({ task }) => {
                             </Tag>
                         )}
 
+                        {task.dueTime && (
+                            <Tag
+                                px={1}
+                                bg={"transparent"}
+                                size={"sm"}
+                                rounded={"sm"}
+                                border={`1px solid ${borderColor}`}
+                            >
+                                <TagLeftIcon as={CiClock2} mr={1} />
+                                <TagLabel>{formattedTime}</TagLabel>
+                            </Tag>
+                        )}
+
                         {task.dueDate && isDateOverDue(task.dueDate) && (
                             <Tag
                                 px={1}
@@ -262,13 +275,13 @@ const TaskContainer = React.memo(({ task }) => {
                         <Spacer />
 
                         {task.category !== -1 && (
-                                <Tag bg={"transparent"} size={"sm"}>
-                                    <TagLabel>
-                                        {authUser.categories?.[task.category]}
-                                    </TagLabel>
-                                    <TagRightIcon as={LiaHashtagSolid} />
-                                </Tag>
-                            )}
+                            <Tag bg={"transparent"} size={"sm"}>
+                                <TagLabel>
+                                    {authUser.categories?.[task.category]}
+                                </TagLabel>
+                                <TagRightIcon as={LiaHashtagSolid} />
+                            </Tag>
+                        )}
 
                         {task.priority !== 0 && (
                             <Tag

@@ -44,6 +44,33 @@ export const useDateFormat = () => {
     }, []);
 };
 
+export const formatTime = (date) => {
+    if (!date) {
+        return "no time";
+    }
+
+    const formatedDate = new Date(date);
+
+    let hours = formatedDate.getHours();
+    const minutes = formatedDate.getMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const minutesStr = minutes < 10 ? "0" + minutes : minutes;
+
+    return `${hours}:${minutesStr} ${ampm}`;
+};
+
+export const isToday = (date) => {
+    const today = new Date();
+
+    return (
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
+    );
+};
+
 export const getDayOfWeek = (date) => {
     const daysOfWeek = [
         "Sunday",

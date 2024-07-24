@@ -178,6 +178,7 @@ const Home = () => {
                 centerContent
             >
                 <Navbar />
+
                 <HStack
                     position={"relative"}
                     width={"full"}
@@ -328,7 +329,7 @@ const Home = () => {
                         />
                     )
                 )}
-                
+
                 {isLoadingTasks && (
                     <Box mt="10" textAlign={"center"} width={"100%"}>
                         <Spinner

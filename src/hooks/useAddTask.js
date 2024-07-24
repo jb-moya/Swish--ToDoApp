@@ -30,6 +30,7 @@ function useAddTask() {
             taskName: task.taskName || "",
             description: task.description || "",
             dueDate: task.dueDate || null,
+            dueTime: task.dueTime || null,
             priority: task.priority || 0,
             category: task.category || null,
             isCompleted: false,

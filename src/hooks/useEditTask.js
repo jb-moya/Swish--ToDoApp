@@ -32,6 +32,9 @@ function useEditTask() {
             if (task.dueDate !== undefined) {
                 updatedTaskInfo.dueDate = task.dueDate;
             }
+            if (task.dueTime !== undefined) {
+                updatedTaskInfo.dueTime = task.dueTime;
+            }
             if (task.priority !== undefined) {
                 updatedTaskInfo.priority = task.priority;
             }
