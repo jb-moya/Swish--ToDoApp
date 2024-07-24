@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { CloseIcon } from "@chakra-ui/icons";
 import {
     ButtonGroup,
@@ -36,7 +36,6 @@ import { PiMinusCircleLight } from "react-icons/pi";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import useDeleteTask from "../../hooks/useDeleteTask";
-import FocusLock from "react-focus-lock";
 import { v4 as uuidv4 } from "uuid";
 import useTaskStore from "../../store/taskStore";
 const CategorySelector = ({
@@ -51,13 +50,14 @@ const CategorySelector = ({
         onClose: closeDeleteConfirm,
     } = useDisclosure();
 
+    console.log("currentCategory", currentCategory);
+
     const [searchText, setSearchText] = React.useState("");
-    const [visible, setVisible] = React.useState(true);
     const { tasks } = useTaskStore((state) => state);
     const [category, setCategory] = React.useState(currentCategory);
-    const { isProfileUpdating, editProfile } = useEditProfile();
+    const { editProfile } = useEditProfile();
     const authUser = useAuthStore((state) => state.user);
-    const { isDeleting, handleDeleteTasks } = useDeleteTask();
+    const { handleDeleteTasks } = useDeleteTask();
 
     const searchInputRef = useRef(null);
 
@@ -91,10 +91,6 @@ const CategorySelector = ({
         "rgba(0, 163, 196, 0.2)"
     );
 
-    useEffect(() => {
-        console.log("rerendeinrg g g g gg");
-    }, []);
-
     const filteredCategories =
         typeof authUser.categories === "object" &&
         !Array.isArray(authUser.categories)
@@ -112,8 +108,6 @@ const CategorySelector = ({
                   []
               )
             : [];
-
-    // console.log("filteredCategories", filteredCategories);
 
     const handleAddNewCategory = async () => {
         try {
@@ -148,12 +142,10 @@ const CategorySelector = ({
             });
 
             const tasksToBeDeleted = tasks.filter((task) => {
-                console.log("task.category", task.category, categoryId);
                 return task.category === categoryId;
             });
 
             if (tasksToBeDeleted.length > 0) {
-                console.log("LMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
                 await handleDeleteTasks(tasksToBeDeleted);
             }
 
@@ -264,7 +256,6 @@ const CategorySelector = ({
                         px={2}
                         mb={1}
                         variant={"flushed"}
-                        // value={searchText}
                         onChange={(e) => {
                             setSearchText(e.target.value);
                         }}
@@ -304,8 +295,7 @@ const CategorySelector = ({
                     </MenuItem>
 
                     <MenuItem
-                        autoFocus="false"
-                        // variant={"unstyled"}
+                        autoFocus={true}
                         my={1}
                         leftIcon={isEditMode && <PiMinusCircleLight />}
                         onClick={() => {
@@ -339,7 +329,6 @@ const CategorySelector = ({
                                 as={RiDeleteBin7Line}
                                 color={"red.400"}
                                 onClick={(e) => {
-                                    console.log("category", category);
                                     e.stopPropagation();
                                     setCategory(category.id);
                                     openDeleteConfirm();

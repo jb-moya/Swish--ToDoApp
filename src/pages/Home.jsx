@@ -37,6 +37,7 @@ import useCategoryStore from "../store/categoryStore";
 import CategorySelector from "../components/Task/CategorySelector";
 import useAuthStore from "../store/authStore";
 import Footer from "../components/Footer";
+import useShowToast from "../hooks/useShowToast";
 
 const messages = [
     "Enjoy the calm and take some time for yourself. You've earned this moment of relaxation!",
@@ -58,6 +59,8 @@ const getRandomMessage = () => {
 };
 
 const Home = () => {
+    const showToast = useShowToast();
+
     const randomMessage = useMemo(() => getRandomMessage(), []);
     const { filter } = useFilterScheduleStore();
     const { selectedCategoryId, setSelectedCategoryId } = useCategoryStore();
@@ -72,8 +75,6 @@ const Home = () => {
         authUser: state.user,
         isGuest: state.isGuest,
     }));
-
-    console.log("authUserrrrrrrrr", authUser);
 
     const userCategories = Array.isArray(authUser.categories)
         ? authUser.categories
@@ -91,10 +92,9 @@ const Home = () => {
 
     const handleAddingTask = async (task) => {
         try {
-            console.log("tasl", task);
             await handleAddTask(task);
         } catch (error) {
-            console.log(error);
+            showToast("Error", error.message, "error");
         }
     };
 
@@ -110,7 +110,7 @@ const Home = () => {
                 )
             );
         } catch (error) {
-            console.log(error);
+            showToast("Error", error.message, "error");
         }
     };
 
@@ -175,7 +175,6 @@ const Home = () => {
                 minH={"100vh"}
                 direction={"column"}
                 mx="auto"
-                centerContent
             >
                 <Navbar />
 

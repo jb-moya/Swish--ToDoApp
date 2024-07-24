@@ -28,14 +28,12 @@ const checkBoxBaseStyle = definePartsStyle({
     }),
     control: defineStyle({
         padding: 2,
-        // mt: 1,
         rounded: "full",
     }),
     container: defineStyle({
         _hover: {
             borderColor: "brand.500",
         },
-        // width: "full",
     }),
 });
 
@@ -74,8 +72,6 @@ const theme = extendTheme(
                                 zIndex: 2,
                                 position: "absolute",
                                 pointerEvents: "none",
-                                // mx: 3,
-                                // px: 1,
                                 my: 1,
                                 transformOrigin: "left top",
                             },

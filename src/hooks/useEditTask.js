@@ -18,7 +18,6 @@ function useEditTask() {
         setIsEditing(true);
 
         try {
-            // Prepare an object with only the fields that are provided in the task parameter
             const updatedTaskInfo = {};
             if (task.taskName !== undefined) {
                 updatedTaskInfo.taskName = task.taskName;
@@ -49,7 +48,6 @@ function useEditTask() {
                 const taskRef = doc(firestore, "tasks", task.id);
                 await updateDoc(taskRef, updatedTaskInfo);
             } else {
-                // edit local storage
                 const storedTasks = JSON.parse(localStorage.getItem("tasks"));
                 const updatedTasks = storedTasks.map((storedTask) => {
                     if (storedTask.id === task.id) {
@@ -61,11 +59,6 @@ function useEditTask() {
             }
 
             editTask({ ...task, ...updatedTaskInfo });
-
-            // console.log("oldTasks", tasks);
-
-            // console.log("newTasks", tasks);
-            // sortTasks();
 
             showToast("Success", "Task Updated successfully", "success");
         } catch (error) {

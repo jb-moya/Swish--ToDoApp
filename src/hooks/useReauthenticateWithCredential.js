@@ -22,7 +22,6 @@ const useReauthenticateWithCredential = () => {
                 credential
             );
 
-            console.log("result", result);
             return result;
         } catch (error) {
             showToast("Error Validating Password", error.message, "error");

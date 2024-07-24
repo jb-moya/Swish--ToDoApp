@@ -72,14 +72,12 @@ const useTaskStore = create((set, get) => ({
 
     sortTasks: () =>
         set((state) => {
-            console.log("statee e", state);
             const sortedTasks = [...state.tasks];
             const { key, direction } = state.sortConfig;
             sortedTasks.sort((a, b) => {
                 let aValue = a[key];
                 let bValue = b[key];
 
-                // Convert to lowercase for case-insensitive comparison if the key is taskName
                 if (key === "taskName") {
                     aValue = aValue.toLowerCase();
                     bValue = bValue.toLowerCase();
@@ -100,7 +98,6 @@ const useTaskStore = create((set, get) => ({
                 return 0;
             });
 
-            console.log("sortedTasks", sortedTasks);
             return { tasks: sortedTasks };
         }),
 
@@ -113,7 +110,6 @@ const useTaskStore = create((set, get) => ({
             ) {
                 direction = "descending";
             }
-            console.log("keyy", key, direction);
             return { sortConfig: { key, direction } };
         }),
 }));

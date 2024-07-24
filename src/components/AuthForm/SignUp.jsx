@@ -27,14 +27,6 @@ const SignUp = () => {
 
     const { loading, error, signUp } = useSignUpWithEmailAndPassword();
 
-    useEffect(() => {
-        console.log("inputs", inputs);
-    }, [inputs]);
-
-    useEffect(() => {
-        console.log("error rerender", error);
-    }, [error]);
-
     const handleSignUp = (event) => {
         event.preventDefault();
 

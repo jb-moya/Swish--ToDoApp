@@ -50,7 +50,6 @@ export const formatTime = (date) => {
     }
 
     const formatedDate = new Date(date);
-
     let hours = formatedDate.getHours();
     const minutes = formatedDate.getMinutes();
     const ampm = hours >= 12 ? "PM" : "AM";
@@ -84,12 +83,26 @@ export const getDayOfWeek = (date) => {
     return daysOfWeek[new Date(date).getDay()];
 };
 
-export const isDateOverDue = (date) => {
+export const isDateOverDue = (date, time) => {
+    const now = new Date();
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set to midnight
+
     const targetDate = new Date(date);
     targetDate.setHours(0, 0, 0, 0);
-    return targetDate < today;
+
+    if (targetDate < today) {
+        return true;
+    } else if (isToday(targetDate)) {
+        if (!time) {
+            return false;
+        }
+
+        const targetTime = new Date(time);
+        return now > targetTime;
+    } else {
+        return false;
+    }
 };
 
 const convertFirestoreTimestampToDate = (timestamp) => {

@@ -39,6 +39,7 @@ import {
     FaClock,
 } from "react-icons/fa";
 import TimePicker from "../TimePicker";
+import useShowToast from "../../hooks/useShowToast";
 
 const priority = ["none", "low", "medium", "high", "critical"];
 
@@ -62,6 +63,8 @@ const TaskEditable = React.memo(
         isLoading,
         isAddingNewTask = false,
     }) => {
+        const showToast = useShowToast();
+
         const dateFormat = useDateFormat();
         const { isDeleting, handleDeleteTasks } = useDeleteTask();
 
@@ -95,7 +98,6 @@ const TaskEditable = React.memo(
             }
         };
 
-        
         const [editTaskInfo, setEditTaskInfo] = useState({
             id: taskInfo.id,
             taskName: taskInfo.taskName,
@@ -110,10 +112,6 @@ const TaskEditable = React.memo(
             createdAt: taskInfo.createdAt,
         });
 
-        useEffect(() => {
-            console.error("editTaskInfo.dueDate", editTaskInfo.dueDate);
-        }, [editTaskInfo.dueDate]);
-
         const [characterLimit, setCharacterLimit] = useState({
             taskName: editTaskInfo.taskName.length >= taskNameCharLimit,
             description: editTaskInfo.taskName.length >= descriptionCharLimit,
@@ -127,7 +125,6 @@ const TaskEditable = React.memo(
         const updateDueDate = (daysToAdd) => {
             const newDate = new Date();
             newDate.setDate(newDate.getDate() + daysToAdd);
-            console.log(`New date with ${daysToAdd} days added:`, newDate);
 
             setEditTaskInfo({
                 ...editTaskInfo,
@@ -152,17 +149,10 @@ const TaskEditable = React.memo(
         }, [editTaskInfo]);
 
         useEffect(() => {
-            console.log("rerendering");
-
             if (inputTitleRef.current) {
                 inputTitleRef.current.focus();
             }
         }, []);
-
-        // console editTaskinfo duedate
-        useEffect(() => {
-            console.log("editTaskInfo.dueDate", editTaskInfo.dueDate);
-        }, [editTaskInfo.dueDate]);
 
         const handleSave = () => {
             onSave(editTaskInfo);
@@ -178,7 +168,7 @@ const TaskEditable = React.memo(
             try {
                 await handleDeleteTasks([editTaskInfo]);
             } catch (error) {
-                console.log(error);
+                showToast("Error", error.message, "error");
             }
         };
 
@@ -211,7 +201,6 @@ const TaskEditable = React.memo(
             const tx = document.getElementsByTagName("textarea");
 
             for (let i = 0; i < tx.length; i++) {
-                console.log("tite");
                 if (tx[i].value == "") {
                     tx[i].setAttribute(
                         "style",
@@ -351,7 +340,6 @@ const TaskEditable = React.memo(
                                         color={borderStyle}
                                         display={"flex"}
                                         flexDirection={"row"}
-                                        // width={"200px"}
                                         border={`1px solid ${borderColor}`}
                                         onClick={() =>
                                             setShowDatePicker(!showDatePicker)
@@ -504,7 +492,6 @@ const TaskEditable = React.memo(
                                     <DatePicker
                                         selectedDate={editTaskInfo.dueDate}
                                         onChange={(date) => {
-                                            console.log("date picker", date);
 
                                             setEditTaskInfo({
                                                 ...editTaskInfo,
@@ -566,7 +553,6 @@ const TaskEditable = React.memo(
                                                     editTaskInfo.dueDate ===
                                                     null
                                                 ) {
-                                                    console.log("no date");
                                                     updateDueDate(0);
                                                 }
 
@@ -600,7 +586,6 @@ const TaskEditable = React.memo(
                                         </MenuItem>
                                     )}
 
-                                    {/* <MenuItem>fasd</MenuItem> */}
                                 </MenuList>
                             </Portal>
                         </Menu>

@@ -1,18 +1,8 @@
 import ReactDatePicker from "react-datepicker";
-import setHours from "date-fns/setHours";
-import setMinutes from "date-fns/setMinutes";
-import setSeconds from "date-fns/setSeconds";
-
-import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import "react-datepicker/dist/react-datepicker.css";
 import "../date-picker.css";
-import { isToday } from "./utils/dateFormat";
 
-const TimePicker = ({ selectedDate, selectedTime, onChange }) => {
-    useEffect(() => {
-        console.log("picked time", selectedTime);
-    }, [selectedTime]);
+const TimePicker = ({ selectedTime, onChange }) => {
 
     const filterPassedTime = (time) => {
         const currentDate = new Date();

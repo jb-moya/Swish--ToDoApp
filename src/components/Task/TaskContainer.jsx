@@ -22,9 +22,10 @@ import TaskEditable from "./TaskEditable";
 import PropTypes from "prop-types";
 import "../../index.css";
 import useDeleteTask from "../../hooks/useDeleteTask";
-import useTaskStore from "../../store/taskStore";
 import useEditTask from "../../hooks/useEditTask";
 import useDateFormat, { formatTime } from "../utils/dateFormat";
+import useShowToast from "../../hooks/useShowToast";
+
 import {
     IoCalendarClearOutline,
     IoFlag,
@@ -35,12 +36,13 @@ import useAuthStore from "../../store/authStore";
 import { BsFillPinAngleFill } from "react-icons/bs";
 import { CiClock2 } from "react-icons/ci";
 
-
 import { isDateOverDue } from "../utils/dateFormat";
 
 const priority = ["none", "low", "medium", "high", "critical"];
 
 const TaskContainer = React.memo(({ task }) => {
+    const showToast = useShowToast();
+
     const authUser = useAuthStore((state) => state.user);
     const dateFormat = useDateFormat();
 
@@ -50,10 +52,6 @@ const TaskContainer = React.memo(({ task }) => {
     );
 
     const formattedTime = formatTime(task.dueTime);
-
-    useEffect(() => {
-        console.log(task);
-    }, [task]);
 
     const { isDeleting, handleDeleteTasks } = useDeleteTask();
 
@@ -82,7 +80,7 @@ const TaskContainer = React.memo(({ task }) => {
         try {
             await handleDeleteTasks([task]);
         } catch (error) {
-            console.log(error);
+            showToast("Error", error.message, "error");
         }
     };
 
@@ -106,7 +104,6 @@ const TaskContainer = React.memo(({ task }) => {
     };
 
     const handleSave = useCallback((updatedTaskInfo) => {
-        console.log("rerererender", updatedTaskInfo);
         setCurrentTaskInfo(updatedTaskInfo);
 
         handleEditTask(updatedTaskInfo);
@@ -116,7 +113,6 @@ const TaskContainer = React.memo(({ task }) => {
     }, []);
 
     const handleCancel = useCallback(() => {
-        console.log("rerererender");
         setEditMode(false);
     }, []);
 
@@ -158,7 +154,6 @@ const TaskContainer = React.memo(({ task }) => {
                 "rgba(126, 132, 144, 0.3)",
                 "rgba(126, 132, 144, 0.3)"
             )}`}
-            // zIndex={0}
             py={2}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
@@ -177,7 +172,6 @@ const TaskContainer = React.memo(({ task }) => {
                             <Checkbox
                                 position={"absolute"}
                                 top={0}
-                                // bg={"red"}
                                 onChange={() => {
                                     setCurrentTaskInfo({
                                         ...currentTaskInfo,
@@ -189,7 +183,6 @@ const TaskContainer = React.memo(({ task }) => {
                                 }}
                                 isChecked={currentTaskInfo.isCompleted}
                                 isDisabled={isEditing}
-                                // isLoading={isEditing}
                             ></Checkbox>
 
                             <Box pl={7}>
@@ -223,7 +216,6 @@ const TaskContainer = React.memo(({ task }) => {
 
                     <Flex
                         justifyContent={"start"}
-                        // opacity={0.75}
                         mt={1}
                         ml={7}
                         gap={2}
@@ -258,19 +250,23 @@ const TaskContainer = React.memo(({ task }) => {
                             </Tag>
                         )}
 
-                        {task.dueDate && isDateOverDue(task.dueDate) && (
-                            <Tag
-                                px={1}
-                                bg={"transparent"}
-                                size={"sm"}
-                                color={"#ff7e61"}
-                                rounded={"sm"}
-                                border={`1px solid #ff7e61`}
-                            >
-                                <TagLeftIcon as={IoAlertCircleSharp} mr={1} />
-                                <TagLabel>overdue</TagLabel>
-                            </Tag>
-                        )}
+                        {task.dueDate &&
+                            isDateOverDue(task.dueDate, task.dueTime) && (
+                                <Tag
+                                    px={1}
+                                    bg={"transparent"}
+                                    size={"sm"}
+                                    color={"#ff7e61"}
+                                    rounded={"sm"}
+                                    border={`1px solid #ff7e61`}
+                                >
+                                    <TagLeftIcon
+                                        as={IoAlertCircleSharp}
+                                        mr={1}
+                                    />
+                                    <TagLabel>overdue</TagLabel>
+                                </Tag>
+                            )}
 
                         <Spacer />
 
@@ -293,7 +289,6 @@ const TaskContainer = React.memo(({ task }) => {
                                 )}`}
                                 bg="transparent"
                                 size={"sm"}
-                                // color={"gray.700"}
                             >
                                 <Icon
                                     as={IoFlag}

@@ -13,15 +13,12 @@ const DatePicker = ({
 }) => {
     const isLight = useColorMode().colorMode === "light";
 
-    console.log("selected", selectedDate);
-
     return (
         <Box className={isLight ? "light-theme" : "dark-theme"}>
             <ReactDatePicker
                 minDate={new Date()}
                 selected={selectedDate}
                 onChange={onChange}
-                // todayButton="Today"
                 isClearable={isClearable}
                 onClickOutside={() => setCalendarIsOpen(false)}
                 dateFormat="MMM d, yyyy h:mm aa"

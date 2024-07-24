@@ -46,11 +46,6 @@ const useSignUpWithEmailAndPassword = () => {
                 inputs.password
             );
 
-            // if (!newUser && error) {
-            //     showToast("Error", error.message, "error");
-            //     return;
-            // }
-
             if (error) {
                 showToast("Error", error.message, "error");
                 return;
@@ -77,7 +72,6 @@ const useSignUpWithEmailAndPassword = () => {
                 loginUser(userDoc);
             }
 
-            console.log(newUser);
         } catch (error) {
             showToast("Error", error.message, "error");
         }

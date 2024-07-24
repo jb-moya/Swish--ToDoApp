@@ -16,8 +16,6 @@ function useDeleteTask() {
 
     const [isDeleting, setIsDeleting] = useState(false);
 
-    // if (!window.confirm("Are you sure you want to delete this post?"))
-    //     return;
     const handleDeleteTasks = useCallback(
         async (tasksToDelete) => {
             if (isDeleting) return;
@@ -38,7 +36,6 @@ function useDeleteTask() {
 
                     await Promise.all(deletePromises);
                 } else {
-                    // If user is not logged in, delete locally
                     const storedTasks = JSON.parse(
                         localStorage.getItem("tasks")
                     );
@@ -85,31 +82,6 @@ function useDeleteTask() {
         },
         [authUser, showToast, setTasks, isDeleting, tasks]
     );
-
-    // const handleDeleteTask = useCallback(
-    //     async (task) => {
-    //         if (isDeleting) return;
-
-    //         try {
-    //             setIsDeleting(true);
-    //             const userRef = doc(firestore, "users", authUser.uid);
-    //             await deleteDoc(doc(firestore, "tasks", task.id));
-
-    //             await updateDoc(userRef, {
-    //                 tasks: arrayRemove(task.id),
-    //             });
-
-    //             setTasks(tasks.filter((task) => task.id !== task.id));
-
-    //             showToast("Success", "Task deleted successfully", "success");
-    //         } catch (error) {
-    //             showToast("Error", error.message, "error");
-    //         } finally {
-    //             setIsDeleting(false);
-    //         }
-    //     },
-    //     [authUser, showToast, setTasks, isDeleting, tasks]
-    // );
 
     return { isDeleting, handleDeleteTasks };
 }

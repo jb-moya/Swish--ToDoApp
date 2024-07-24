@@ -1,15 +1,12 @@
 import {
     Icon,
     Input,
-    InputGroup,
-    InputRightElement,
     Button,
     Box,
     FormLabel,
     FormControl,
     useColorModeValue,
 } from "@chakra-ui/react";
-import PropTypes from "prop-types";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
 const PasswordInput = ({
@@ -18,8 +15,6 @@ const PasswordInput = ({
     setShowPassword,
     input,
     setInput,
-    size = "sm",
-    mb = 3,
 }) => {
     return (
         <Box position={"relative"}>
@@ -65,13 +60,5 @@ const PasswordInput = ({
         </Box>
     );
 };
-
-// PasswordInput.propTypes = {
-//     placeholder: PropTypes.string,
-//     showPassword: PropTypes.bool.isRequired,
-//     setShowPassword: PropTypes.func.isRequired,
-//     input: PropTypes.string.isRequired,
-//     setInput: PropTypes.func.isRequired,
-// };
 
 export default PasswordInput;

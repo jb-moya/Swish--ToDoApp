@@ -39,12 +39,14 @@ const useGetAllTasks = () => {
                     task.dueDate = convertFirestoreTimestampToDate(
                         task.dueDate
                     );
+                    task.dueTime = convertFirestoreTimestampToDate(
+                        task.dueTime
+                    );
                 });
 
                 setTasks(tasks);
                 sortTasks();
             } else {
-                console.log("HINID LOGIN SO KUHA SA LOCAL HOST");
                 const storedTasks = JSON.parse(localStorage.getItem("tasks"));
                 if (storedTasks) {
                     setTasks(storedTasks);

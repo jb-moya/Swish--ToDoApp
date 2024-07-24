@@ -20,12 +20,8 @@ const useSocialAuth = (signInMethod) => {
 
             if (userSnap.exists()) {
                 const userDoc = userSnap.data();
-                console.log("userDocasdf", userDoc);
                 localStorage.setItem("user-info", JSON.stringify(userDoc));
-                loginUser(userDoc);
-                // 
-                // setAuthUser(userDoc);
-
+                loginUser(userDoc); 
             } else {
                 const userDoc = {
                     uid: newUser.user.uid,
