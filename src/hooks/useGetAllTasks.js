@@ -4,9 +4,11 @@ import useAuthStore from "../store/authStore";
 import useShowToast from "./useShowToast";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
+import useCountCategoryTasks from "./useCountCategoryTasks";
 import { convertFirestoreTimestampToDate } from "../components/utils/dateFormat";
 
 const useGetAllTasks = () => {
+    const { countCategoryTasks } = useCountCategoryTasks();
     const [isLoading, setIsLoading] = useState(true);
     const { tasks, setTasks, sortTasks } = useTaskStore();
     // const setAuthUser = useAuthStore((state) => state.setUser);

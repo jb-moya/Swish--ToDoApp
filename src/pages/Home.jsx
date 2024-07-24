@@ -368,7 +368,7 @@ const Home = () => {
                             fontWeight="bold"
                             color={noTaskHeadingStyle}
                         >
-                            All Caught Up!
+                            You&apos;re all caught up!
                         </Box>
                         <Box>{randomMessage}</Box>
                     </Box>

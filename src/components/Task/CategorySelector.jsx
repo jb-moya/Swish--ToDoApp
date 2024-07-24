@@ -38,11 +38,13 @@ import { RiDeleteBin7Line } from "react-icons/ri";
 import useDeleteTask from "../../hooks/useDeleteTask";
 import { v4 as uuidv4 } from "uuid";
 import useTaskStore from "../../store/taskStore";
+import useCategoryStore from "../../store/categoryStore";
 const CategorySelector = ({
     currentCategory,
     onCategoryChange,
     isEditMode = true,
 }) => {
+    const { categoriesTaskCount } = useCategoryStore();
     const showToast = useShowToast();
     const {
         isOpen: isOpenDeleteConfirm,
@@ -165,6 +167,13 @@ const CategorySelector = ({
         );
     };
 
+    const totalUnCategorizedTasks = tasks.reduce((acc, task) => {
+        if (task.category === -1) {
+            return acc + 1;
+        }
+        return acc;
+    }, 0);
+
     return (
         <Menu>
             <Modal
@@ -178,8 +187,8 @@ const CategorySelector = ({
                     <ModalCloseButton />
                     <ModalBody>
                         This will permanently delete &apos;
-                        {authUser.categories?.[category]}&apos; and all its tasks.
-                        This can&apos;t be undone.
+                        {authUser.categories?.[category]}&apos; and all its
+                        tasks. This can&apos;t be undone.
                     </ModalBody>
 
                     <ModalFooter>
@@ -226,8 +235,7 @@ const CategorySelector = ({
                                   "add category"
                                 : "no category"
                             : category !== -1
-                            ? authUser.categories?.[category] ??
-                              "add category"
+                            ? authUser.categories?.[category] ?? "add category"
                             : "All"}
                     </MenuButton>
                 </Tooltip>
@@ -302,12 +310,39 @@ const CategorySelector = ({
                             setCategory(-1);
                             onCategoryChange(-1);
                         }}
+                        position={"relative"}
                     >
                         {isEditMode && currentCategory !== -1
-                            ? "Remove Category"
+                            ? "Uncategorize"
                             : isEditMode
                             ? "No Category"
                             : "All"}
+
+                        {!isEditMode && tasks.length > 0 && (
+                            <Text
+                                position={"absolute"}
+                                fontSize={"small"}
+                                right={6}
+                                fontWeight={"thin"}
+                                mr={4}
+                                opacity={0.8}
+                            >
+                                {tasks.length}
+                            </Text>
+                        )}
+
+                        {isEditMode && totalUnCategorizedTasks > 0 && (
+                            <Text
+                                position={"absolute"}
+                                fontSize={"small"}
+                                right={6}
+                                fontWeight={"thin"}
+                                mr={4}
+                                opacity={0.8}
+                            >
+                                {totalUnCategorizedTasks}
+                            </Text>
+                        )}
                     </MenuItem>
 
                     <MenuDivider />
@@ -320,9 +355,25 @@ const CategorySelector = ({
                                 setCategory(category.id);
                                 onCategoryChange(category.id);
                             }}
+                            position={"relative"}
                         >
-                            <Box>{category.category}</Box>
+                            <Box noOfLines={1} width={"80%"}>
+                                {category.category}
+                            </Box>
                             <Spacer />
+                            {categoriesTaskCount[category.id] > 0 && (
+                                <Text
+                                    position={"absolute"}
+                                    fontSize={"small"}
+                                    right={6}
+                                    fontWeight={"thin"}
+                                    mr={4}
+                                    opacity={0.8}
+                                >
+                                    {categoriesTaskCount[category.id]}
+                                </Text>
+                            )}
+
                             <IconButton
                                 variant={"ghost"}
                                 size={"10px"}
