@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
     Flex,
     Button,
-    useColorMode,
     Avatar,
     Menu,
     MenuButton,
@@ -27,7 +26,7 @@ import {
     useColorModeValue,
 } from "@chakra-ui/react";
 import EditProfile from "./AuthForm/Profile/EditProfile";
-import { MdPerson, MdDarkMode, MdOutlineLightMode } from "react-icons/md";
+import { MdPerson } from "react-icons/md";
 import useLogout from "../hooks/useLogout";
 import useAuthStore from "../store/authStore";
 import { ChevronDownIcon } from "@chakra-ui/icons";
@@ -38,10 +37,10 @@ import useCategoryStore from "../store/categoryStore";
 import useGetAllTasks from "../hooks/useGetAllTasks";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { redirect, useNavigate } from "react-router-dom";
+import ThemeToggler from "./ThemeToggler";
 
 const Navbar = () => {
     const navigate = useNavigate();
-    const { colorMode, toggleColorMode } = useColorMode();
     const { selectedCategoryId } = useCategoryStore();
     const { filter, setFilter } = useFilterScheduleStore();
     const { handleLogout, isLoggingOut, error } = useLogout();
@@ -153,6 +152,7 @@ const Navbar = () => {
                         </MenuButton>
                     </Stat>
                 </Tooltip>
+
                 <Portal>
                     <MenuList>
                         {filterSchedule.map((item, index) => (
@@ -167,6 +167,7 @@ const Navbar = () => {
                         ))}
                     </MenuList>
                 </Portal>
+                
             </Menu>
 
             <Spacer />
@@ -218,18 +219,7 @@ const Navbar = () => {
                 </Button>
             )}
 
-            <IconButton
-                variant={"ghost"}
-                aria-label="Toggle color mode"
-                icon={
-                    colorMode === "light" ? (
-                        <MdDarkMode />
-                    ) : (
-                        <MdOutlineLightMode />
-                    )
-                }
-                onClick={toggleColorMode}
-            />
+            <ThemeToggler />
         </Flex>
     );
 };
