@@ -5,6 +5,7 @@ import {
     MenuButton,
     MenuList,
     MenuItem,
+    Box,
     useDisclosure,
 } from "@chakra-ui/react";
 import useAuthStore from "../store/authStore";
@@ -14,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import useLogout from "../hooks/useLogout";
 import EditProfile from "./AuthForm/Profile/EditProfile";
 
-const UserProfileMenuButton = () => {
+const UserProfileMenuButton = ({...mainContainerProps}) => {
     const user = useAuthStore((state) => state.user);
     const { authUser, isGuest } = useAuthStore((state) => ({
         authUser: state.user,
@@ -25,14 +26,13 @@ const UserProfileMenuButton = () => {
     const navigate = useNavigate();
 
     return (
-        <>
+        <Box {...mainContainerProps}>
             <EditProfile isOpen={isOpen} onClose={onClose} />
 
             {!isGuest ? (
                 <Menu>
                     <MenuButton
                         as={Button}
-                        mx={3}
                         variant={"ghost"}
                         leftIcon={
                             user?.profilePicURL ? (
@@ -74,7 +74,7 @@ const UserProfileMenuButton = () => {
                     Login
                 </Button>
             )}
-        </>
+        </Box>
     );
 };
 

@@ -38,6 +38,7 @@ import CategorySelector from "../components/Task/CategorySelector";
 import useAuthStore from "../store/authStore";
 import Footer from "../components/Footer";
 import useShowToast from "../hooks/useShowToast";
+import SidebarWithHeader from "../components/SideBarWithHeader";
 
 const messages = [
     "Enjoy the calm and take some time for yourself. You've earned this moment of relaxation!",
@@ -189,6 +190,8 @@ const Home = () => {
                         "rgba(126, 132, 144, 0.3)"
                     )}`}
                 >
+                    <SidebarWithHeader />
+
                     <Button
                         size={"sm"}
                         ml={-3}

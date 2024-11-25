@@ -1,85 +1,34 @@
-import { useState } from "react";
 import {
     Flex,
     Button,
-    Avatar,
     Menu,
     MenuButton,
     MenuList,
     MenuItem,
     Spacer,
-    IconButton,
     Tooltip,
     Portal,
-    CircularProgress,
     Stat,
-    StatLabel,
-    StatNumber,
     Box,
     Icon,
-    Text,
     StatHelpText,
-    StatArrow,
-    StatGroup,
-    CircularProgressLabel,
-    useDisclosure,
     useColorModeValue,
 } from "@chakra-ui/react";
-import EditProfile from "./AuthForm/Profile/EditProfile";
-import { MdPerson } from "react-icons/md";
-import useLogout from "../hooks/useLogout";
-import useAuthStore from "../store/authStore";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import useFilterScheduleStore from "../store/filterScheduleStore";
 import useTaskStore from "../store/taskStore";
-import { IoCalendarClearOutline } from "react-icons/io5";
 import useCategoryStore from "../store/categoryStore";
 import useGetAllTasks from "../hooks/useGetAllTasks";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
-import { redirect, useNavigate } from "react-router-dom";
 import ThemeToggler from "./ThemeToggler";
 import UserProfileMenuButton from "./UserProfileMenuButton";
+import filterSchedule from "../constants/filterSchedule";
 
 const Navbar = () => {
-    const navigate = useNavigate();
     const { selectedCategoryId } = useCategoryStore();
     const { filter, setFilter } = useFilterScheduleStore();
-    const { handleLogout, isLoggingOut, error } = useLogout();
     const { getTasks } = useTaskStore();
     const { isLoading: isGettingTasksLoading } = useGetAllTasks();
-    const user = useAuthStore((state) => state.user);
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    const { authUser, isGuest } = useAuthStore((state) => ({
-        authUser: state.user,
-        isGuest: state.isGuest,
-    }));
-
-    const filterSchedule = [
-        {
-            name: "Unscheduled",
-            value: "unscheduled",
-        },
-        {
-            name: "Overdue",
-            value: "overdue",
-        },
-        {
-            name: "All",
-            value: "all",
-        },
-        {
-            name: "Today",
-            value: "today",
-        },
-        {
-            name: "Tomorrow",
-            value: "tomorrow",
-        },
-        {
-            name: "Upcoming",
-            value: "upcoming",
-        },
-    ];
 
     const tasksCount = getTasks(filter.value, selectedCategoryId).length;
     const completedTaskCount = getTasks(
@@ -91,18 +40,22 @@ const Navbar = () => {
     const tasksCompletionCountStyle = useColorModeValue("black", "white");
 
     return (
-        <Flex width="full" mt={4} zIndex={2} alignItems={"center"}>
-            {/* <EditProfile isOpen={isOpen} onClose={onClose} /> */}
+        <Flex
+            width="full"
+            mt={{ base: 0, md: 4 }}
+            zIndex={2}
+            alignItems={"center"}
+        >
             <Menu>
                 <Tooltip label="Filter By Due Date" placement="top">
-                    <Stat>
+                    <Stat display={{ base: "none", md: "block" }}>
                         <MenuButton
                             as={Button}
                             color={useColorModeValue("cyan.500", "cyan.300")}
                             boxSizing="border-box"
                             boxSize={6}
                             minWidth={"fit-content"}
-                            pr={10}
+                            // pr={10}
                             textAlign={"left"}
                             height={"42px"}
                             variant={"unstyled"}
@@ -129,7 +82,7 @@ const Navbar = () => {
                                                     }
                                                     mr={1}
                                                 />
-                                                All
+                                                All Completed
                                             </Flex>
                                         ) : (
                                             <Flex alignItems={"center"}>
@@ -160,20 +113,29 @@ const Navbar = () => {
                             <MenuItem
                                 key={index}
                                 onClick={() => {
-                                    setFilter(item);
+                                    const { icon, ...filterWithoutIcon } = item; // Destructure and omit `icon`
+                                    setFilter(filterWithoutIcon);
                                 }}
                             >
+                                {item.icon && (
+                                    <Icon
+                                        mr="4"
+                                        fontSize="16"
+                                        _groupHover={{
+                                            color: "white",
+                                        }}
+                                        as={item.icon}
+                                    />
+                                )}
                                 {item.name}
                             </MenuItem>
                         ))}
                     </MenuList>
                 </Portal>
             </Menu>
-
             <Spacer />
-
-            <UserProfileMenuButton />
-            <ThemeToggler />
+            <UserProfileMenuButton display={{ base: "none", md: "flex" }} />
+            <ThemeToggler display={{ base: "none", md: "flex" }} />
         </Flex>
     );
 };
