@@ -100,7 +100,7 @@ export default function EditProfile({ isOpen, onClose }) {
             bg={useColorModeValue("gray.50", "gray.800")}
         >
             <ModalOverlay />
-            <ModalContent>
+            <ModalContent pb={6}>
                 <ModalHeader>Edit Profile</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
@@ -324,9 +324,9 @@ export default function EditProfile({ isOpen, onClose }) {
                         </Stack>
                     </Stack>
                 </ModalBody>
-                <ModalFooter>
+                {/* <ModalFooter>
                     <Button onClick={onClose}>Close</Button>
-                </ModalFooter>
+                </ModalFooter> */}
             </ModalContent>
         </Modal>
     );
