@@ -325,9 +325,6 @@ export default function EditProfile({ isOpen, onClose }) {
                         </Stack>
                     </Stack>
                 </ModalBody>
-                {/* <ModalFooter>
-                    <Button onClick={onClose}>Close</Button>
-                </ModalFooter> */}
             </ModalContent>
         </Modal>
     );
