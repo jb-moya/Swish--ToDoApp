@@ -38,6 +38,7 @@ import useGetAllTasks from "../hooks/useGetAllTasks";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { redirect, useNavigate } from "react-router-dom";
 import ThemeToggler from "./ThemeToggler";
+import UserProfileMenuButton from "./UserProfileMenuButton";
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -91,7 +92,7 @@ const Navbar = () => {
 
     return (
         <Flex width="full" mt={4} zIndex={2} alignItems={"center"}>
-            <EditProfile isOpen={isOpen} onClose={onClose} />
+            {/* <EditProfile isOpen={isOpen} onClose={onClose} /> */}
             <Menu>
                 <Tooltip label="Filter By Due Date" placement="top">
                     <Stat>
@@ -167,58 +168,11 @@ const Navbar = () => {
                         ))}
                     </MenuList>
                 </Portal>
-                
             </Menu>
 
             <Spacer />
 
-            {!isGuest ? (
-                <Menu>
-                    <MenuButton
-                        as={Button}
-                        mx={3}
-                        variant={"ghost"}
-                        leftIcon={
-                            user?.profilePicURL ? (
-                                <Avatar
-                                    mr={2}
-                                    size={"sm"}
-                                    name={user?.username}
-                                    src={user?.profilePicURL}
-                                />
-                            ) : (
-                                <MdPerson size={"24"} />
-                            )
-                        }
-                    >
-                        {user?.username}
-                        <ChevronDownIcon ml={1} />
-                    </MenuButton>
-                    <MenuList>
-                        <MenuItem as={Button} onClick={onOpen}>
-                            Edit Profile
-                        </MenuItem>
-                        <MenuItem
-                            as={Button}
-                            onClick={handleLogout}
-                            isDisabled={isLoggingOut}
-                            color={"red.500"}
-                        >
-                            Logout
-                        </MenuItem>
-                    </MenuList>
-                </Menu>
-            ) : (
-                <Button
-                    mr={3}
-                    onClick={() => {
-                        navigate("/auth");
-                    }}
-                >
-                    Login
-                </Button>
-            )}
-
+            <UserProfileMenuButton />
             <ThemeToggler />
         </Flex>
     );
