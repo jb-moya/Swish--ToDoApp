@@ -146,6 +146,7 @@ export default function EditProfile({ isOpen, onClose }) {
                                 <Input
                                     type="file"
                                     hidden
+                                    accept="image/*"
                                     ref={fileRef}
                                     onChange={handleImageChange}
                                 />
