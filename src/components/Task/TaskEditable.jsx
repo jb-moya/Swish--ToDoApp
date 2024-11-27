@@ -99,7 +99,7 @@ const TaskEditable = React.memo(
             }
         };
 
-        const [editTaskInfo, setEditTaskInfo] = useState({
+        const [editTaskInfo, setEditTaskInfo] = useState(() => ({
             id: taskInfo.id,
             taskName: taskInfo.taskName,
             description: taskInfo.description,
@@ -111,7 +111,11 @@ const TaskEditable = React.memo(
             category: isAddingNewTask ? selectedCategoryId : taskInfo.category,
             createdBy: taskInfo.createdBy,
             createdAt: taskInfo.createdAt,
-        });
+        }));
+
+        const [category, setCategory] = useState(
+            isAddingNewTask ? selectedCategoryId : taskInfo.category
+        );
 
         const [characterLimit, setCharacterLimit] = useState({
             taskName: editTaskInfo.taskName.length >= taskNameCharLimit,
@@ -163,9 +167,15 @@ const TaskEditable = React.memo(
         }, []);
 
         const handleSave = () => {
-            onSave(editTaskInfo);
+            onSave({
+                ...editTaskInfo,
+                category: category,
+            });
 
-            setEditTaskInfo(taskInfo);
+            setEditTaskInfo({
+                ...taskInfo,
+                category: category,
+            });
 
             if (inputTitleRef.current) {
                 inputTitleRef.current.focus();
@@ -187,8 +197,8 @@ const TaskEditable = React.memo(
         };
 
         const handleCategoryChange = (value) => {
-            setSelectedCategoryId(value);
-            setEditTaskInfo({ ...editTaskInfo, category: value });
+            console.log("what changing");
+            setCategory(value);
         };
 
         const borderStyle = useColorModeValue("gray.500", "gray.500");
