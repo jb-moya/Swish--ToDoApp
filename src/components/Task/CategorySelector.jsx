@@ -64,6 +64,10 @@ const CategorySelector = ({
     const searchInputRef = useRef(null);
 
     useEffect(() => {
+        setCategory(currentCategory);
+    }, [currentCategory]);
+
+    useEffect(() => {
         const handleBlur = () => {
             setTimeout(() => {
                 searchInputRef.current.focus();

@@ -69,7 +69,8 @@ const TaskEditable = React.memo(
         const { isDeleting, handleDeleteTasks } = useDeleteTask();
 
         const { filter } = useFilterScheduleStore();
-        const { selectedCategoryId } = useCategoryStore();
+        const { selectedCategoryId, setSelectedCategoryId } =
+            useCategoryStore();
 
         const initialSetSchedule = () => {
             if (isAddingNewTask) {
@@ -135,6 +136,13 @@ const TaskEditable = React.memo(
         };
 
         useEffect(() => {
+            setEditTaskInfo({
+                ...editTaskInfo,
+                category: selectedCategoryId,
+            });
+        }, [editTaskInfo.category, selectedCategoryId]);
+
+        useEffect(() => {
             if (editTaskInfo.dueTime) {
                 setOpenTimePicker(true);
             }
@@ -179,6 +187,7 @@ const TaskEditable = React.memo(
         };
 
         const handleCategoryChange = (value) => {
+            setSelectedCategoryId(value);
             setEditTaskInfo({ ...editTaskInfo, category: value });
         };
 
