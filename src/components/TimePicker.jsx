@@ -2,20 +2,20 @@ import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../date-picker.css";
 
-const TimePicker = ({ selectedTime, onChange }) => {
+const TimePicker = ({ selectedDate, selectedTime, onChange }) => {
+    const date = new Date(selectedDate);
+    date.setHours(0, 0, 0, 0);
 
-    const filterPassedTime = (time) => {
-        const currentDate = new Date();
-        const selectedDate = new Date(time);
-
-        return currentDate.getTime() < selectedDate.getTime();
+    const filterPassedTime = (timePoint) => {
+        const currentTime = new Date().getTime();
+        return currentTime < new Date(timePoint).getTime();
     };
 
     return (
         <ReactDatePicker
             selected={new Date(selectedTime)}
             onChange={onChange}
-            filterTime={filterPassedTime}
+            filterTime={date <= new Date() && filterPassedTime}
             showTimeSelect
             showTimeSelectOnly
             timeIntervals={15}
