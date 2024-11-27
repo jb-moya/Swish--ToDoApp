@@ -27,8 +27,9 @@ const useCountCategoryTasks = () => {
     };
 
     useEffect(() => {
+        // console.log("r");
         countCategoryTasks();
-    }, [authUser.categories, tasks]);
+    }, [authUser?.categories, tasks]);
 
     return { countCategoryTasks };
 };
