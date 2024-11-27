@@ -7,7 +7,6 @@ import useAuthStore from "../store/authStore";
 const useSocialAuth = (signInMethod) => {
     const showToast = useShowToast();
     const loginUser = useAuthStore((state) => state.login);
-    const setAuthUser = useAuthStore((state) => state.setUser);
 
     const handleSocialAuth = useCallback(async () => {
         try {

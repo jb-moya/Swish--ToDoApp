@@ -35,7 +35,6 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { BsSortDown, BsSortUp } from "react-icons/bs";
 import useCategoryStore from "../store/categoryStore";
 import CategorySelector from "../components/Task/CategorySelector";
-import useAuthStore from "../store/authStore";
 import Footer from "../components/Footer";
 import useShowToast from "../hooks/useShowToast";
 import SidebarWithHeader from "../components/SideBarWithHeader";
@@ -72,14 +71,6 @@ const Home = () => {
     const [isAllTasksUncompleted, setIsAllTasksUncompleted] = useState(true);
     const { tasks, sortConfig, sortTasks, setSortConfig, getTasks } =
         useTaskStore();
-    const { authUser, isGuest } = useAuthStore((state) => ({
-        authUser: state.user,
-        isGuest: state.isGuest,
-    }));
-
-    const userCategories = Array.isArray(authUser.categories)
-        ? authUser.categories
-        : [];
 
     useEffect(() => {
         if (tasks.length > 0) {

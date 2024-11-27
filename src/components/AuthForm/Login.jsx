@@ -8,7 +8,7 @@ import {
     useColorModeValue,
     Stack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import PasswordInput from "./PasswordInput";
 import useLogin from "../../hooks/useLogin";
 

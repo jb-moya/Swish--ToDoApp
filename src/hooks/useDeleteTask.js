@@ -12,7 +12,7 @@ function useDeleteTask() {
         authUser: state.user,
         isGuest: state.isGuest,
     }));
-    const { tasks, setTasks, deleteTasks, sortTasks } = useTaskStore();
+    const { tasks, setTasks } = useTaskStore();
 
     const [isDeleting, setIsDeleting] = useState(false);
 

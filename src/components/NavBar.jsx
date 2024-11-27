@@ -55,7 +55,6 @@ const Navbar = () => {
                             boxSizing="border-box"
                             boxSize={6}
                             minWidth={"fit-content"}
-                            // pr={10}
                             textAlign={"left"}
                             height={"42px"}
                             variant={"unstyled"}

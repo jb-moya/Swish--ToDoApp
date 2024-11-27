@@ -18,8 +18,8 @@ function useAddTask() {
         authUser: state.user,
         isGuest: state.isGuest,
     }));
-    const setAuthUser = useAuthStore((state) => state.setUser);
-    const { tasks, setTasks, addTask } = useTaskStore();
+
+    const { addTask } = useTaskStore();
 
     const handleAddTask = async (task) => {
         if (isLoading) return;

@@ -17,12 +17,12 @@ import EditProfile from "./AuthForm/Profile/EditProfile";
 
 const UserProfileMenuButton = ({...mainContainerProps}) => {
     const user = useAuthStore((state) => state.user);
-    const { authUser, isGuest } = useAuthStore((state) => ({
+    const { isGuest } = useAuthStore((state) => ({
         authUser: state.user,
         isGuest: state.isGuest,
     }));
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { handleLogout, isLoggingOut, error } = useLogout();
+    const { handleLogout, isLoggingOut } = useLogout();
     const navigate = useNavigate();
 
     return (

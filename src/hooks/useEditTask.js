@@ -8,7 +8,7 @@ import useAuthStore from "../store/authStore";
 function useEditTask() {
     const showToast = useShowToast();
     const [isEditing, setIsEditing] = useState(false);
-    const { tasks, editTask } = useTaskStore();
+    const { editTask } = useTaskStore();
     const { isGuest } = useAuthStore((state) => ({
         isGuest: state.isGuest,
     }));

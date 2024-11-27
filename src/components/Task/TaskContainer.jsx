@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
     Box,
     useColorModeValue,
@@ -6,13 +6,10 @@ import {
     IconButton,
     Spacer,
     Stack,
-    HStack,
     Flex,
     Tag,
     TagLabel,
-    Text,
     Icon,
-    Portal,
     Tooltip,
     TagRightIcon,
     TagLeftIcon,
