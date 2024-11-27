@@ -3,8 +3,11 @@ import Home from "./pages/Home";
 import Authentication from "./pages/Authentication";
 import useAuthStore from "./store/authStore";
 import PageLayout from "./layouts/PageLayout/PageLayout";
+import useCountCategoryTasks from "./hooks/useCountCategoryTasks";
 
 function App() {
+    useCountCategoryTasks();
+
     const { isLoggedIn, isGuest } = useAuthStore((state) => ({
         isLoggedIn: state.isLoggedIn,
         isGuest: state.isGuest,
