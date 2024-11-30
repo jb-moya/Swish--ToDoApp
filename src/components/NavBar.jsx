@@ -47,8 +47,8 @@ const Navbar = () => {
             alignItems={"center"}
         >
             <Menu>
-                <Tooltip label="Filter By Due Date" placement="top">
-                    <Stat display={{ base: "none", md: "block" }}>
+                <Stat display={{ base: "none", md: "block" }}>
+                    <Tooltip label="Filter By Due Date" placement="top">
                         <MenuButton
                             as={Button}
                             color={useColorModeValue("cyan.500", "cyan.300")}
@@ -103,8 +103,8 @@ const Navbar = () => {
                                 </StatHelpText>
                             )}
                         </MenuButton>
-                    </Stat>
-                </Tooltip>
+                    </Tooltip>
+                </Stat>
 
                 <Portal>
                     <MenuList>
