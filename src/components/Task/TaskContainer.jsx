@@ -1,20 +1,14 @@
 import React, { useState, useCallback, useMemo } from "react";
 import {
     Box,
-    useColorModeValue,
-    Checkbox,
     IconButton,
     Spacer,
     Stack,
     Flex,
-    Tag,
-    TagLabel,
     Icon,
-    Tooltip,
-    TagRightIcon,
-    TagLeftIcon,
 } from "@chakra-ui/react";
-import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { Checkbox } from "../ui/checkbox";
+import { MdDelete, MdEdit } from "react-icons/md";
 import TaskEditable from "./TaskEditable";
 import PropTypes from "prop-types";
 import "../../index.css";
@@ -22,7 +16,9 @@ import useDeleteTask from "../../hooks/useDeleteTask";
 import useEditTask from "../../hooks/useEditTask";
 import useDateFormat, { formatTime } from "../utils/dateFormat";
 import useShowToast from "../../hooks/useShowToast";
-
+import { useColorModeValue } from "../ui/color-mode";
+import { Tag } from "../ui/tag";
+import { Tooltip } from "../ui/tooltip";
 import {
     IoCalendarClearOutline,
     IoFlag,
@@ -169,7 +165,7 @@ const TaskContainer = React.memo(({ task }) => {
                             <Checkbox
                                 position={"absolute"}
                                 top={0}
-                                onChange={() => {
+                                onCheckedChange={() => {
                                     setCurrentTaskInfo({
                                         ...currentTaskInfo,
                                         isCompleted:
@@ -178,8 +174,8 @@ const TaskContainer = React.memo(({ task }) => {
 
                                     handleCompleteTask();
                                 }}
-                                isChecked={currentTaskInfo.isCompleted}
-                                isDisabled={isEditing}
+                                checked={currentTaskInfo.isCompleted}
+                                disabled={isEditing}
                             ></Checkbox>
 
                             <Box pl={7}>
@@ -225,12 +221,9 @@ const TaskContainer = React.memo(({ task }) => {
                                 size={"sm"}
                                 rounded={"sm"}
                                 border={`1px solid ${borderColor}`}
+                                startElement={<IoCalendarClearOutline />}
                             >
-                                <TagLeftIcon
-                                    as={IoCalendarClearOutline}
-                                    mr={1}
-                                />
-                                <TagLabel>{formattedDate}</TagLabel>
+                                {formattedDate}
                             </Tag>
                         )}
 
@@ -241,9 +234,9 @@ const TaskContainer = React.memo(({ task }) => {
                                 size={"sm"}
                                 rounded={"sm"}
                                 border={`1px solid ${borderColor}`}
+                                startElement={<CiClock2 />}
                             >
-                                <TagLeftIcon as={CiClock2} mr={1} />
-                                <TagLabel>{formattedTime}</TagLabel>
+                                {formattedTime}
                             </Tag>
                         )}
 
@@ -256,23 +249,21 @@ const TaskContainer = React.memo(({ task }) => {
                                     color={"#ff7e61"}
                                     rounded={"sm"}
                                     border={`1px solid #ff7e61`}
+                                    startElement={<IoAlertCircleSharp />}
                                 >
-                                    <TagLeftIcon
-                                        as={IoAlertCircleSharp}
-                                        mr={1}
-                                    />
-                                    <TagLabel>overdue</TagLabel>
+                                    overdue
                                 </Tag>
                             )}
 
                         <Spacer />
 
                         {task.category !== -1 && (
-                            <Tag bg={"transparent"} size={"sm"}>
-                                <TagLabel>
-                                    {authUser.categories?.[task.category]}
-                                </TagLabel>
-                                <TagRightIcon as={LiaHashtagSolid} />
+                            <Tag
+                                bg={"transparent"}
+                                size={"sm"}
+                                endElement={<LiaHashtagSolid />}
+                            >
+                                {authUser.categories?.[task.category]}
                             </Tag>
                         )}
 
@@ -286,17 +277,19 @@ const TaskContainer = React.memo(({ task }) => {
                                 )}`}
                                 bg="transparent"
                                 size={"sm"}
+                                startElement={
+                                    <Icon
+                                        as={IoFlag}
+                                        mr={1}
+                                        color={tagPriorityBorderColor(
+                                            priority[task.priority]
+                                        )}
+                                    />
+                                }
                             >
-                                <Icon
-                                    as={IoFlag}
-                                    mr={1}
-                                    color={tagPriorityBorderColor(
-                                        priority[task.priority]
-                                    )}
-                                />
-                                <TagLabel width={"full"} textAlign={"right"}>
-                                    {priority[task.priority]}
-                                </TagLabel>
+                                {/* <TagLabel width={"full"} textAlign={"right"}> */}
+                                {priority[task.priority]}
+                                {/* </TagLabel> */}
                             </Tag>
                         )}
                     </Flex>
@@ -325,7 +318,7 @@ const TaskContainer = React.memo(({ task }) => {
                                 size={"sm"}
                                 variant={"ghost"}
                                 aria-label="edit task"
-                                icon={<EditIcon />}
+                                icon={<MdEdit />}
                                 onClick={() => setEditMode(true)}
                             />
 
@@ -333,13 +326,13 @@ const TaskContainer = React.memo(({ task }) => {
                                 size={"sm"}
                                 variant={"ghost"}
                                 aria-label="delete task"
-                                icon={<DeleteIcon />}
+                                icon={<MdDelete />}
                                 onClick={handleDeletingTask}
                                 isLoading={isDeleting}
                             />
 
                             <Tooltip
-                                label="pin on top"
+                                content="pin on top"
                                 placement="top"
                                 openDelay={500}
                             >

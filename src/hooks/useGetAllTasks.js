@@ -5,14 +5,15 @@ import useShowToast from "./useShowToast";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 import { convertFirestoreTimestampToDate } from "../components/utils/dateFormat";
+import { useShallow } from "zustand/shallow";
 
 const useGetAllTasks = () => {
     const [isLoading, setIsLoading] = useState(true);
     const { tasks, setTasks, sortTasks } = useTaskStore();
-    const { authUser, isGuest } = useAuthStore((state) => ({
+    const { authUser, isGuest } = useAuthStore(useShallow((state) => ({
         authUser: state.user,
         isGuest: state.isGuest,
-    }));
+    })));
 
     const showToast = useShowToast();
 

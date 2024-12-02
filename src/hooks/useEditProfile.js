@@ -5,14 +5,15 @@ import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { firestore, storage } from "../firebase/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import useUserProfileStore from "../store/userProfileStore";
+import { useShallow } from "zustand/shallow";
 
 const useEditProfile = () => {
     const [isProfileUpdating, setIsProfileUpdating] = useState(false);
 
-    const { authUser, isGuest } = useAuthStore((state) => ({
+    const { authUser, isGuest } = useAuthStore(useShallow((state) => ({
         authUser: state.user,
         isGuest: state.isGuest,
-    }));
+    })));
     const setAuthUser = useAuthStore((state) => state.setUser);
     const setUserProfile = useUserProfileStore((state) => state.setUserProfile);
 

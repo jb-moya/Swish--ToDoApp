@@ -3,15 +3,16 @@ import { firestore } from "../firebase/firebase";
 import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import useAuthStore from "../store/authStore";
 import useShowToast from "./useShowToast";
+import { useShallow } from "zustand/shallow";
 import useTaskStore from "../store/taskStore";
 
 function useDeleteTask() {
     const showToast = useShowToast();
 
-    const { authUser, isGuest } = useAuthStore((state) => ({
+    const { authUser, isGuest } = useAuthStore(useShallow((state) => ({
         authUser: state.user,
         isGuest: state.isGuest,
-    }));
+    })));
     const { tasks, setTasks } = useTaskStore();
 
     const [isDeleting, setIsDeleting] = useState(false);

@@ -6,10 +6,10 @@ import {
     Heading,
     Button,
     VStack,
-    useColorMode,
 } from "@chakra-ui/react";
 import { MdDarkMode, MdOutlineLightMode } from "react-icons/md";
 import AuthForm from "../components/AuthForm/AuthForm";
+import { useColorMode } from "../components/ui/color-mode";
 
 const Authentication = () => {
     const { colorMode, toggleColorMode } = useColorMode();

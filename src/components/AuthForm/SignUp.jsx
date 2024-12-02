@@ -3,14 +3,14 @@ import {
     Input,
     Button,
     Alert,
-    AlertIcon,
+    // AlertIcon,
     Stack,
-    FormLabel,
-    FormControl,
-    useColorModeValue,
+    // FormLabel,
+    // FormControl,
 } from "@chakra-ui/react";
 import PasswordInput from "./PasswordInput";
 import useSignUpWithEmailAndPassword from "../../hooks/useSignUpWithEmailAndPassword";
+import { useColorModeValue } from "../ui/color-mode";
 
 const SignUp = () => {
     const [inputs, setInputs] = useState({
@@ -41,7 +41,7 @@ const SignUp = () => {
                 maxW={"md"}
                 bg={useColorModeValue("white", "gray.700")}
             >
-                <FormControl id="username" isRequired variant="floating">
+                {/* <FormControl id="username" isRequired variant="floating">
                     <Input
                         size={"sm"}
                         placeholder=" "
@@ -81,7 +81,7 @@ const SignUp = () => {
                     >
                         Email
                     </FormLabel>
-                </FormControl>
+                </FormControl> */}
 
                 <PasswordInput
                     placeholder="Password"
@@ -119,7 +119,7 @@ const SignUp = () => {
                         p={2}
                         my={3}
                     >
-                        <AlertIcon />
+                        {/* <AlertIcon /> */}
                         {error.message}
                     </Alert>
                 )}

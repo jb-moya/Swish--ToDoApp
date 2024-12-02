@@ -1,21 +1,34 @@
 "use client";
-
+import React, { useState } from "react";
 import {
     IconButton,
     Box,
-    CloseButton,
     Flex,
+    // CloseButton,
     Icon,
-    useColorModeValue,
-    Drawer,
-    DrawerContent,
     useDisclosure,
+    Text,
 } from "@chakra-ui/react";
+import {
+    DrawerBackdrop,
+    DrawerBody,
+    DrawerCloseTrigger,
+    DrawerActionTrigger,
+    DrawerContent,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerRoot,
+    DrawerTitle,
+    DrawerTrigger,
+} from "./../components/ui/drawer";
+import { Button } from "./ui/button";
 import { FiMenu } from "react-icons/fi";
 import UserProfileMenuButton from "./UserProfileMenuButton";
 import ThemeToggler from "./ThemeToggler";
 import filterSchedule from "../constants/filterSchedule";
 import useFilterScheduleStore from "../store/filterScheduleStore";
+import { useColorModeValue } from "./ui/color-mode";
+import { CloseButton } from "./ui/close-button";
 
 const SidebarContent = ({ onClose, ...rest }) => {
     const { setFilter } = useFilterScheduleStore();
@@ -58,7 +71,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
     );
 };
 
-const NavItem = ({ icon, children, ...rest }) => {
+const NavItem = ({ icon, content, ...rest }) => {
     return (
         <Box
             as="a"
@@ -82,14 +95,15 @@ const NavItem = ({ icon, children, ...rest }) => {
                 {icon && (
                     <Icon
                         mr="4"
-                        fontSize="16"
+                        fontSize="20px"
                         _groupHover={{
                             color: "white",
                         }}
-                        as={icon}
-                    />
+                    >
+                        {icon}
+                    </Icon>
                 )}
-                {children}
+                <Text>{content}</Text>
             </Flex>
         </Box>
     );
@@ -107,12 +121,87 @@ const MobileNav = ({ onOpen, ...rest }) => {
     );
 };
 
+const Test = () => {
+    return <Box>ffff</Box>;
+};
+
 const SidebarWithHeader = () => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    // const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
+    const [open, setOpen] = useState(false);
 
     return (
         <Box>
-            <Drawer
+            <DrawerRoot
+                placement="start"
+                open={open}
+                onOpenChange={(e) => setOpen(e.open)}
+            >
+                <DrawerBackdrop />
+                <DrawerTrigger asChild>
+                    {/* <MobileNav onOpen={() => setOpen(true)} /> */}
+                    <IconButton
+                        display={{ base: "flex", md: "none" }}
+                        // onClick={onOpen}
+                        variant="outline"
+                        aria-label="open menu"
+                        icon={<FiMenu />}
+                    />
+                    {/* <Button variant="outline" size="sm">
+                        Open Drawer
+                    </Button> */}
+                </DrawerTrigger>
+                <DrawerContent>
+                    <DrawerHeader>
+                        {/* <DrawerTitle>Drawer Title</DrawerTitle> */}
+                        <DrawerTitle>
+                            <Flex
+                                h="20"
+                                alignItems="center"
+                                mx="4"
+                                justifyContent="space-between"
+                            >
+                                <Flex>
+                                    <UserProfileMenuButton />
+                                    <ThemeToggler />
+                                </Flex>
+                                <CloseButton
+                                    display={{ base: "flex" }}
+                                    onClick={() => setOpen(false)}
+                                />
+                            </Flex>
+                        </DrawerTitle>
+                    </DrawerHeader>
+                    <DrawerTrigger />
+                    <DrawerBody>
+                        {filterSchedule.map((filterType) => {
+                            return (
+                                <NavItem
+                                    key={filterType.name}
+                                    icon={<filterType.icon />}
+                                    content={filterType.name}
+                                    onClick={() => {
+                                        const { icon, ...filterWithoutIcon } =
+                                            filterType; // Destructure and omit `icon`
+                                        setFilter(filterWithoutIcon);
+                                        onClose();
+                                    }}
+                                />
+                            );
+                        })}
+                    </DrawerBody>
+                    <DrawerFooter />
+
+                    <DrawerFooter>
+                        <DrawerActionTrigger asChild>
+                            <Button variant="outline">Cancel</Button>
+                        </DrawerActionTrigger>
+                        <Button>Save</Button>
+                    </DrawerFooter>
+                    <DrawerCloseTrigger />
+                </DrawerContent>
+            </DrawerRoot>
+
+            {/* <Drawer
                 isOpen={isOpen}
                 placement="left"
                 onClose={onClose}
@@ -122,8 +211,7 @@ const SidebarWithHeader = () => {
                 <DrawerContent>
                     <SidebarContent onClose={onClose} />
                 </DrawerContent>
-            </Drawer>
-            <MobileNav onOpen={onOpen} />
+            </Drawer> */}
         </Box>
     );
 };

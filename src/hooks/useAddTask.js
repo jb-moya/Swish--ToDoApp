@@ -9,15 +9,16 @@ import {
     doc,
     updateDoc,
 } from "firebase/firestore";
+import { useShallow } from "zustand/shallow";
 import { firestore } from "../firebase/firebase";
 
 function useAddTask() {
     const showToast = useShowToast();
     const [isLoading, setIsLoading] = useState(false);
-    const { authUser, isGuest } = useAuthStore((state) => ({
+    const { authUser, isGuest } = useAuthStore(useShallow((state) => ({
         authUser: state.user,
         isGuest: state.isGuest,
-    }));
+    })));
 
     const { addTask } = useTaskStore();
 

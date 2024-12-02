@@ -4,24 +4,33 @@ import {
     Button,
     Box,
     HStack,
-    Spinner,
     useBreakpointValue,
-    Modal,
     useDisclosure,
-    ModalOverlay,
-    ModalBody,
-    ModalContent,
     Icon,
-    useColorModeValue,
-    Divider,
-    Menu,
     Flex,
-    MenuButton,
+    Spinner,
     Portal,
     Spacer,
-    MenuList,
-    MenuItem,
 } from "@chakra-ui/react";
+import {
+    MenuContent,
+    MenuItem,
+    MenuItemCommand,
+    MenuRoot,
+    MenuTrigger,
+} from "./../components/ui/menu";
+import {
+    DialogBody,
+    DialogCloseTrigger,
+    DialogActionTrigger,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogRoot,
+    DialogTitle,
+    DialogTrigger,
+} from "./../components/ui/dialog";
+import { useColorModeValue } from "../components/ui/color-mode";
 import TaskContainer from "../components/Task/TaskContainer";
 import TaskEditable from "../components/Task/TaskEditable";
 import useAddTask from "../hooks/useAddTask";
@@ -31,13 +40,14 @@ import useFilterScheduleStore from "../store/filterScheduleStore";
 import { RiDeleteBin3Line } from "react-icons/ri";
 import { FaPlus } from "react-icons/fa6";
 import useDeleteTask from "../hooks/useDeleteTask";
-import { ChevronDownIcon } from "@chakra-ui/icons";
+import { IoChevronDown } from "react-icons/io5";
 import { BsSortDown, BsSortUp } from "react-icons/bs";
 import useCategoryStore from "../store/categoryStore";
 import CategorySelector from "../components/Task/CategorySelector";
 import Footer from "../components/Footer";
 import useShowToast from "../hooks/useShowToast";
 import SidebarWithHeader from "../components/SideBarWithHeader";
+import { useShallow } from "zustand/shallow";
 
 const messages = [
     "Enjoy the calm and take some time for yourself. You've earned this moment of relaxation!",
@@ -61,7 +71,8 @@ const getRandomMessage = () => {
 const Home = () => {
     const showToast = useShowToast();
 
-    const randomMessage = useMemo(() => getRandomMessage(), []);
+    const randomMessage = getRandomMessage();
+    // const filter = useFilterScheduleStore(useShallow((state) => state.filter));
     const { filter } = useFilterScheduleStore();
     const { selectedCategoryId, setSelectedCategoryId } = useCategoryStore();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -200,7 +211,7 @@ const Home = () => {
                     >
                         {isSmallScreen ? "" : "Delete Completed Tasks"}
                     </Button>
-                    <Divider orientation="vertical" />
+                    {/* <Divider orientation="vertical" /> */}
 
                     <CategorySelector
                         currentCategory={selectedCategoryId}
@@ -210,44 +221,47 @@ const Home = () => {
 
                     <Spacer />
 
-                    <Menu>
-                        <MenuButton
-                            ml={2}
-                            px={1}
-                            as={Button}
-                            variant={"outline"}
-                            border={`1px solid ${useColorModeValue(
-                                "rgba(0, 163, 196, 0.2)",
-                                "rgba(0, 163, 196, 0.2)"
-                            )}`}
-                            size={"sm"}
-                            rightIcon={<ChevronDownIcon />}
-                        >
-                            <HStack>
-                                <Box
-                                    pl={1}
-                                    textColor={useColorModeValue(
-                                        "gray.700",
-                                        "gray.100"
-                                    )}
-                                    fontWeight={"thin"}
-                                    opacity={0.75}
-                                >
-                                    {!isSmallScreen ? "Sort by:" : "Sort"}
-                                </Box>
-                                {!isSmallScreen && (
-                                    <Box>
-                                        {sortConfig.key === "dueDate"
-                                            ? "Due date"
-                                            : sortConfig.key === "priority"
-                                            ? "Priority"
-                                            : "Task Name"}
+                    {/* <MenuRoot>
+                        <MenuTrigger asChild>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                ml={2}
+                                px={1}
+                                as={Button}
+                                border={`1px solid ${useColorModeValue(
+                                    "rgba(0, 163, 196, 0.2)",
+                                    "rgba(0, 163, 196, 0.2)"
+                                )}`}
+                                rightIcon={<IoChevronDown />}
+                            >
+                                <HStack>
+                                    <Box
+                                        pl={1}
+                                        textColor={useColorModeValue(
+                                            "gray.700",
+                                            "gray.100"
+                                        )}
+                                        fontWeight={"thin"}
+                                        opacity={0.75}
+                                    >
+                                        {!isSmallScreen ? "Sort by:" : "Sort"}
                                     </Box>
-                                )}
-                            </HStack>
-                        </MenuButton>
+                                    {!isSmallScreen && (
+                                        <Box>
+                                            {sortConfig.key === "dueDate"
+                                                ? "Due date"
+                                                : sortConfig.key === "priority"
+                                                  ? "Priority"
+                                                  : "Task Name"}
+                                        </Box>
+                                    )}
+                                </HStack>
+                            </Button>
+                        </MenuTrigger>
+
                         <Portal>
-                            <MenuList>
+                            <MenuContent>
                                 <MenuItem
                                     as={Button}
                                     onClick={() => setSortConfig("taskName")}
@@ -266,9 +280,10 @@ const Home = () => {
                                 >
                                     Priority
                                 </MenuItem>
-                            </MenuList>
+                            </MenuContent>
                         </Portal>
-                    </Menu>
+                    </MenuRoot> */}
+
                     <Button
                         px={1}
                         variant={"ghost"}
@@ -282,37 +297,65 @@ const Home = () => {
                                     : "desc"}
                             </Box>
                         )}
-                        <Icon
+                        {/* <Icon
                             as={
                                 sortConfig.direction === "ascending"
-                                    ? BsSortDown
-                                    : BsSortUp
+                                ? BsSortDown
+                                : BsSortUp
                             }
-                        />
+                        /> */}
                     </Button>
                 </HStack>
+
                 {isSmallScreen ? (
-                    <Modal
-                        p={0}
-                        m={0}
-                        width="fit-content"
-                        isCentered
-                        isOpen={isOpen}
-                        onClose={onClose}
-                    >
-                        <ModalOverlay />
-                        <ModalContent p={0} m={0}>
-                            <ModalBody p={0} m={0}>
-                                <TaskEditable
-                                    onCancel={onClose}
-                                    onSave={handleAddingTask}
-                                    isLoading={isAddTaskLoading}
-                                    isAddingNewTask
-                                />
-                            </ModalBody>
-                        </ModalContent>
-                    </Modal>
+                    <DialogRoot>
+                        <DialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                                Open Dialog
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Dialog Title</DialogTitle>
+                            </DialogHeader>
+                            <DialogBody>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur
+                                    adipiscing elit. Sed do eiusmod tempor
+                                    incididunt ut labore et dolore magna aliqua.
+                                </p>
+                            </DialogBody>
+                            <DialogFooter>
+                                <DialogActionTrigger asChild>
+                                    <Button variant="outline">Cancel</Button>
+                                </DialogActionTrigger>
+                                <Button>Save</Button>
+                            </DialogFooter>
+                            <DialogCloseTrigger />
+                        </DialogContent>
+                    </DialogRoot>
                 ) : (
+                    // <Modal
+                    //     p={0}
+                    //     m={0}
+                    //     width="fit-content"
+                    //     isCentered
+                    //     isOpen={isOpen}
+                    //     onClose={onClose}
+                    // >
+                    //     <ModalOverlay />
+                    //     <ModalContent p={0} m={0}>
+                    //         <ModalBody p={0} m={0}>
+                    //             <TaskEditable
+                    //                 onCancel={onClose}
+                    //                 onSave={handleAddingTask}
+                    //                 isLoading={isAddTaskLoading}
+                    //                 isAddingNewTask
+                    //             />
+                    //         </ModalBody>
+                    //     </ModalContent>
+                    // </Modal>
+
                     isOpen && (
                         <TaskEditable
                             onCancel={onClose}

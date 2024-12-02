@@ -3,11 +3,11 @@ import {
     Input,
     Button,
     Box,
-    FormLabel,
-    FormControl,
-    useColorModeValue,
+    // FormLabel,
+    // FormControl,
 } from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { useColorModeValue } from "../ui/color-mode";
 
 const PasswordInput = ({
     placeholder,
@@ -18,7 +18,7 @@ const PasswordInput = ({
 }) => {
     return (
         <Box position={"relative"}>
-            <FormControl
+            {/* <FormControl
                 key={showPassword}
                 isRequired
                 variant="floating"
@@ -39,7 +39,7 @@ const PasswordInput = ({
                 >
                     {placeholder}
                 </FormLabel>
-            </FormControl>
+            </FormControl> */}
 
             <Button
                 position={"absolute"}
@@ -52,9 +52,9 @@ const PasswordInput = ({
                 onClick={setShowPassword}
             >
                 {showPassword ? (
-                    <Icon as={ViewIcon} />
+                    <Icon as={AiFillEye} />
                 ) : (
-                    <Icon as={ViewOffIcon} />
+                    <Icon as={AiFillEyeInvisible} />
                 )}
             </Button>
         </Box>

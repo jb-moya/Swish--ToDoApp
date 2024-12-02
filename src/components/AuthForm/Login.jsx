@@ -2,15 +2,15 @@ import {
     Button,
     Input,
     Alert,
-    AlertIcon,
-    FormControl,
-    FormLabel,
-    useColorModeValue,
+    // AlertIcon,
+    // FormControl,
+    // FormLabel,
     Stack,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import PasswordInput from "./PasswordInput";
 import useLogin from "../../hooks/useLogin";
+import { useColorModeValue } from "../ui/color-mode";
 
 const Login = () => {
     const [inputs, setInputs] = useState({
@@ -35,7 +35,7 @@ const Login = () => {
                 maxW={"md"}
                 bg={useColorModeValue("white", "gray.700")}
             >
-                <FormControl id="email" isRequired variant="floating">
+                {/* <FormControl id="email" isRequired variant="floating">
                     <Input
                         size={"sm"}
                         placeholder=" "
@@ -54,7 +54,7 @@ const Login = () => {
                     >
                         Email
                     </FormLabel>
-                </FormControl>
+                </FormControl> */}
 
                 <PasswordInput
                     placeholder={"Password"}
@@ -72,7 +72,7 @@ const Login = () => {
                         p={2}
                         my={3}
                     >
-                        <AlertIcon />
+                        {/* <AlertIcon /> */}
                         {error.message}
                     </Alert>
                 )}

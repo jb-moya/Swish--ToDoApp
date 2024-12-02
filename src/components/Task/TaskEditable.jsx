@@ -3,32 +3,32 @@ import {
     Box,
     Button,
     Flex,
-    useColorModeValue,
-    Menu,
-    MenuButton,
+    // Menu,
+    // MenuButton,
     IconButton,
-    MenuList,
-    MenuItem,
-    Divider,
+    // MenuList,
+    // MenuItem,
+    // Divider,
     Textarea,
-    ButtonGroup,
+    // ButtonGroup,
     Tooltip,
     Spacer,
-    MenuDivider,
+    // MenuDivider,
     Portal,
     Icon,
     Text,
 } from "@chakra-ui/react";
 import { IoCalendarClearOutline, IoFlagOutline } from "react-icons/io5";
-import { CloseIcon } from "@chakra-ui/icons";
+import { IoMdClose } from "react-icons/io";
+import { useColorModeValue } from "../ui/color-mode";
 import DatePicker from "../../components/DatePicker";
 import useDateFormat, { formatTime, getDayOfWeek } from "../utils/dateFormat";
 import CategorySelector from "./CategorySelector";
-import { ChevronDownIcon } from "@chakra-ui/icons";
+import { IoChevronDown } from "react-icons/io5";
 import useFilterScheduleStore from "../../store/filterScheduleStore";
 import useCategoryStore from "../../store/categoryStore";
 import { BsFillPinAngleFill } from "react-icons/bs";
-import { DeleteIcon } from "@chakra-ui/icons";
+import { MdDelete } from "react-icons/md";
 import "../../index.css";
 import useDeleteTask from "../../hooks/useDeleteTask";
 import {
@@ -343,7 +343,7 @@ const TaskEditable = React.memo(
                         mb={2}
                         position={"relative"}
                     >
-                        <Menu>
+                        {/* <Menu>
                             <Tooltip
                                 label="Select Due Date"
                                 placement="top"
@@ -387,7 +387,7 @@ const TaskEditable = React.memo(
                                         <IconButton
                                             border={`1px solid ${borderColor}`}
                                             color={borderStyle}
-                                            icon={<CloseIcon />}
+                                            icon={<IoMdClose />}
                                             onClick={(e) => {
                                                 e.stopPropagation();
 
@@ -549,7 +549,7 @@ const TaskEditable = React.memo(
                                                 position={"absolute"}
                                                 variant={"ghost"}
                                                 size={"10px"}
-                                                as={CloseIcon}
+                                                as={IoMdClose}
                                                 color={"red.400"}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
@@ -607,9 +607,9 @@ const TaskEditable = React.memo(
 
                                 </MenuList>
                             </Portal>
-                        </Menu>
+                        </Menu> */}
 
-                        <Menu>
+                        {/* <Menu>
                             <Tooltip
                                 label="Select Priority"
                                 placement="top"
@@ -633,7 +633,7 @@ const TaskEditable = React.memo(
                                             "rgba(0, 163, 196, 0.2)"
                                         )}`}
                                         leftIcon={<IoFlagOutline />}
-                                        rightIcon={<ChevronDownIcon />}
+                                        rightIcon={<IoChevronDown />}
                                     >
                                         {priority[editTaskInfo.priority || 0]}
                                     </MenuButton>
@@ -643,7 +643,7 @@ const TaskEditable = React.memo(
                                             variant={"ghost"}
                                             color={borderStyle}
                                             border={`1px solid ${borderColor}`}
-                                            icon={<CloseIcon />}
+                                            icon={<IoMdClose />}
                                             onClick={(e) => {
                                                 e.stopPropagation();
 
@@ -675,7 +675,7 @@ const TaskEditable = React.memo(
                                     ))}
                                 </MenuList>
                             </Portal>
-                        </Menu>
+                        </Menu> */}
 
                         <CategorySelector
                             currentCategory={editTaskInfo.category}
@@ -704,12 +704,12 @@ const TaskEditable = React.memo(
                             size={"sm"}
                             variant={"ghost"}
                             aria-label="delete task"
-                            icon={<DeleteIcon />}
+                            icon={<MdDelete />}
                             onClick={handleDeletingTask}
                             isLoading={isDeleting}
                         />
                     </Flex>
-                    <Divider />
+                    {/* <Divider /> */}
                     <Flex
                         mt={2}
                         justifyContent={{ base: "center", sm: "flex-end" }}

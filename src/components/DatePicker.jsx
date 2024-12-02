@@ -1,5 +1,6 @@
 import ReactDatePicker from "react-datepicker";
-import { useColorMode, Box } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
+import { useColorMode } from "./ui/color-mode";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "../date-picker.css";

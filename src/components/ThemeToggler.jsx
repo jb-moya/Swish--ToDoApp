@@ -1,4 +1,5 @@
-import { useColorMode, IconButton } from "@chakra-ui/react";
+import { IconButton } from "@chakra-ui/react";
+import { useColorMode } from "./ui/color-mode";
 import { MdDarkMode, MdOutlineLightMode } from "react-icons/md";
 
 const ThemeToggler = ({...IconStyle}) => {
