@@ -1,14 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import {
-    IconButton,
-    Box,
-    Flex,
-    // CloseButton,
-    Icon,
-    useDisclosure,
-    Text,
-} from "@chakra-ui/react";
+import { IconButton, Box, Flex, Icon, Text } from "@chakra-ui/react";
 import {
     DrawerBackdrop,
     DrawerBody,
@@ -21,6 +13,22 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "./../components/ui/drawer";
+import {
+    DialogBody,
+    DialogCloseTrigger,
+    DialogContent,
+    DialogHeader,
+    DialogRoot,
+    DialogTitle,
+    DialogTrigger,
+} from "./ui/dialog";
+import {
+    MenuContent,
+    MenuItem,
+    MenuItemCommand,
+    MenuRoot,
+    MenuTrigger,
+} from "./ui/menu";
 import { Button } from "./ui/button";
 import { FiMenu } from "react-icons/fi";
 import UserProfileMenuButton from "./UserProfileMenuButton";
@@ -29,47 +37,6 @@ import filterSchedule from "../constants/filterSchedule";
 import useFilterScheduleStore from "../store/filterScheduleStore";
 import { useColorModeValue } from "./ui/color-mode";
 import { CloseButton } from "./ui/close-button";
-
-const SidebarContent = ({ onClose, ...rest }) => {
-    const { setFilter } = useFilterScheduleStore();
-
-    return (
-        <Box
-            transition="3s ease"
-            bg={useColorModeValue("white", "gray.900")}
-            w={{ base: "full" }}
-            pos="fixed"
-            h="full"
-            {...rest}
-        >
-            <Flex
-                h="20"
-                alignItems="center"
-                mx="4"
-                justifyContent="space-between"
-            >
-                <Flex>
-                    <UserProfileMenuButton />
-                    <ThemeToggler />
-                </Flex>
-                <CloseButton display={{ base: "flex" }} onClick={onClose} />
-            </Flex>
-            {filterSchedule.map((filterType) => (
-                <NavItem
-                    key={filterType.name}
-                    icon={filterType.icon}
-                    onClick={() => {
-                        const { icon, ...filterWithoutIcon } = filterType; // Destructure and omit `icon`
-                        setFilter(filterWithoutIcon);
-                        onClose();
-                    }}
-                >
-                    {filterType.name}
-                </NavItem>
-            ))}
-        </Box>
-    );
-};
 
 const NavItem = ({ icon, content, ...rest }) => {
     return (
@@ -109,50 +76,63 @@ const NavItem = ({ icon, content, ...rest }) => {
     );
 };
 
-const MobileNav = ({ onOpen, ...rest }) => {
-    return (
-        <IconButton
-            display={{ base: "flex", md: "none" }}
-            onClick={onOpen}
-            variant="outline"
-            aria-label="open menu"
-            icon={<FiMenu />}
-        />
-    );
-};
-
-const Test = () => {
-    return <Box>ffff</Box>;
-};
-
 const SidebarWithHeader = () => {
-    // const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
     const [open, setOpen] = useState(false);
 
     return (
         <Box>
+            {/* <DialogRoot trapFocus={false} size="full">
+                <DialogTrigger asChild>
+                    <Button variant="outline" size="sm">
+                        Open Dialog
+                    </Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Dialog Title</DialogTitle>
+                    </DialogHeader>
+                    <DialogBody>
+                        <MenuRoot>
+                            <MenuTrigger asChild>
+                                <Button variant="outline">Edit</Button>
+                            </MenuTrigger>
+                            <MenuContent zIndex={"max"}>
+                                <MenuItem value="cut" valueText="cut">
+                                    <Box flex="1">Cut</Box>
+                                    <MenuItemCommand>⌘X</MenuItemCommand>
+                                </MenuItem>
+                                <MenuItem value="copy" valueText="copy">
+                                    <Box flex="1">Copy</Box>
+                                    <MenuItemCommand>⌘C</MenuItemCommand>
+                                </MenuItem>
+                                <MenuItem value="paste" valueText="paste">
+                                    <Box flex="1">Paste</Box>
+                                    <MenuItemCommand>⌘V</MenuItemCommand>
+                                </MenuItem>
+                            </MenuContent>
+                        </MenuRoot>
+                    </DialogBody>
+                    <DialogCloseTrigger />
+                </DialogContent>
+            </DialogRoot> */}
             <DrawerRoot
+                trapFocus={false}
                 placement="start"
                 open={open}
                 onOpenChange={(e) => setOpen(e.open)}
             >
                 <DrawerBackdrop />
                 <DrawerTrigger asChild>
-                    {/* <MobileNav onOpen={() => setOpen(true)} /> */}
                     <IconButton
                         display={{ base: "flex", md: "none" }}
-                        // onClick={onOpen}
                         variant="outline"
                         aria-label="open menu"
-                        icon={<FiMenu />}
-                    />
-                    {/* <Button variant="outline" size="sm">
-                        Open Drawer
-                    </Button> */}
+                    >
+                        <FiMenu />
+                    </IconButton>
                 </DrawerTrigger>
                 <DrawerContent>
                     <DrawerHeader>
-                        {/* <DrawerTitle>Drawer Title</DrawerTitle> */}
                         <DrawerTitle>
                             <Flex
                                 h="20"
@@ -160,14 +140,10 @@ const SidebarWithHeader = () => {
                                 mx="4"
                                 justifyContent="space-between"
                             >
-                                <Flex>
+                                <Flex zindex={"max"}>
                                     <UserProfileMenuButton />
                                     <ThemeToggler />
                                 </Flex>
-                                <CloseButton
-                                    display={{ base: "flex" }}
-                                    onClick={() => setOpen(false)}
-                                />
                             </Flex>
                         </DrawerTitle>
                     </DrawerHeader>
@@ -181,7 +157,7 @@ const SidebarWithHeader = () => {
                                     content={filterType.name}
                                     onClick={() => {
                                         const { icon, ...filterWithoutIcon } =
-                                            filterType; // Destructure and omit `icon`
+                                            filterType;
                                         setFilter(filterWithoutIcon);
                                         onClose();
                                     }}
@@ -191,27 +167,9 @@ const SidebarWithHeader = () => {
                     </DrawerBody>
                     <DrawerFooter />
 
-                    <DrawerFooter>
-                        <DrawerActionTrigger asChild>
-                            <Button variant="outline">Cancel</Button>
-                        </DrawerActionTrigger>
-                        <Button>Save</Button>
-                    </DrawerFooter>
                     <DrawerCloseTrigger />
                 </DrawerContent>
             </DrawerRoot>
-
-            {/* <Drawer
-                isOpen={isOpen}
-                placement="left"
-                onClose={onClose}
-                returnFocusOnClose={false}
-                onOverlayClick={onClose}
-            >
-                <DrawerContent>
-                    <SidebarContent onClose={onClose} />
-                </DrawerContent>
-            </Drawer> */}
         </Box>
     );
 };

@@ -1,17 +1,14 @@
-import {
-    Button,
-    Input,
-    Alert,
-    // AlertIcon,
-    // FormControl,
-    // FormLabel,
-    Stack,
-} from "@chakra-ui/react";
+import { Input, Stack } from "@chakra-ui/react";
+import { Alert } from "../ui/alert";
+import { Button } from "../ui/button";
 import { useState } from "react";
 import PasswordInput from "./PasswordInput";
 import useLogin from "../../hooks/useLogin";
 import { useColorModeValue } from "../ui/color-mode";
-
+import { Field } from "../ui/field";
+import useSocialAuth from "../../hooks/useSocialAuth";
+import { FiAlertCircle } from "react-icons/fi";
+import useAuthStore from "../../store/authStore";
 const Login = () => {
     const [inputs, setInputs] = useState({
         email: "",
@@ -19,7 +16,8 @@ const Login = () => {
     });
 
     const [showPassword, setShowPassword] = useState(false);
-    const { loading, error, login } = useLogin();
+    const isLoggingIn = useAuthStore((state) => state.isLoggingIn);
+    const { loading: loginLoading, error, login } = useLogin();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -35,7 +33,7 @@ const Login = () => {
                 maxW={"md"}
                 bg={useColorModeValue("white", "gray.700")}
             >
-                {/* <FormControl id="email" isRequired variant="floating">
+                <Field id="email" required variant="floating" label="Email">
                     <Input
                         size={"sm"}
                         placeholder=" "
@@ -47,14 +45,7 @@ const Login = () => {
                             setInputs({ ...inputs, email: e.target.value })
                         }
                     />
-                    <FormLabel
-                        fontWeight={"thin"}
-                        size={"sm"}
-                        bg={useColorModeValue("#fff", "#2d3748")}
-                    >
-                        Email
-                    </FormLabel>
-                </FormControl> */}
+                </Field>
 
                 <PasswordInput
                     placeholder={"Password"}
@@ -67,12 +58,13 @@ const Login = () => {
                 {error && (
                     <Alert
                         status="error"
+                        title="Error logging in"
                         fontSize={"sm"}
                         rounded={"sm"}
                         p={2}
                         my={3}
                     >
-                        {/* <AlertIcon /> */}
+                        {/* <FiAlertCircle /> */}
                         {error.message}
                     </Alert>
                 )}
@@ -82,7 +74,9 @@ const Login = () => {
                     width="full"
                     mt={5}
                     type="submit"
-                    isLoading={loading}
+                    loading={loginLoading}
+                    disabled={loginLoading || isLoggingIn}
+                    loadingText="Signing in"
                 >
                     LOGIN
                 </Button>

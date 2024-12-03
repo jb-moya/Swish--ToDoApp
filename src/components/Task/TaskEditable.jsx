@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
     Box,
-    Button,
     Flex,
     // Menu,
     // MenuButton,
@@ -9,9 +8,9 @@ import {
     // MenuList,
     // MenuItem,
     // Divider,
+    Group,
     Textarea,
     // ButtonGroup,
-    Tooltip,
     Spacer,
     // MenuDivider,
     Portal,
@@ -38,7 +37,10 @@ import {
     FaSun,
     FaClock,
 } from "react-icons/fa";
+import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "./../ui/menu";
 import TimePicker from "../TimePicker";
+import { Button } from "../ui/button";
+import { Tooltip } from "../ui/tooltip";
 import useShowToast from "../../hooks/useShowToast";
 
 const priority = ["none", "low", "medium", "high", "critical"];
@@ -343,51 +345,55 @@ const TaskEditable = React.memo(
                         mb={2}
                         position={"relative"}
                     >
-                        {/* <Menu>
+                        <MenuRoot>
                             <Tooltip
-                                label="Select Due Date"
+                                content="Select Due Date"
                                 placement="top"
                                 openDelay={500}
                             >
-                                <ButtonGroup
-                                    size="sm"
-                                    isAttached
-                                    variant="outline"
-                                >
-                                    <MenuButton
-                                        as={Button}
-                                        color={borderStyle}
-                                        display={"flex"}
-                                        flexDirection={"row"}
-                                        border={`1px solid ${borderColor}`}
-                                        onClick={() =>
-                                            setShowDatePicker(!showDatePicker)
-                                        }
-                                        leftIcon={<IoCalendarClearOutline />}
-                                    >
-                                        {editTaskInfo.dueDate !== null ? (
-                                            <Box display={"flex"}>
-                                                {dateFormat(
-                                                    editTaskInfo.dueDate
-                                                )}
-                                                {editTaskInfo.dueTime && (
-                                                    <Text ml={1} opacity={0.75}>
-                                                        {formatTime(
-                                                            editTaskInfo.dueTime
-                                                        )}
-                                                    </Text>
-                                                )}
-                                            </Box>
-                                        ) : (
-                                            "No Date"
-                                        )}
-                                    </MenuButton>
+                                <Group size="sm" isAttached variant="outline">
+                                    <MenuTrigger asChild>
+                                        <Button
+                                            // as={Button}
+                                            color={borderStyle}
+                                            display={"flex"}
+                                            flexDirection={"row"}
+                                            border={`1px solid ${borderColor}`}
+                                            onClick={() =>
+                                                setShowDatePicker(
+                                                    !showDatePicker
+                                                )
+                                            }
+                                            leftIcon={
+                                                <IoCalendarClearOutline />
+                                            }
+                                        >
+                                            {editTaskInfo.dueDate !== null ? (
+                                                <Box display={"flex"}>
+                                                    {dateFormat(
+                                                        editTaskInfo.dueDate
+                                                    )}
+                                                    {editTaskInfo.dueTime && (
+                                                        <Text
+                                                            ml={1}
+                                                            opacity={0.75}
+                                                        >
+                                                            {formatTime(
+                                                                editTaskInfo.dueTime
+                                                            )}
+                                                        </Text>
+                                                    )}
+                                                </Box>
+                                            ) : (
+                                                "No Date"
+                                            )}
+                                        </Button>
+                                    </MenuTrigger>
 
                                     {editTaskInfo.dueDate && (
                                         <IconButton
                                             border={`1px solid ${borderColor}`}
                                             color={borderStyle}
-                                            icon={<IoMdClose />}
                                             onClick={(e) => {
                                                 e.stopPropagation();
 
@@ -397,13 +403,15 @@ const TaskEditable = React.memo(
                                                 });
                                             }}
                                             _hover={{ color: "red" }}
-                                        />
+                                        >
+                                            <IoMdClose />
+                                        </IconButton>
                                     )}
-                                </ButtonGroup>
+                                </Group>
                             </Tooltip>
 
                             <Portal>
-                                <MenuList p={0}>
+                                <MenuContent p={0}>
                                     <MenuItem
                                         flex
                                         justifyContent={"space-between"}
@@ -413,11 +421,9 @@ const TaskEditable = React.memo(
                                             display={"flex"}
                                             alignItems={"center"}
                                         >
-                                            <Icon
-                                                as={FaCalendarDay}
-                                                mr={2}
-                                                opacity={0.5}
-                                            />
+                                            <Icon mr={2} opacity={0.5}>
+                                                <FaCalendarDay />
+                                            </Icon>
                                             Today
                                         </Box>
                                         <Box fontSize={"xs"} opacity={0.5}>
@@ -433,11 +439,10 @@ const TaskEditable = React.memo(
                                             display={"flex"}
                                             alignItems={"center"}
                                         >
-                                            <Icon
-                                                as={FaArrowRight}
-                                                mr={2}
-                                                opacity={0.5}
-                                            />{" "}
+                                            <Icon mr={2} opacity={0.5}>
+                                                {/* {" "} */}
+                                                <FaArrowRight />
+                                            </Icon>{" "}
                                             Tomorrow
                                         </Box>
                                         <Box fontSize={"xs"} opacity={0.5}>
@@ -459,11 +464,10 @@ const TaskEditable = React.memo(
                                             display={"flex"}
                                             alignItems={"center"}
                                         >
-                                            <Icon
-                                                as={FaCalendarWeek}
-                                                mr={2}
-                                                opacity={0.5}
-                                            />{" "}
+                                            <Icon mr={2} opacity={0.5}>
+                                                {/* {" "} */}
+                                                <FaCalendarWeek />
+                                            </Icon>
                                             Next Week
                                         </Box>
                                         <Box fontSize={"xs"} opacity={0.5}>
@@ -487,11 +491,10 @@ const TaskEditable = React.memo(
                                             display={"flex"}
                                             alignItems={"center"}
                                         >
-                                            <Icon
-                                                as={FaSun}
-                                                mr={2}
-                                                opacity={0.5}
-                                            />{" "}
+                                            <Icon mr={2} opacity={0.5}>
+                                                {/* {" "} */}
+                                                <FaSun />
+                                            </Icon>
                                             This Weekend
                                         </Box>
                                         <Box fontSize={"xs"} opacity={0.5}>
@@ -506,12 +509,11 @@ const TaskEditable = React.memo(
                                         </Box>
                                     </MenuItem>
 
-                                    <MenuDivider />
+                                    {/* <MenuDivider /> */}
 
-                                    <DatePicker
+                                    {/* <DatePicker
                                         selectedDate={editTaskInfo.dueDate}
                                         onChange={(date) => {
-
                                             setEditTaskInfo({
                                                 ...editTaskInfo,
                                                 dueDate: date,
@@ -520,9 +522,9 @@ const TaskEditable = React.memo(
                                         }}
                                         isCalendarOpen={showDatePicker}
                                         setCalendarIsOpen={setShowDatePicker}
-                                    />
+                                    /> */}
 
-                                    <MenuDivider />
+                                    {/* <MenuDivider /> */}
 
                                     {openTimePicker ? (
                                         <Box position={"relative"}>
@@ -549,7 +551,6 @@ const TaskEditable = React.memo(
                                                 position={"absolute"}
                                                 variant={"ghost"}
                                                 size={"10px"}
-                                                as={IoMdClose}
                                                 color={"red.400"}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
@@ -561,7 +562,9 @@ const TaskEditable = React.memo(
 
                                                     setOpenTimePicker(false);
                                                 }}
-                                            />
+                                            >
+                                                <IoMdClose />
+                                            </IconButton>
                                         </Box>
                                     ) : (
                                         <MenuItem
@@ -590,10 +593,12 @@ const TaskEditable = React.memo(
                                             >
                                                 <Icon
                                                     boxSize={4}
-                                                    as={FaClock}
                                                     mr={2}
                                                     opacity={0.5}
-                                                />{" "}
+                                                >
+                                                    {/* {" "} */}
+                                                    <FaClock />
+                                                </Icon>
                                                 <Box>Set Time</Box>
                                             </Box>
 
@@ -604,24 +609,19 @@ const TaskEditable = React.memo(
                                             </Box>
                                         </MenuItem>
                                     )}
-
-                                </MenuList>
+                                </MenuContent>
                             </Portal>
-                        </Menu> */}
+                        </MenuRoot>
 
-                        {/* <Menu>
+                        <MenuRoot>
                             <Tooltip
-                                label="Select Priority"
+                                content="Select Priority"
                                 placement="top"
                                 openDelay={500}
                             >
-                                <ButtonGroup
-                                    size="sm"
-                                    isAttached
-                                    variant="outline"
-                                >
-                                    <MenuButton
-                                        as={Button}
+                                <Group size="sm" isAttached variant="outline">
+                                    <Button
+                                        // as={Button}
                                         display={"flex"}
                                         px={2}
                                         color={useColorModeValue(
@@ -636,14 +636,13 @@ const TaskEditable = React.memo(
                                         rightIcon={<IoChevronDown />}
                                     >
                                         {priority[editTaskInfo.priority || 0]}
-                                    </MenuButton>
+                                    </Button>
 
                                     {editTaskInfo.priority !== 0 && (
                                         <IconButton
                                             variant={"ghost"}
                                             color={borderStyle}
                                             border={`1px solid ${borderColor}`}
-                                            icon={<IoMdClose />}
                                             onClick={(e) => {
                                                 e.stopPropagation();
 
@@ -653,13 +652,15 @@ const TaskEditable = React.memo(
                                                 });
                                             }}
                                             _hover={{ color: "red" }}
-                                        />
+                                        >
+                                            <IoMdClose />
+                                        </IconButton>
                                     )}
-                                </ButtonGroup>
+                                </Group>
                             </Tooltip>
 
                             <Portal>
-                                <MenuList>
+                                <MenuContent>
                                     {priority.map((item, index) => (
                                         <MenuItem
                                             key={item}
@@ -673,9 +674,9 @@ const TaskEditable = React.memo(
                                             {item}
                                         </MenuItem>
                                     ))}
-                                </MenuList>
+                                </MenuContent>
                             </Portal>
-                        </Menu> */}
+                        </MenuRoot>
 
                         <CategorySelector
                             currentCategory={editTaskInfo.category}
@@ -691,23 +692,25 @@ const TaskEditable = React.memo(
                             left={0}
                             variant={editTaskInfo.isPinned ? "solid" : "ghost"}
                             aria-label="complete task"
-                            icon={<BsFillPinAngleFill />}
                             onClick={() => {
                                 setEditTaskInfo({
                                     ...editTaskInfo,
                                     isPinned: !editTaskInfo.isPinned,
                                 });
                             }}
-                        />
+                        >
+                            <BsFillPinAngleFill />
+                        </IconButton>
 
                         <IconButton
                             size={"sm"}
                             variant={"ghost"}
                             aria-label="delete task"
-                            icon={<MdDelete />}
                             onClick={handleDeletingTask}
-                            isLoading={isDeleting}
-                        />
+                            loading={isDeleting}
+                        >
+                            <MdDelete />
+                        </IconButton>
                     </Flex>
                     {/* <Divider /> */}
                     <Flex
@@ -735,7 +738,8 @@ const TaskEditable = React.memo(
                             }}
                             size={"sm"}
                             onClick={handleSave}
-                            isLoading={isLoading}
+                            loading={isLoading}
+                            loadingText="Saving..."
                             isDisabled={saveButtonDisable}
                         >
                             {isAddingNewTask ? "Add Task" : "Save"}

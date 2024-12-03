@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import Navbar from "../components/NavBar";
 import {
-    Button,
     Box,
     HStack,
     useBreakpointValue,
@@ -20,16 +19,11 @@ import {
     MenuTrigger,
 } from "./../components/ui/menu";
 import {
-    DialogBody,
-    DialogCloseTrigger,
-    DialogActionTrigger,
     DialogContent,
-    DialogFooter,
-    DialogHeader,
     DialogRoot,
-    DialogTitle,
     DialogTrigger,
 } from "./../components/ui/dialog";
+import { Button } from "../components/ui/button";
 import { useColorModeValue } from "../components/ui/color-mode";
 import TaskContainer from "../components/Task/TaskContainer";
 import TaskEditable from "../components/Task/TaskEditable";
@@ -75,7 +69,8 @@ const Home = () => {
     // const filter = useFilterScheduleStore(useShallow((state) => state.filter));
     const { filter } = useFilterScheduleStore();
     const { selectedCategoryId, setSelectedCategoryId } = useCategoryStore();
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    // const { isOpen, onOpen, onClose } = useDisclosure();
+    const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
     const { handleAddTask, isAddTaskLoading } = useAddTask();
     const { isDeleting, handleDeleteTasks } = useDeleteTask();
     const { isLoading: isLoadingTasks } = useGetAllTasks();
@@ -187,10 +182,10 @@ const Home = () => {
                     height={"50px"}
                     mt={6}
                     py={3}
-                    borderBottom={`1px solid ${useColorModeValue(
-                        "rgba(126, 132, 144, 0.3)",
-                        "rgba(126, 132, 144, 0.3)"
-                    )}`}
+                    // borderBottom={`1px solid ${useColorModeValue(
+                    //     "rgba(126, 132, 144, 0.3)",
+                    //     "rgba(126, 132, 144, 0.3)"
+                    // )}`}
                 >
                     <SidebarWithHeader />
 
@@ -199,7 +194,11 @@ const Home = () => {
                         ml={-3}
                         py={0}
                         my={0}
-                        leftIcon={<Icon as={RiDeleteBin3Line} boxSize={5} />}
+                        leftIcon={
+                            <Icon boxSize={5}>
+                                <RiDeleteBin3Line />
+                            </Icon>
+                        }
                         variant="ghost"
                         isDisabled={
                             tasks.length === 0 ||
@@ -207,7 +206,8 @@ const Home = () => {
                             isAllTasksUncompleted
                         }
                         onClick={handleDeletingCompletedTasks}
-                        isLoading={isDeleting}
+                        loading={isDeleting}
+                        loadingText={"Deleting..."}
                     >
                         {isSmallScreen ? "" : "Delete Completed Tasks"}
                     </Button>
@@ -221,27 +221,27 @@ const Home = () => {
 
                     <Spacer />
 
-                    {/* <MenuRoot>
+                    <MenuRoot>
                         <MenuTrigger asChild>
                             <Button
                                 variant="outline"
                                 size="sm"
                                 ml={2}
                                 px={1}
-                                as={Button}
-                                border={`1px solid ${useColorModeValue(
-                                    "rgba(0, 163, 196, 0.2)",
-                                    "rgba(0, 163, 196, 0.2)"
-                                )}`}
-                                rightIcon={<IoChevronDown />}
+                                // as={Button}
+                                // border={`1px solid ${useColorModeValue(
+                                //     "rgba(0, 163, 196, 0.2)",
+                                //     "rgba(0, 163, 196, 0.2)"
+                                // )}`}
+                                // rightIcon={<IoChevronDown />}
                             >
                                 <HStack>
                                     <Box
                                         pl={1}
-                                        textColor={useColorModeValue(
-                                            "gray.700",
-                                            "gray.100"
-                                        )}
+                                        // textColor={useColorModeValue(
+                                        //     "gray.700",
+                                        //     "gray.100"
+                                        // )}
                                         fontWeight={"thin"}
                                         opacity={0.75}
                                     >
@@ -260,29 +260,32 @@ const Home = () => {
                             </Button>
                         </MenuTrigger>
 
-                        <Portal>
-                            <MenuContent>
-                                <MenuItem
-                                    as={Button}
-                                    onClick={() => setSortConfig("taskName")}
-                                >
-                                    Task Name
-                                </MenuItem>
-                                <MenuItem
-                                    as={Button}
-                                    onClick={() => setSortConfig("dueDate")}
-                                >
-                                    Due date
-                                </MenuItem>
-                                <MenuItem
-                                    as={Button}
-                                    onClick={() => setSortConfig("priority")}
-                                >
-                                    Priority
-                                </MenuItem>
-                            </MenuContent>
-                        </Portal>
-                    </MenuRoot> */}
+                        {/* <Portal> */}
+                        <MenuContent>
+                            <MenuItem
+                                // as={Button}
+                                value={"Task Name"}
+                                onClick={() => setSortConfig("taskName")}
+                            >
+                                Task Name
+                            </MenuItem>
+                            <MenuItem
+                                // as={Button}
+                                value={"Due date"}
+                                onClick={() => setSortConfig("dueDate")}
+                            >
+                                Due date
+                            </MenuItem>
+                            <MenuItem
+                                // as={Button}
+                                value={"Priority"}
+                                onClick={() => setSortConfig("priority")}
+                            >
+                                Priority
+                            </MenuItem>
+                        </MenuContent>
+                        {/* </Portal> */}
+                    </MenuRoot>
 
                     <Button
                         px={1}
@@ -297,68 +300,37 @@ const Home = () => {
                                     : "desc"}
                             </Box>
                         )}
-                        {/* <Icon
-                            as={
-                                sortConfig.direction === "ascending"
-                                ? BsSortDown
-                                : BsSortUp
-                            }
-                        /> */}
+                        <Icon>
+                            {sortConfig.direction === "ascending" ? (
+                                <BsSortDown />
+                            ) : (
+                                <BsSortUp />
+                            )}
+                        </Icon>
                     </Button>
                 </HStack>
 
                 {isSmallScreen ? (
-                    <DialogRoot>
-                        <DialogTrigger asChild>
-                            <Button variant="outline" size="sm">
-                                Open Dialog
-                            </Button>
-                        </DialogTrigger>
+                    <DialogRoot
+                        lazyMount
+                        open={isAddTaskModalOpen}
+                        onOpenChange={() =>
+                            setIsAddTaskModalOpen(!isAddTaskModalOpen)
+                        }
+                    >
                         <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Dialog Title</DialogTitle>
-                            </DialogHeader>
-                            <DialogBody>
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur
-                                    adipiscing elit. Sed do eiusmod tempor
-                                    incididunt ut labore et dolore magna aliqua.
-                                </p>
-                            </DialogBody>
-                            <DialogFooter>
-                                <DialogActionTrigger asChild>
-                                    <Button variant="outline">Cancel</Button>
-                                </DialogActionTrigger>
-                                <Button>Save</Button>
-                            </DialogFooter>
-                            <DialogCloseTrigger />
+                            <TaskEditable
+                                onCancel={() => setIsAddTaskModalOpen(false)}
+                                onSave={handleAddingTask}
+                                isLoading={isAddTaskLoading}
+                                isAddingNewTask
+                            />
                         </DialogContent>
                     </DialogRoot>
                 ) : (
-                    // <Modal
-                    //     p={0}
-                    //     m={0}
-                    //     width="fit-content"
-                    //     isCentered
-                    //     isOpen={isOpen}
-                    //     onClose={onClose}
-                    // >
-                    //     <ModalOverlay />
-                    //     <ModalContent p={0} m={0}>
-                    //         <ModalBody p={0} m={0}>
-                    //             <TaskEditable
-                    //                 onCancel={onClose}
-                    //                 onSave={handleAddingTask}
-                    //                 isLoading={isAddTaskLoading}
-                    //                 isAddingNewTask
-                    //             />
-                    //         </ModalBody>
-                    //     </ModalContent>
-                    // </Modal>
-
-                    isOpen && (
+                    isAddTaskModalOpen && (
                         <TaskEditable
-                            onCancel={onClose}
+                            onCancel={() => setIsAddTaskModalOpen(false)}
                             onSave={handleAddingTask}
                             isLoading={isAddTaskLoading}
                             isAddingNewTask
@@ -383,7 +355,7 @@ const Home = () => {
                     filteredScheduleTasks.map((task) => (
                         <TaskContainer key={task.id} task={task} />
                     ))}
-                {!isOpen && (
+                {!isAddTaskModalOpen && (
                     <Button
                         zIndex={1} // 2
                         position={{ base: "fixed", sm: "static" }}
@@ -392,8 +364,11 @@ const Home = () => {
                         bottom={{ base: 10, sm: "auto" }}
                         right={{ base: 10, sm: "auto" }}
                         variant={"ghost"}
-                        onClick={onOpen}
-                        isLoading={isAddTaskLoading}
+                        onClick={() => {
+                            setIsAddTaskModalOpen(true);
+                        }}
+                        loading={isAddTaskLoading}
+                        loadingText="Adding..."
                     >
                         {buttonText}
                     </Button>

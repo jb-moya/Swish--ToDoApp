@@ -4,6 +4,16 @@ const useAuthStore = create((set) => ({
     user: JSON.parse(localStorage.getItem("user-info")) || { categories: {} },
     isLoggedIn: JSON.parse(localStorage.getItem("isLoggedIn")) || false,
     isGuest: JSON.parse(localStorage.getItem("isGuest")) || false,
+    isLoggingIn: false,
+
+    loginStart: () => {
+        console.log("login start");
+        set({ isLoggingIn: true });
+    },
+    loginEnd: () => {
+        console.log("login end");
+        set({ isLoggingIn: false });
+    },
 
     login: (user) => {
         localStorage.setItem("user-info", JSON.stringify(user));

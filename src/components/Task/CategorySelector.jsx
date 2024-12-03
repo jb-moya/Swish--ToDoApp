@@ -7,12 +7,13 @@ import {
     Box,
     Text,
     useDisclosure,
-    Tooltip,
     Flex,
     Portal,
     IconButton,
+    Group,
     Icon,
 } from "@chakra-ui/react";
+import { Tooltip } from "../ui/tooltip";
 import { LiaHashtagSolid } from "react-icons/lia";
 import { IoAddSharp } from "react-icons/io5";
 import useEditProfile from "../../hooks/useEditProfile";
@@ -186,35 +187,216 @@ const CategorySelector = ({
     }, 0);
 
     return (
-        <></>
-        // <MenuRoot>
-        //     <DialogRoot>
-        //         <DialogTrigger asChild>
-        //             <Button variant="outline" size="sm">
-        //                 Open Dialog
-        //             </Button>
-        //         </DialogTrigger>
-        //         <DialogContent>
-        //             <DialogHeader>
-        //                 <DialogTitle>Dialog Title</DialogTitle>
-        //             </DialogHeader>
-        //             <DialogBody>
-        //                 <p>
-        //                     Lorem ipsum dolor sit amet, consectetur adipiscing
-        //                     elit. Sed do eiusmod tempor incididunt ut labore et
-        //                     dolore magna aliqua.
-        //                 </p>
-        //             </DialogBody>
-        //             <DialogFooter>
-        //                 <DialogActionTrigger asChild>
-        //                     <Button variant="outline">Cancel</Button>
-        //                 </DialogActionTrigger>
-        //                 <Button>Save</Button>
-        //             </DialogFooter>
-        //             <DialogCloseTrigger />
-        //         </DialogContent>
-        //     </DialogRoot>
-        // </MenuRoot>
+        // <></>
+        <MenuRoot>
+            {/* <DialogRoot>
+                <DialogTrigger asChild>
+                    <Button variant="outline" size="sm">
+                        Open Dialog
+                    </Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Dialog Title</DialogTitle>
+                    </DialogHeader>
+                    <DialogBody>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit. Sed do eiusmod tempor incididunt ut labore et
+                            dolore magna aliqua.
+                        </p>
+                    </DialogBody>
+                    <DialogFooter>
+                        <DialogActionTrigger asChild>
+                            <Button variant="outline">Cancel</Button>
+                        </DialogActionTrigger>
+                        <Button>Save</Button>
+                    </DialogFooter>
+                    <DialogCloseTrigger />
+                </DialogContent>
+            </DialogRoot> */}
+
+            <MenuTrigger asChild>
+                <Group attached>
+                    <Tooltip
+                        content="Select Category"
+                        placement="top"
+                        openDelay={500}
+                    >
+                        <Button
+                            as={Button}
+                            display={"flex"}
+                            px={2}
+                            color={useColorModeValue("gray.500", "gray.500")}
+                            border={`1px solid ${useColorModeValue(
+                                "rgba(0, 163, 196, 0.2)",
+                                "rgba(0, 163, 196, 0.2)"
+                            )}`}
+                            leftIcon={<LiaHashtagSolid />}
+                            rightIcon={<IoChevronDown />}
+                        >
+                            {isEditMode
+                                ? category != null
+                                    ? (authUser.categories?.[category] ??
+                                      "add category")
+                                    : "no category"
+                                : category !== -1
+                                  ? (authUser.categories?.[category] ??
+                                    "add category")
+                                  : "All"}
+                        </Button>
+                    </Tooltip>
+                    {isEditMode && category !== -1 && (
+                        <IconButton
+                            variant={"ghost"}
+                            color={borderStyle}
+                            border={`1px solid ${borderColor}`}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setCategory(-1);
+                                onCategoryChange(-1);
+                            }}
+                            _hover={{ color: "red" }}
+                        >
+                            <IoMdClose />
+                        </IconButton>
+                    )}
+                </Group>
+            </MenuTrigger>
+
+            <MenuContent>
+                <Input
+                    ref={searchInputRef}
+                    placeholder="Search or Create New"
+                    px={2}
+                    mb={1}
+                    variant={"flushed"}
+                    onChange={(e) => {
+                        setSearchText(e.target.value);
+                    }}
+                />
+
+                <MenuItem
+                    my={1}
+                    width={"100%"}
+                    isDisabled={
+                        !searchText || isCategoryTitleExists(searchText)
+                    }
+                    _disabled={{ opacity: 0.3, cursor: "not-allowed" }}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleAddNewCategory();
+                    }}
+                >
+                    {/* <Icon={1}><IoAddSharp /></Icon> */}
+                    {searchText ? (
+                        <Flex overflow="hidden" gap={1}>
+                            <Box>Create</Box>
+                            <Box
+                                fontWeight={"bold"}
+                                color={"cyan.500"}
+                                overflow="hidden"
+                                whiteSpace="nowrap"
+                                textOverflow="ellipsis"
+                                maxWidth="100%"
+                            >
+                                {searchText}
+                            </Box>
+                        </Flex>
+                    ) : (
+                        <Text>Type to create</Text>
+                    )}
+                </MenuItem>
+
+                <MenuItem
+                    autoFocus={true}
+                    my={1}
+                    leftIcon={isEditMode && <PiMinusCircleLight />}
+                    onClick={() => {
+                        setCategory(-1);
+                        onCategoryChange(-1);
+                    }}
+                    position={"relative"}
+                >
+                    {isEditMode && currentCategory !== -1
+                        ? "Uncategorize"
+                        : isEditMode
+                          ? "No Category"
+                          : "All"}
+
+                    {!isEditMode && tasks.length > 0 && (
+                        <Text
+                            position={"absolute"}
+                            fontSize={"small"}
+                            right={6}
+                            fontWeight={"thin"}
+                            mr={4}
+                            opacity={0.8}
+                        >
+                            {tasks.length}
+                        </Text>
+                    )}
+
+                    {isEditMode && totalUnCategorizedTasks > 0 && (
+                        <Text
+                            position={"absolute"}
+                            fontSize={"small"}
+                            right={6}
+                            fontWeight={"thin"}
+                            mr={4}
+                            opacity={0.8}
+                        >
+                            {totalUnCategorizedTasks}
+                        </Text>
+                    )}
+                </MenuItem>
+
+                {/* <MenuDivider /> */}
+
+                {filteredCategories.map((category) => (
+                    <MenuItem
+                        as={Flex}
+                        key={category.id}
+                        onClick={() => {
+                            setCategory(category.id);
+                            onCategoryChange(category.id);
+                        }}
+                        position={"relative"}
+                    >
+                        <Box noOfLines={1} width={"80%"}>
+                            {category.category}
+                        </Box>
+                        <Spacer />
+                        {categoriesTaskCount[category.id] > 0 && (
+                            <Text
+                                position={"absolute"}
+                                fontSize={"small"}
+                                right={6}
+                                fontWeight={"thin"}
+                                mr={4}
+                                opacity={0.8}
+                            >
+                                {categoriesTaskCount[category.id]}
+                            </Text>
+                        )}
+
+                        <IconButton
+                            variant={"ghost"}
+                            size={"10px"}
+                            color={"red.400"}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setCategory(category.id);
+                                openDeleteConfirm();
+                            }}
+                        >
+                            <RiDeleteBin7Line />
+                        </IconButton>
+                    </MenuItem>
+                ))}
+            </MenuContent>
+        </MenuRoot>
 
         //     {/* <Modal
         //         autoSelect
@@ -251,183 +433,8 @@ const CategorySelector = ({
         //         </ModalContent>
         //     </Modal> */}
 
-        //     <ButtonGroup size="sm" isAttached variant="outline">
-        //         <Tooltip
-        //             label="Select Category"
-        //             placement="top"
-        //             openDelay={500}
-        //         >
-        //             <MenuButton
-        //                 as={Button}
-        //                 display={"flex"}
-        //                 px={2}
-        //                 color={useColorModeValue("gray.500", "gray.500")}
-        //                 border={`1px solid ${useColorModeValue(
-        //                     "rgba(0, 163, 196, 0.2)",
-        //                     "rgba(0, 163, 196, 0.2)"
-        //                 )}`}
-        //                 leftIcon={<LiaHashtagSolid />}
-        //                 rightIcon={<IoChevronDown />}
-        //             >
-        //                 {isEditMode
-        //                     ? category != null
-        //                         ? authUser.categories?.[category] ??
-        //                           "add category"
-        //                         : "no category"
-        //                     : category !== -1
-        //                     ? authUser.categories?.[category] ?? "add category"
-        //                     : "All"}
-        //             </MenuButton>
-        //         </Tooltip>
-
-        //         {isEditMode && category !== -1 && (
-        //             <IconButton
-        //                 variant={"ghost"}
-        //                 color={borderStyle}
-        //                 border={`1px solid ${borderColor}`}
-        //                 icon={<IoMdClose />}
-        //                 onClick={(e) => {
-        //                     e.stopPropagation();
-        //                     setCategory(-1);
-        //                     onCategoryChange(-1);
-        //                 }}
-        //                 _hover={{ color: "red" }}
-        //             />
-        //         )}
-        //     </ButtonGroup>
-
         //     <Portal>
-        //         <MenuList width={"100px"} as={Box}>
-        //             <Input
-        //                 ref={searchInputRef}
-        //                 placeholder="Search or Create New"
-        //                 px={2}
-        //                 mb={1}
-        //                 variant={"flushed"}
-        //                 onChange={(e) => {
-        //                     setSearchText(e.target.value);
-        //                 }}
-        //             />
-
-        //             <MenuItem
-        //                 my={1}
-        //                 width={"100%"}
-        //                 isDisabled={
-        //                     !searchText || isCategoryTitleExists(searchText)
-        //                 }
-        //                 _disabled={{ opacity: 0.3, cursor: "not-allowed" }}
-        //                 onClick={(e) => {
-        //                     e.preventDefault();
-        //                     e.stopPropagation();
-        //                     handleAddNewCategory();
-        //                 }}
-        //             >
-        //                 <Icon as={IoAddSharp} mr={1} />
-        //                 {searchText ? (
-        //                     <Flex overflow="hidden" gap={1}>
-        //                         <Box>Create</Box>
-        //                         <Box
-        //                             fontWeight={"bold"}
-        //                             color={"cyan.500"}
-        //                             overflow="hidden"
-        //                             whiteSpace="nowrap"
-        //                             textOverflow="ellipsis"
-        //                             maxWidth="100%"
-        //                         >
-        //                             {searchText}
-        //                         </Box>
-        //                     </Flex>
-        //                 ) : (
-        //                     <Text>Type to create</Text>
-        //                 )}
-        //             </MenuItem>
-
-        //             <MenuItem
-        //                 autoFocus={true}
-        //                 my={1}
-        //                 leftIcon={isEditMode && <PiMinusCircleLight />}
-        //                 onClick={() => {
-        //                     setCategory(-1);
-        //                     onCategoryChange(-1);
-        //                 }}
-        //                 position={"relative"}
-        //             >
-        //                 {isEditMode && currentCategory !== -1
-        //                     ? "Uncategorize"
-        //                     : isEditMode
-        //                     ? "No Category"
-        //                     : "All"}
-
-        //                 {!isEditMode && tasks.length > 0 && (
-        //                     <Text
-        //                         position={"absolute"}
-        //                         fontSize={"small"}
-        //                         right={6}
-        //                         fontWeight={"thin"}
-        //                         mr={4}
-        //                         opacity={0.8}
-        //                     >
-        //                         {tasks.length}
-        //                     </Text>
-        //                 )}
-
-        //                 {isEditMode && totalUnCategorizedTasks > 0 && (
-        //                     <Text
-        //                         position={"absolute"}
-        //                         fontSize={"small"}
-        //                         right={6}
-        //                         fontWeight={"thin"}
-        //                         mr={4}
-        //                         opacity={0.8}
-        //                     >
-        //                         {totalUnCategorizedTasks}
-        //                     </Text>
-        //                 )}
-        //             </MenuItem>
-
-        //             <MenuDivider />
-
-        //             {filteredCategories.map((category) => (
-        //                 <MenuItem
-        //                     as={Flex}
-        //                     key={category.id}
-        //                     onClick={() => {
-        //                         setCategory(category.id);
-        //                         onCategoryChange(category.id);
-        //                     }}
-        //                     position={"relative"}
-        //                 >
-        //                     <Box noOfLines={1} width={"80%"}>
-        //                         {category.category}
-        //                     </Box>
-        //                     <Spacer />
-        //                     {categoriesTaskCount[category.id] > 0 && (
-        //                         <Text
-        //                             position={"absolute"}
-        //                             fontSize={"small"}
-        //                             right={6}
-        //                             fontWeight={"thin"}
-        //                             mr={4}
-        //                             opacity={0.8}
-        //                         >
-        //                             {categoriesTaskCount[category.id]}
-        //                         </Text>
-        //                     )}
-
-        //                     <IconButton
-        //                         variant={"ghost"}
-        //                         size={"10px"}
-        //                         as={RiDeleteBin7Line}
-        //                         color={"red.400"}
-        //                         onClick={(e) => {
-        //                             e.stopPropagation();
-        //                             setCategory(category.id);
-        //                             openDeleteConfirm();
-        //                         }}
-        //                     />
-        //                 </MenuItem>
-        //             ))}
-        //         </MenuList>
+        //
         //     </Portal>
     );
 };

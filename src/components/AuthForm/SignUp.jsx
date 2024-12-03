@@ -1,16 +1,17 @@
 import { useState } from "react";
 import {
     Input,
-    Button,
     Alert,
     // AlertIcon,
     Stack,
     // FormLabel,
     // FormControl,
 } from "@chakra-ui/react";
+import { Button } from "../ui/button";
 import PasswordInput from "./PasswordInput";
 import useSignUpWithEmailAndPassword from "../../hooks/useSignUpWithEmailAndPassword";
 import { useColorModeValue } from "../ui/color-mode";
+import useAuthStore from "../../store/authStore";
 
 const SignUp = () => {
     const [inputs, setInputs] = useState({
@@ -26,7 +27,7 @@ const SignUp = () => {
     });
 
     const { loading, error, signUp } = useSignUpWithEmailAndPassword();
-
+    const isLoggingIn = useAuthStore((state) => state.isLoggingIn);
     const handleSignUp = (event) => {
         event.preventDefault();
 
@@ -124,7 +125,13 @@ const SignUp = () => {
                     </Alert>
                 )}
 
-                <Button width="full" type="submit" isLoading={loading}>
+                <Button
+                    width="full"
+                    type="submit"
+                    loading={loading}
+                    disabled={isLoggingIn}
+                    loadingText="Signing up..."
+                >
                     SIGN UP
                 </Button>
             </Stack>

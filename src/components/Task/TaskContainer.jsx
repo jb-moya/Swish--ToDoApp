@@ -1,12 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
-import {
-    Box,
-    IconButton,
-    Spacer,
-    Stack,
-    Flex,
-    Icon,
-} from "@chakra-ui/react";
+import { Box, IconButton, Spacer, Stack, Flex, Icon } from "@chakra-ui/react";
 import { Checkbox } from "../ui/checkbox";
 import { MdDelete, MdEdit } from "react-icons/md";
 import TaskEditable from "./TaskEditable";
@@ -296,14 +289,15 @@ const TaskContainer = React.memo(({ task }) => {
 
                     {currentTaskInfo.isPinned && (
                         <Icon
-                            as={BsFillPinAngleFill}
                             boxSize={5}
                             color={pinColor}
                             position={"absolute"}
                             className="flip-horizontal"
                             top={0}
                             left={-6}
-                        />
+                        >
+                            <BsFillPinAngleFill />
+                        </Icon>
                     )}
 
                     {isHovered && (
@@ -318,18 +312,20 @@ const TaskContainer = React.memo(({ task }) => {
                                 size={"sm"}
                                 variant={"ghost"}
                                 aria-label="edit task"
-                                icon={<MdEdit />}
                                 onClick={() => setEditMode(true)}
-                            />
+                            >
+                                <MdEdit />
+                            </IconButton>
 
                             <IconButton
                                 size={"sm"}
                                 variant={"ghost"}
                                 aria-label="delete task"
-                                icon={<MdDelete />}
                                 onClick={handleDeletingTask}
-                                isLoading={isDeleting}
-                            />
+                                loading={isDeleting}
+                            >
+                                <MdDelete />
+                            </IconButton>
 
                             <Tooltip
                                 content="pin on top"
@@ -342,7 +338,6 @@ const TaskContainer = React.memo(({ task }) => {
                                     left={0}
                                     variant={"ghost"}
                                     aria-label="complete task"
-                                    icon={<BsFillPinAngleFill />}
                                     onClick={() => {
                                         setCurrentTaskInfo({
                                             ...currentTaskInfo,
@@ -351,7 +346,9 @@ const TaskContainer = React.memo(({ task }) => {
 
                                         handlePinTask();
                                     }}
-                                />
+                                >
+                                    <BsFillPinAngleFill />
+                                </IconButton>
                             </Tooltip>
                         </Box>
                     )}

@@ -4,9 +4,9 @@ import {
     Box,
     Flex,
     Heading,
-    Button,
     VStack,
 } from "@chakra-ui/react";
+import { Button } from "../components/ui/button";
 import { MdDarkMode, MdOutlineLightMode } from "react-icons/md";
 import AuthForm from "../components/AuthForm/AuthForm";
 import { useColorMode } from "../components/ui/color-mode";

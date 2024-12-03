@@ -3,13 +3,20 @@ import { useCallback } from "react";
 import { firestore } from "../firebase/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import useAuthStore from "../store/authStore";
+import { useState } from "react";
 
 const useSocialAuth = (signInMethod) => {
     const showToast = useShowToast();
     const loginUser = useAuthStore((state) => state.login);
+    const loginStart = useAuthStore((state) => state.loginStart);
+    const loginEnd = useAuthStore((state) => state.loginEnd);
+
+    const [isLogging, setIsLogging] = useState(false);
 
     const handleSocialAuth = useCallback(async () => {
         try {
+            loginStart();
+            setIsLogging(true);
             const newUser = await signInMethod();
             if (!newUser) {
                 return;
@@ -37,10 +44,13 @@ const useSocialAuth = (signInMethod) => {
             }
         } catch (error) {
             showToast("Error", error.message, "error");
+        } finally {
+            loginEnd();
+            setIsLogging(false);
         }
     }, [signInMethod, loginUser, showToast]);
 
-    return handleSocialAuth;
+    return { handleSocialAuth, isLogging };
 };
 
 export default useSocialAuth;

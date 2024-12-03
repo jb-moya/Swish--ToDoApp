@@ -1,8 +1,12 @@
 import useSocialAuth from "../hooks/useSocialAuth";
-import { Button, Text } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
+import { Button } from "./ui/button";
+import useLogin from "../hooks/useLogin";
+import useAuthStore from "../store/authStore";
 
 const SocialAuthButton = ({ prefix, signInMethod, icon, provider }) => {
-    const handleSocialAuth = useSocialAuth(signInMethod);
+    const { handleSocialAuth, isLogging } = useSocialAuth(signInMethod);
+    const isLoggingIn = useAuthStore((state) => state.isLoggingIn);
 
     return (
         <Button
@@ -13,6 +17,9 @@ const SocialAuthButton = ({ prefix, signInMethod, icon, provider }) => {
             textAlign="center"
             alignItems={"center"}
             onClick={handleSocialAuth}
+            loading={isLogging}
+            loadingText={"Signing in..."}
+            disabled={isLogging || isLoggingIn}
         >
             {icon}
             <Text ml={2}>
