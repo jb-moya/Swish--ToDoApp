@@ -1,5 +1,13 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { Box, IconButton, Spacer, Stack, Flex, Icon } from "@chakra-ui/react";
+import {
+    Box,
+    IconButton,
+    Spacer,
+    Stack,
+    Flex,
+    Text,
+    Icon,
+} from "@chakra-ui/react";
 import { Checkbox } from "../ui/checkbox";
 import { MdDelete, MdEdit } from "react-icons/md";
 import TaskEditable from "./TaskEditable";
@@ -132,6 +140,8 @@ const TaskContainer = React.memo(({ task }) => {
 
     const pinColor = useColorModeValue("cyan.500", "cyan.200");
 
+    // return(<></>)
+
     return (
         <Box
             position={"relative"}
@@ -156,6 +166,8 @@ const TaskContainer = React.memo(({ task }) => {
                     <Flex>
                         <Stack spacing={0} position={"relative"}>
                             <Checkbox
+                                colorPalette={"cyan"}
+                                variant={"solid"}
                                 position={"absolute"}
                                 top={0}
                                 onCheckedChange={() => {
@@ -171,7 +183,7 @@ const TaskContainer = React.memo(({ task }) => {
                                 disabled={isEditing}
                             ></Checkbox>
 
-                            <Box pl={7}>
+                            <Flex pl={7} lineClamp="2">
                                 <Box
                                     lineHeight={1.2}
                                     fontSize={"17px"}
@@ -186,17 +198,16 @@ const TaskContainer = React.memo(({ task }) => {
                                 >
                                     {currentTaskInfo.taskName}
                                 </Box>
-                                <Box
+                                <Text
                                     opacity={0.8}
                                     fontSize={"15px"}
-                                    noOfLines={2}
+                                    lineClamp="2"
                                 >
-                                    {" "}
                                     {currentTaskInfo.description
                                         ? currentTaskInfo.description
                                         : " "}
-                                </Box>
-                            </Box>
+                                </Text>
+                            </Flex>
                         </Stack>
                     </Flex>
 
@@ -262,27 +273,32 @@ const TaskContainer = React.memo(({ task }) => {
 
                         {task.priority !== 0 && (
                             <Tag
-                                px={1}
+                                // px={1}
                                 rounded={"sm"}
-                                width={"69px"}
-                                borderBottom={`2px solid ${tagPriorityBorderColor(
-                                    priority[task.priority]
-                                )}`}
+                                // width={"69px"}
+                                // borderBottom={`2px solid ${tagPriorityBorderColor(
+                                //     priority[task.priority]
+                                // )}`}
                                 bg="transparent"
                                 size={"sm"}
-                                startElement={
+
+                                // startElement={
+
+                                // }
+                            >
+                                <Text>
                                     <Icon
-                                        as={IoFlag}
                                         mr={1}
                                         color={tagPriorityBorderColor(
                                             priority[task.priority]
                                         )}
-                                    />
-                                }
-                            >
-                                {/* <TagLabel width={"full"} textAlign={"right"}> */}
-                                {priority[task.priority]}
-                                {/* </TagLabel> */}
+                                    >
+                                        <IoFlag />
+                                    </Icon>
+                                    {/* <TagLabel width={"full"} textAlign={"right"}> */}
+                                    {priority[task.priority]}
+                                    {/* </TagLabel> */}
+                                </Text>
                             </Tag>
                         )}
                     </Flex>
@@ -322,7 +338,7 @@ const TaskContainer = React.memo(({ task }) => {
                                 variant={"ghost"}
                                 aria-label="delete task"
                                 onClick={handleDeletingTask}
-                                loading={isDeleting}
+                                // loading={isDeleting}
                             >
                                 <MdDelete />
                             </IconButton>

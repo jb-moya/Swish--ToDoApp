@@ -1,28 +1,21 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/NavBar";
 import {
     Box,
     HStack,
     useBreakpointValue,
-    useDisclosure,
     Icon,
     Flex,
     Spinner,
-    Portal,
     Spacer,
 } from "@chakra-ui/react";
 import {
     MenuContent,
     MenuItem,
-    MenuItemCommand,
     MenuRoot,
     MenuTrigger,
 } from "./../components/ui/menu";
-import {
-    DialogContent,
-    DialogRoot,
-    DialogTrigger,
-} from "./../components/ui/dialog";
+import { DialogContent, DialogRoot } from "./../components/ui/dialog";
 import { Button } from "../components/ui/button";
 import { useColorModeValue } from "../components/ui/color-mode";
 import TaskContainer from "../components/Task/TaskContainer";
@@ -34,15 +27,12 @@ import useFilterScheduleStore from "../store/filterScheduleStore";
 import { RiDeleteBin3Line } from "react-icons/ri";
 import { FaPlus } from "react-icons/fa6";
 import useDeleteTask from "../hooks/useDeleteTask";
-import { IoChevronDown } from "react-icons/io5";
 import { BsSortDown, BsSortUp } from "react-icons/bs";
 import useCategoryStore from "../store/categoryStore";
 import CategorySelector from "../components/Task/CategorySelector";
 import Footer from "../components/Footer";
 import useShowToast from "../hooks/useShowToast";
 import SidebarWithHeader from "../components/SideBarWithHeader";
-import { useShallow } from "zustand/shallow";
-
 const messages = [
     "Enjoy the calm and take some time for yourself. You've earned this moment of relaxation!",
     "Take a breather and enjoy the moment!",
@@ -66,10 +56,8 @@ const Home = () => {
     const showToast = useShowToast();
 
     const randomMessage = getRandomMessage();
-    // const filter = useFilterScheduleStore(useShallow((state) => state.filter));
     const { filter } = useFilterScheduleStore();
     const { selectedCategoryId, setSelectedCategoryId } = useCategoryStore();
-    // const { isOpen, onOpen, onClose } = useDisclosure();
     const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
     const { handleAddTask, isAddTaskLoading } = useAddTask();
     const { isDeleting, handleDeleteTasks } = useDeleteTask();
@@ -85,7 +73,7 @@ const Home = () => {
     }, [tasks]);
 
     useEffect(() => {
-        sortTasks(); // Sort tasks whenever the component mounts or sorting configuration changes
+        sortTasks(); 
     }, [sortTasks, sortConfig]);
 
     const handleAddingTask = async (task) => {
@@ -160,10 +148,7 @@ const Home = () => {
         }
     });
 
-    const noTaskHeadingStyle = useColorModeValue(
-        "rgba(0, 163, 196, 0.8)",
-        "rgba(0, 163, 196, 0.8)"
-    );
+    const noTaskHeadingStyle = useColorModeValue("cyan.500", "cyan.200");
 
     return (
         <>
@@ -194,13 +179,8 @@ const Home = () => {
                         ml={-3}
                         py={0}
                         my={0}
-                        leftIcon={
-                            <Icon boxSize={5}>
-                                <RiDeleteBin3Line />
-                            </Icon>
-                        }
                         variant="ghost"
-                        isDisabled={
+                        disabled={
                             tasks.length === 0 ||
                             isLoadingTasks ||
                             isAllTasksUncompleted
@@ -209,9 +189,11 @@ const Home = () => {
                         loading={isDeleting}
                         loadingText={"Deleting..."}
                     >
+                        <Icon boxSize={5}>
+                            <RiDeleteBin3Line />
+                        </Icon>
                         {isSmallScreen ? "" : "Delete Completed Tasks"}
                     </Button>
-                    {/* <Divider orientation="vertical" /> */}
 
                     <CategorySelector
                         currentCategory={selectedCategoryId}

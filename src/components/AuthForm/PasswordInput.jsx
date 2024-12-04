@@ -20,7 +20,6 @@ const PasswordInput = ({
         <Box position={"relative"}>
             <Field
                 key={showPassword}
-                isRequired
                 variant="floating"
                 required
                 label={placeholder}

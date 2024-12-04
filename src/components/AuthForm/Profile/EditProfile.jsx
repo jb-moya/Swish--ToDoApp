@@ -311,7 +311,7 @@ export default function EditProfile({ isOpen, toggler }) {
                         }}
                         loading={isProfileUpdating || isPasswordUpdating}
                         loadingText="Updating..."
-                        isDisabled={isProfileUpdating || isPasswordUpdating}
+                        disabled={isProfileUpdating || isPasswordUpdating}
                     >
                         Submit
                     </Button>

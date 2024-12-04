@@ -6,21 +6,19 @@ import {
     Spacer,
     Box,
     Text,
-    useDisclosure,
     Flex,
-    Portal,
     IconButton,
     Group,
-    Icon,
 } from "@chakra-ui/react";
+import { useState } from "react";
 import { Tooltip } from "../ui/tooltip";
 import { LiaHashtagSolid } from "react-icons/lia";
-import { IoAddSharp } from "react-icons/io5";
+
 import useEditProfile from "../../hooks/useEditProfile";
 import useShowToast from "../../hooks/useShowToast";
 import useAuthStore from "../../store/authStore";
 import { PiMinusCircleLight } from "react-icons/pi";
-import { IoChevronDown } from "react-icons/io5";
+
 import { RiDeleteBin7Line } from "react-icons/ri";
 import useDeleteTask from "../../hooks/useDeleteTask";
 import { v4 as uuidv4 } from "uuid";
@@ -29,23 +27,15 @@ import useCategoryStore from "../../store/categoryStore";
 import { useColorModeValue } from "../ui/color-mode";
 import {
     DialogBody,
-    DialogCloseTrigger,
     DialogActionTrigger,
     DialogContent,
     DialogFooter,
     DialogHeader,
     DialogRoot,
     DialogTitle,
-    DialogTrigger,
 } from "./../ui/dialog";
 import { Button } from "../ui/button";
-import {
-    MenuContent,
-    MenuItem,
-    MenuItemCommand,
-    MenuRoot,
-    MenuTrigger,
-} from "../ui/menu";
+import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "../ui/menu";
 
 const CategorySelector = ({
     currentCategory,
@@ -54,11 +44,7 @@ const CategorySelector = ({
 }) => {
     const { categoriesTaskCount } = useCategoryStore();
     const showToast = useShowToast();
-    const {
-        isOpen: isOpenDeleteConfirm,
-        onOpen: openDeleteConfirm,
-        onClose: closeDeleteConfirm,
-    } = useDisclosure();
+    const [isOpenDeleteConfirm, setIsOpenDeleteConfirm] = useState(false);
 
     console.log("currentCategory", currentCategory);
 
@@ -165,9 +151,10 @@ const CategorySelector = ({
 
             setCategory(-1);
             onCategoryChange(-1);
-            closeDeleteConfirm();
         } catch (error) {
             showToast("Error", error.message, "error");
+        } finally {
+            setIsOpenDeleteConfirm(false);
         }
     };
 
@@ -186,35 +173,47 @@ const CategorySelector = ({
         return acc;
     }, 0);
 
+    useEffect(() => {
+        console.log(isOpenDeleteConfirm);
+    }, [isOpenDeleteConfirm]);
+
     return (
-        // <></>
         <MenuRoot>
-            {/* <DialogRoot>
-                <DialogTrigger asChild>
-                    <Button variant="outline" size="sm">
-                        Open Dialog
-                    </Button>
-                </DialogTrigger>
+            <DialogRoot lazyMount open={isOpenDeleteConfirm}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Dialog Title</DialogTitle>
+                        <DialogTitle>Delete?</DialogTitle>
                     </DialogHeader>
                     <DialogBody>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Sed do eiusmod tempor incididunt ut labore et
-                            dolore magna aliqua.
-                        </p>
+                        <Text>
+                            This will permanently delete &apos;
+                            {authUser.categories?.[category]}&apos; and all its
+                            tasks. This can&apos;t be undone.
+                        </Text>
                     </DialogBody>
                     <DialogFooter>
                         <DialogActionTrigger asChild>
-                            <Button variant="outline">Cancel</Button>
+                            <Button
+                                variant="outline"
+                                mr={3}
+                                colorScheme="blue"
+                                onClick={() => setIsOpenDeleteConfirm(false)}
+                            >
+                                Cancel
+                            </Button>
                         </DialogActionTrigger>
-                        <Button>Save</Button>
+
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                handleDeleteCategory(category);
+                            }}
+                        >
+                            Delete Category
+                        </Button>
                     </DialogFooter>
-                    <DialogCloseTrigger />
                 </DialogContent>
-            </DialogRoot> */}
+            </DialogRoot>
 
             <MenuTrigger asChild>
                 <Group attached>
@@ -224,17 +223,16 @@ const CategorySelector = ({
                         openDelay={500}
                     >
                         <Button
-                            as={Button}
                             display={"flex"}
                             px={2}
-                            color={useColorModeValue("gray.500", "gray.500")}
-                            border={`1px solid ${useColorModeValue(
-                                "rgba(0, 163, 196, 0.2)",
-                                "rgba(0, 163, 196, 0.2)"
-                            )}`}
-                            leftIcon={<LiaHashtagSolid />}
-                            rightIcon={<IoChevronDown />}
+                            variant={"outline"}
+                            // color={useColorModeValue("gray.500", "gray.500")}
+                            // border={`1px solid ${useColorModeValue(
+                            //     "rgba(0, 163, 196, 0.2)",
+                            //     "rgba(0, 163, 196, 0.2)"
+                            // )}`}
                         >
+                            <LiaHashtagSolid />
                             {isEditMode
                                 ? category != null
                                     ? (authUser.categories?.[category] ??
@@ -244,12 +242,13 @@ const CategorySelector = ({
                                   ? (authUser.categories?.[category] ??
                                     "add category")
                                   : "All"}
+                            {/* <IoChevronDown /> */}
                         </Button>
                     </Tooltip>
                     {isEditMode && category !== -1 && (
                         <IconButton
                             variant={"ghost"}
-                            color={borderStyle}
+                            // color={borderStyle}
                             border={`1px solid ${borderColor}`}
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -279,9 +278,7 @@ const CategorySelector = ({
                 <MenuItem
                     my={1}
                     width={"100%"}
-                    isDisabled={
-                        !searchText || isCategoryTitleExists(searchText)
-                    }
+                    disabled={!searchText || isCategoryTitleExists(searchText)}
                     _disabled={{ opacity: 0.3, cursor: "not-allowed" }}
                     onClick={(e) => {
                         e.preventDefault();
@@ -289,7 +286,6 @@ const CategorySelector = ({
                         handleAddNewCategory();
                     }}
                 >
-                    {/* <Icon={1}><IoAddSharp /></Icon> */}
                     {searchText ? (
                         <Flex overflow="hidden" gap={1}>
                             <Box>Create</Box>
@@ -312,19 +308,20 @@ const CategorySelector = ({
                 <MenuItem
                     autoFocus={true}
                     my={1}
-                    leftIcon={isEditMode && <PiMinusCircleLight />}
                     onClick={() => {
                         setCategory(-1);
                         onCategoryChange(-1);
                     }}
                     position={"relative"}
+                    value={""}
                 >
+                    {isEditMode && <PiMinusCircleLight />}
+
                     {isEditMode && currentCategory !== -1
                         ? "Uncategorize"
                         : isEditMode
                           ? "No Category"
                           : "All"}
-
                     {!isEditMode && tasks.length > 0 && (
                         <Text
                             position={"absolute"}
@@ -337,7 +334,6 @@ const CategorySelector = ({
                             {tasks.length}
                         </Text>
                     )}
-
                     {isEditMode && totalUnCategorizedTasks > 0 && (
                         <Text
                             position={"absolute"}
@@ -352,8 +348,6 @@ const CategorySelector = ({
                     )}
                 </MenuItem>
 
-                {/* <MenuDivider /> */}
-
                 {filteredCategories.map((category) => (
                     <MenuItem
                         as={Flex}
@@ -363,6 +357,7 @@ const CategorySelector = ({
                             onCategoryChange(category.id);
                         }}
                         position={"relative"}
+                        value={category.id}
                     >
                         <Box noOfLines={1} width={"80%"}>
                             {category.category}
@@ -388,7 +383,7 @@ const CategorySelector = ({
                             onClick={(e) => {
                                 e.stopPropagation();
                                 setCategory(category.id);
-                                openDeleteConfirm();
+                                setIsOpenDeleteConfirm(true);
                             }}
                         >
                             <RiDeleteBin7Line />
@@ -397,45 +392,6 @@ const CategorySelector = ({
                 ))}
             </MenuContent>
         </MenuRoot>
-
-        //     {/* <Modal
-        //         autoSelect
-        //         isOpen={isOpenDeleteConfirm}
-        //         onClose={closeDeleteConfirm}
-        //     >
-        //         <ModalOverlay />
-        //         <ModalContent>
-        //             <ModalHeader>Delete?</ModalHeader>
-        //             <ModalCloseButton />
-        //             <ModalBody>
-        //                 This will permanently delete &apos;
-        //                 {authUser.categories?.[category]}&apos; and all its
-        //                 tasks. This can&apos;t be undone.
-        //             </ModalBody>
-
-        //             <ModalFooter>
-        //                 <Button
-        //                     colorScheme="blue"
-        //                     mr={3}
-        //                     onClick={closeDeleteConfirm}
-        //                 >
-        //                     Close
-        //                 </Button>
-        //                 <Button
-        //                     variant="ghost"
-        //                     onClick={() => {
-        //                         handleDeleteCategory(category);
-        //                     }}
-        //                 >
-        //                     Delete Category
-        //                 </Button>
-        //             </ModalFooter>
-        //         </ModalContent>
-        //     </Modal> */}
-
-        //     <Portal>
-        //
-        //     </Portal>
     );
 };
 

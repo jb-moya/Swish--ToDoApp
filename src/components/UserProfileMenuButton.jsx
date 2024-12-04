@@ -51,7 +51,6 @@ const UserProfileMenuButton = ({ ...mainContainerProps }) => {
                         </Button>
                     </MenuTrigger>
                     <MenuContent zIndex={"max"}>
-                        {/* <Portal> */}
                         <MenuItem
                             value="edit"
                             onClick={() => setIsEditProfileDialogOpen(true)}
@@ -61,12 +60,11 @@ const UserProfileMenuButton = ({ ...mainContainerProps }) => {
                         <MenuItem
                             value="logout"
                             onClick={handleLogout}
-                            isDisabled={isLoggingOut}
+                            disabled={isLoggingOut}
                             color={"red.500"}
                         >
                             Logout
                         </MenuItem>
-                        {/* </Portal> */}
                     </MenuContent>
                 </MenuRoot>
             ) : (

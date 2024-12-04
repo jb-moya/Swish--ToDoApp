@@ -1,12 +1,11 @@
-import {
-    // extendTheme,
-    // baseTheme,
-    // withDefaultColorScheme,
-    // createMultiStyleConfigHelpers,
-} from "@chakra-ui/react";
+import {} from // extendTheme,
+// baseTheme,
+// withDefaultColorScheme,
+// createMultiStyleConfigHelpers,
+"@chakra-ui/react";
 import { ChakraProvider, defineStyle } from "@chakra-ui/react";
 
-import { createSystem, defaultConfig } from "@chakra-ui/react"
+import { createSystem, defaultConfig } from "@chakra-ui/react";
 // import { checkboxAnatomy } from "@chakra-ui/anatomy";
 
 // const { definePartsStyle, defineMultiStyleConfig } =
@@ -33,51 +32,51 @@ const activeLabelStyles = {
 //     }),
 // });
 
-
-
 // const checkboxTheme = defineMultiStyleConfig({ baseStyle: checkBoxBaseStyle });
 
 export const system = createSystem(defaultConfig, {
-  theme: {
-    tokens: {
-      colors: {
-            // brand: baseTheme.colors.cyan,
-        },
-        components: {
-            // Checkbox: checkboxTheme,
-            Alert: {
-                defaultProps: {
-                    colorScheme: "blue",
-                },
+    theme: {
+        tokens: {
+            colors: {
+                // brand: "brand.colors.cyan",
+                // brand: "cyan.500",
+                red: "#fff",
             },
-            Form: {
-                variants: {
-                    floating: {
-                        container: {
-                            _focusWithin: {
+            components: {
+                // Checkbox: checkboxTheme,
+                Alert: {
+                    defaultProps: {
+                        colorScheme: "blue",
+                    },
+                },
+                Form: {
+                    variants: {
+                        floating: {
+                            container: {
+                                _focusWithin: {
+                                    label: {
+                                        ...activeLabelStyles,
+                                    },
+                                },
+                                "input:not(:placeholder-shown) + label, .chakra-select__wrapper + label, textarea:not(:placeholder-shown) ~ label":
+                                    {
+                                        ...activeLabelStyles,
+                                    },
                                 label: {
-                                    ...activeLabelStyles,
+                                    top: 0,
+                                    left: 0,
+                                    zIndex: 2,
+                                    position: "absolute",
+                                    pointerEvents: "none",
+                                    my: 1,
+                                    transformOrigin: "left top",
                                 },
-                            },
-                            "input:not(:placeholder-shown) + label, .chakra-select__wrapper + label, textarea:not(:placeholder-shown) ~ label":
-                                {
-                                    ...activeLabelStyles,
-                                },
-                            label: {
-                                top: 0,
-                                left: 0,
-                                zIndex: 2,
-                                position: "absolute",
-                                pointerEvents: "none",
-                                my: 1,
-                                transformOrigin: "left top",
                             },
                         },
                     },
                 },
             },
+            // withDefaultColorScheme({ colorScheme: "brand" })
         },
-        // withDefaultColorScheme({ colorScheme: "brand" })
     },
-  },
-})
+});

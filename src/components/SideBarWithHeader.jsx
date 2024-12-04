@@ -5,7 +5,6 @@ import {
     DrawerBackdrop,
     DrawerBody,
     DrawerCloseTrigger,
-    DrawerActionTrigger,
     DrawerContent,
     DrawerFooter,
     DrawerHeader,
@@ -13,30 +12,12 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "./../components/ui/drawer";
-import {
-    DialogBody,
-    DialogCloseTrigger,
-    DialogContent,
-    DialogHeader,
-    DialogRoot,
-    DialogTitle,
-    DialogTrigger,
-} from "./ui/dialog";
-import {
-    MenuContent,
-    MenuItem,
-    MenuItemCommand,
-    MenuRoot,
-    MenuTrigger,
-} from "./ui/menu";
-import { Button } from "./ui/button";
-import { FiMenu } from "react-icons/fi";
+import { FiSidebar } from "react-icons/fi";
+
 import UserProfileMenuButton from "./UserProfileMenuButton";
 import ThemeToggler from "./ThemeToggler";
 import filterSchedule from "../constants/filterSchedule";
 import useFilterScheduleStore from "../store/filterScheduleStore";
-import { useColorModeValue } from "./ui/color-mode";
-import { CloseButton } from "./ui/close-button";
 
 const NavItem = ({ icon, content, ...rest }) => {
     return (
@@ -78,43 +59,10 @@ const NavItem = ({ icon, content, ...rest }) => {
 
 const SidebarWithHeader = () => {
     const [open, setOpen] = useState(false);
+    const { setFilter } = useFilterScheduleStore();
 
     return (
         <Box>
-            {/* <DialogRoot trapFocus={false} size="full">
-                <DialogTrigger asChild>
-                    <Button variant="outline" size="sm">
-                        Open Dialog
-                    </Button>
-                </DialogTrigger>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Dialog Title</DialogTitle>
-                    </DialogHeader>
-                    <DialogBody>
-                        <MenuRoot>
-                            <MenuTrigger asChild>
-                                <Button variant="outline">Edit</Button>
-                            </MenuTrigger>
-                            <MenuContent zIndex={"max"}>
-                                <MenuItem value="cut" valueText="cut">
-                                    <Box flex="1">Cut</Box>
-                                    <MenuItemCommand>⌘X</MenuItemCommand>
-                                </MenuItem>
-                                <MenuItem value="copy" valueText="copy">
-                                    <Box flex="1">Copy</Box>
-                                    <MenuItemCommand>⌘C</MenuItemCommand>
-                                </MenuItem>
-                                <MenuItem value="paste" valueText="paste">
-                                    <Box flex="1">Paste</Box>
-                                    <MenuItemCommand>⌘V</MenuItemCommand>
-                                </MenuItem>
-                            </MenuContent>
-                        </MenuRoot>
-                    </DialogBody>
-                    <DialogCloseTrigger />
-                </DialogContent>
-            </DialogRoot> */}
             <DrawerRoot
                 trapFocus={false}
                 placement="start"
@@ -128,7 +76,7 @@ const SidebarWithHeader = () => {
                         variant="outline"
                         aria-label="open menu"
                     >
-                        <FiMenu />
+                        <FiSidebar />
                     </IconButton>
                 </DrawerTrigger>
                 <DrawerContent>
@@ -159,7 +107,7 @@ const SidebarWithHeader = () => {
                                         const { icon, ...filterWithoutIcon } =
                                             filterType;
                                         setFilter(filterWithoutIcon);
-                                        onClose();
+                                        setOpen(false);
                                     }}
                                 />
                             );

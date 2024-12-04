@@ -1,11 +1,4 @@
-import {
-    Flex,
-    Spacer,
-    Portal,
-    Box,
-    Icon,
-    StatHelpText,
-} from "@chakra-ui/react";
+import { Flex, Spacer, Box, Icon, Portal } from "@chakra-ui/react";
 import { Button } from "./ui/button";
 import { Tooltip } from "./ui/tooltip";
 import { IoChevronDown } from "react-icons/io5";
@@ -47,8 +40,6 @@ const Navbar = () => {
             alignItems={"center"}
         >
             <MenuRoot>
-                {/* <StatRoot display={{ base: "none", md: "block" }}> */}
-                {/* <Tooltip content="Filter By Due Date" placement="top"> */}
                 <MenuTrigger asChild>
                     <Button
                         display={{ base: "none", md: "block" }}
@@ -61,82 +52,82 @@ const Navbar = () => {
                         variant={"ghost"}
                         transition="all 0.2s"
                     >
-                        <>
-                            <Box fontWeight={"bold"}>
-                                {filter.name}{" "}
-                                <Icon>
-                                    <IoChevronDown />
-                                </Icon>
-                            </Box>
+                        <Tooltip content="Filter By Due Date" placement="top">
+                            <Box>
+                                <Box fontWeight={"bold"}>
+                                    {filter.name}{" "}
+                                    <Icon>
+                                        <IoChevronDown />
+                                    </Icon>
+                                </Box>
 
-                            {!isGettingTasksLoading && (
-                                // <StatHelpText
-                                <Flex
-                                    fontWeight={"normal"}
-                                    color={tasksCompletionCountStyle}
-                                >
-                                    {/* <Flex> */}
-                                    {tasksCount === completedTaskCount ? (
-                                        <Flex
-                                            fontWeight={"bold"}
-                                            alignItems={"center"}
-                                        >
-                                            <Icon mr={1}>
-                                                <IoIosCheckmarkCircleOutline />
-                                            </Icon>
-                                            All Completed
-                                        </Flex>
-                                    ) : (
-                                        <Flex alignItems={"center"}>
-                                            <Icon mr={1}>
-                                                <IoIosCheckmarkCircleOutline />
-                                            </Icon>
-                                            <Box fontWeight={"bold"}>
-                                                {completedTaskCount}
-                                            </Box>
-                                            <Box ml={1}>of {tasksCount} </Box>
-                                        </Flex>
-                                    )}
-                                    {/* </Flex> */}
-                                    {/* </StatHelpText> */}
-                                </Flex>
-                            )}
-                        </>
+                                {!isGettingTasksLoading && (
+                                    <Flex
+                                        fontWeight={"normal"}
+                                        color={tasksCompletionCountStyle}
+                                    >
+                                        {tasksCount === completedTaskCount ? (
+                                            <Flex
+                                                fontWeight={"bold"}
+                                                alignItems={"center"}
+                                            >
+                                                <Icon mr={1}>
+                                                    <IoIosCheckmarkCircleOutline />
+                                                </Icon>
+                                                All Completed
+                                            </Flex>
+                                        ) : (
+                                            <Flex alignItems={"center"}>
+                                                <Icon mr={1}>
+                                                    <IoIosCheckmarkCircleOutline />
+                                                </Icon>
+                                                <Box fontWeight={"bold"}>
+                                                    {completedTaskCount}
+                                                </Box>
+                                                <Box ml={1}>
+                                                    of {tasksCount}{" "}
+                                                </Box>
+                                            </Flex>
+                                        )}
+                                    </Flex>
+                                )}
+                            </Box>
+                        </Tooltip>
                     </Button>
                 </MenuTrigger>
-                {/* </Tooltip> */}
-                {/* </StatRoot> */}
 
-                {/* <Portal> */}
-
-                <MenuContent>
-                    {filterSchedule.map((item, index) => {
-                        return (
-                            <MenuItem
-                                key={index}
-                                value={item.name}
-                                onClick={() => {
-                                    const { icon, ...filterWithoutIcon } = item; // Destructure and omit `icon`
-                                    setFilter(filterWithoutIcon);
-                                }}
-                            >
-                                {item.icon && (
-                                    <Icon
-                                        mr="4"
-                                        fontSize="16"
-                                        _groupHover={{
-                                            color: "white",
-                                        }}
-                                    >
-                                        <item.icon />
-                                    </Icon>
-                                )}
-                                {item.name}
-                            </MenuItem>
-                        );
-                    })}
-                </MenuContent>
-                {/* </Portal> */}
+                <Portal>
+                    <MenuContent>
+                        {filterSchedule.map((item, index) => {
+                            return (
+                                <MenuItem
+                                    key={index}
+                                    value={item.name}
+                                    onClick={() => {
+                                        const { icon, ...filterWithoutIcon } =
+                                            item; // Destructure and omit `icon`
+                                        setFilter(filterWithoutIcon);
+                                    }}
+                                >
+                                    <Box>
+                                        {item.icon && (
+                                            <Icon
+                                                mr="4"
+                                                fontSize="16"
+                                                _groupHover={{
+                                                    color: "white",
+                                                }}
+                                            >
+                                                <item.icon />
+                                            </Icon>
+                                        )}
+                                        {item.name}
+                                    </Box>
+                                </MenuItem>
+                            );
+                        })}
+                    </MenuContent>
+                </Portal>
             </MenuRoot>
 
             <Spacer />
