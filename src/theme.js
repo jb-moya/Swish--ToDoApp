@@ -40,7 +40,7 @@ export const system = createSystem(defaultConfig, {
             colors: {
                 // brand: "brand.colors.cyan",
                 // brand: "cyan.500",
-                red: "#fff",
+                brand: "cyan",
             },
             components: {
                 // Checkbox: checkboxTheme,

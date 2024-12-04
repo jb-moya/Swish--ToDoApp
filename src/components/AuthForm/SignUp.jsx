@@ -105,7 +105,6 @@ const SignUp = () => {
                         p={2}
                         my={3}
                     >
-                        {/* <AlertIcon /> */}
                         {error.message}
                     </Alert>
                 )}

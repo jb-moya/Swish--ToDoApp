@@ -1,12 +1,7 @@
 {
     "compilerOptions": {
         "module": "CommonJS",
-        "target": "ES6",
-        // "baseUrl": ".",
-        // "paths": {
-        //     "@chakra-ui/*": ["node_modules/@chakra-ui/*"],
-        //     "@/*": ["src/*"]
-        // }
+        "target": "ES6"
     },
     "exclude": ["node_modules", "**/node_modules/*"]
 }

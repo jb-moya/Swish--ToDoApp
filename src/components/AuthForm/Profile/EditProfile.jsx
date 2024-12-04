@@ -319,24 +319,5 @@ export default function EditProfile({ isOpen, toggler }) {
                 <DialogCloseTrigger />
             </DialogContent>
         </DialogRoot>
-
-        // <Modal
-        //     isOpen={isOpen}
-        //     onClose={onClose}
-        //     isCentered
-        //     bg={useColorModeValue("gray.50", "gray.800")}
-        // >
-        //     <ModalOverlay />
-        //     <ModalContent pb={6}>
-        //         <ModalHeader>Edit Profile</ModalHeader>
-        //         <ModalCloseButton />
-        //         <ModalBody>
-        //
-        //         </ModalBody>
-        //         {/* <ModalFooter>
-        //             <Button onClick={onClose}>Close</Button>
-        //         </ModalFooter> */}
-        //     </ModalContent>
-        // </Modal>
     );
 }

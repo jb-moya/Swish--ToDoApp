@@ -25,6 +25,7 @@ import { v4 as uuidv4 } from "uuid";
 import useTaskStore from "../../store/taskStore";
 import useCategoryStore from "../../store/categoryStore";
 import { useColorModeValue } from "../ui/color-mode";
+import { IoChevronDown } from "react-icons/io5";
 import {
     DialogBody,
     DialogActionTrigger,
@@ -242,7 +243,7 @@ const CategorySelector = ({
                                   ? (authUser.categories?.[category] ??
                                     "add category")
                                   : "All"}
-                            {/* <IoChevronDown /> */}
+                            <IoChevronDown />
                         </Button>
                     </Tooltip>
                     {isEditMode && category !== -1 && (

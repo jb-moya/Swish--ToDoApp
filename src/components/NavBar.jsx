@@ -11,8 +11,6 @@ import ThemeToggler from "./ThemeToggler";
 import UserProfileMenuButton from "./UserProfileMenuButton";
 import filterSchedule from "../constants/filterSchedule";
 import { useColorModeValue } from "./ui/color-mode";
-import { StatLabel, StatRoot, StatValueText } from "./ui/stat";
-
 import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "./ui/menu";
 
 const Navbar = () => {
@@ -29,8 +27,6 @@ const Navbar = () => {
     ).length;
 
     const tasksCompletionCountStyle = useColorModeValue("black", "white");
-
-    // return <></>;
 
     return (
         <Flex

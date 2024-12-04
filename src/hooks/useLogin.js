@@ -9,7 +9,6 @@ const useLogin = () => {
     const [signInWithEmailAndPassword, , loading, error] =
         useSignInWithEmailAndPassword(auth);
 
-    // what is this
     const loginUser = useAuthStore((state) => state.login);
     const loginStart = useAuthStore((state) => state.loginStart);
     const loginEnd = useAuthStore((state) => state.loginEnd);

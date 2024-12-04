@@ -73,7 +73,7 @@ const Home = () => {
     }, [tasks]);
 
     useEffect(() => {
-        sortTasks(); 
+        sortTasks();
     }, [sortTasks, sortConfig]);
 
     const handleAddingTask = async (task) => {
@@ -242,31 +242,26 @@ const Home = () => {
                             </Button>
                         </MenuTrigger>
 
-                        {/* <Portal> */}
                         <MenuContent>
                             <MenuItem
-                                // as={Button}
                                 value={"Task Name"}
                                 onClick={() => setSortConfig("taskName")}
                             >
                                 Task Name
                             </MenuItem>
                             <MenuItem
-                                // as={Button}
                                 value={"Due date"}
                                 onClick={() => setSortConfig("dueDate")}
                             >
                                 Due date
                             </MenuItem>
                             <MenuItem
-                                // as={Button}
                                 value={"Priority"}
                                 onClick={() => setSortConfig("priority")}
                             >
                                 Priority
                             </MenuItem>
                         </MenuContent>
-                        {/* </Portal> */}
                     </MenuRoot>
 
                     <Button

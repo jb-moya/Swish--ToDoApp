@@ -64,7 +64,6 @@ const Login = () => {
                         p={2}
                         my={3}
                     >
-                        {/* <FiAlertCircle /> */}
                         {error.message}
                     </Alert>
                 )}

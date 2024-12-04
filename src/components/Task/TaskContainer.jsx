@@ -140,8 +140,6 @@ const TaskContainer = React.memo(({ task }) => {
 
     const pinColor = useColorModeValue("cyan.500", "cyan.200");
 
-    // return(<></>)
-
     return (
         <Box
             position={"relative"}
@@ -273,7 +271,6 @@ const TaskContainer = React.memo(({ task }) => {
 
                         {task.priority !== 0 && (
                             <Tag
-                                // px={1}
                                 rounded={"sm"}
                                 // width={"69px"}
                                 // borderBottom={`2px solid ${tagPriorityBorderColor(
@@ -281,10 +278,6 @@ const TaskContainer = React.memo(({ task }) => {
                                 // )}`}
                                 bg="transparent"
                                 size={"sm"}
-
-                                // startElement={
-
-                                // }
                             >
                                 <Text>
                                     <Icon
@@ -295,9 +288,7 @@ const TaskContainer = React.memo(({ task }) => {
                                     >
                                         <IoFlag />
                                     </Icon>
-                                    {/* <TagLabel width={"full"} textAlign={"right"}> */}
                                     {priority[task.priority]}
-                                    {/* </TagLabel> */}
                                 </Text>
                             </Tag>
                         )}

@@ -2,12 +2,9 @@ import {
     Icon,
     Input,
     Box,
-    // FormLabel,
-    // FormControl,
 } from "@chakra-ui/react";
 import { Button } from "../ui/button";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { useColorModeValue } from "../ui/color-mode";
 import { Field } from "../ui/field";
 const PasswordInput = ({
     placeholder,

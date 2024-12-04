@@ -2,17 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import {
     Box,
     Flex,
-    // Menu,
-    // MenuButton,
     IconButton,
-    // MenuList,
-    // MenuItem,
-    // Divider,
     Group,
     Textarea,
-    // ButtonGroup,
     Spacer,
-    // MenuDivider,
     Portal,
     Icon,
     Text,
@@ -248,12 +241,9 @@ const TaskEditable = React.memo(
             };
         }, [editTaskInfo]);
 
-        // return(<></>)
-
         return (
             <Flex flexDir={"column"} width={"100%"}>
                 <Box
-                    // bg={useColorModeValue("white", "#1a202c")}
                     shadow={{ base: "2xl", sm: "none" }}
                     p={4}
                     rounded={"md"}
@@ -737,12 +727,10 @@ const TaskEditable = React.memo(
                             variant={"ghost"}
                             aria-label="delete task"
                             onClick={handleDeletingTask}
-                            // loading={isDeleting}
                         >
                             <MdDelete />
                         </IconButton>
                     </Flex>
-                    {/* <Divider /> */}
                     <Flex
                         mt={2}
                         justifyContent={{ base: "center", sm: "flex-end" }}
