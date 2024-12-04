@@ -12,6 +12,7 @@ import {
     Heading,
     Input,
     Stack,
+    Text,
     useColorModeValue,
     Modal,
     Avatar,
@@ -23,7 +24,6 @@ import {
     ModalHeader,
     ModalCloseButton,
     ModalBody,
-    ModalFooter,
 } from "@chakra-ui/react";
 import { SmallCloseIcon } from "@chakra-ui/icons";
 import PasswordInput from "../PasswordInput";
@@ -34,7 +34,6 @@ import { getAuth } from "firebase/auth";
 export default function EditProfile({ isOpen, onClose }) {
     const [inputs, setInputs] = useState({
         username: "",
-        email: "",
         oldPassword: "",
         newPassword: "",
         confirmNewPassword: "",
@@ -50,6 +49,9 @@ export default function EditProfile({ isOpen, onClose }) {
     const fileRef = useRef(null);
     const { handleImageChange, selectedFile, setSelectedFile } =
         usePreviewImg();
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const { isProfileUpdating, editProfile } = useEditProfile();
     const { updateUserPassword, isPasswordUpdating } = useUpdateUserPassword();
     const showToast = useShowToast();
@@ -64,7 +66,11 @@ export default function EditProfile({ isOpen, onClose }) {
     const labelBackground = useColorModeValue("gray.100", "gray.700");
 
     const handleEditProfile = async () => {
+        console.log("editing");
+
         try {
+            console.log("cccccccccc");
+
             await editProfile(inputs, selectedFile);
             setSelectedFile(null);
             onClose();
@@ -75,8 +81,9 @@ export default function EditProfile({ isOpen, onClose }) {
 
     useEffect(() => {}, [inputs]);
 
-    const isPasswordValid = () => {
-        if (!verifyPassword(inputs.oldPassword)) {
+    const isPasswordValid = async () => {
+        const resultValidation = await verifyPassword(inputs.oldPassword);
+        if (!resultValidation) {
             return false;
         }
 
@@ -88,8 +95,50 @@ export default function EditProfile({ isOpen, onClose }) {
         return true;
     };
 
-    const handlePasswordChange = () => {
-        updateUserPassword(inputs.newPassword);
+    const handlePasswordChange = async () => {
+        if (
+            !inputs.oldPassword &&
+            !inputs.newPassword &&
+            !inputs.confirmNewPassword
+        ) {
+            return;
+        }
+
+        if (
+            !inputs.oldPassword ||
+            !inputs.newPassword ||
+            !inputs.confirmNewPassword
+        ) {
+            showToast("Error", "Please fill in all fields", "error");
+            return;
+        }
+
+        if (await isPasswordValid()) {
+            updateUserPassword(inputs.newPassword);
+        }
+    };
+
+    const handleSubmit = async () => {
+        setIsSubmitting(true);
+
+        await handlePasswordChange();
+
+        if (inputs.username !== "" || selectedFile) {
+            handleEditProfile();
+        }
+
+        resetInput();
+        onClose();
+        setIsSubmitting(false);
+    };
+
+    const resetInput = () => {
+        setInputs({
+            username: "",
+            oldPassword: "",
+            newPassword: "",
+            confirmNewPassword: "",
+        });
     };
 
     return (
@@ -146,6 +195,7 @@ export default function EditProfile({ isOpen, onClose }) {
                                 <Input
                                     type="file"
                                     hidden
+                                    accept="image/*"
                                     ref={fileRef}
                                     onChange={handleImageChange}
                                 />
@@ -164,12 +214,12 @@ export default function EditProfile({ isOpen, onClose }) {
                                 type="text"
                                 variant="flushed"
                                 value={inputs.username || authUser.username}
-                                onChange={(e) =>
+                                onChange={(e) => {
                                     setInputs({
                                         ...inputs,
                                         username: e.target.value,
-                                    })
-                                }
+                                    });
+                                }}
                             />
                             <FormLabel
                                 fontWeight={"thin"}
@@ -194,12 +244,8 @@ export default function EditProfile({ isOpen, onClose }) {
                                         type="email"
                                         variant="flushed"
                                         value={inputs.email || authUser.email}
-                                        onChange={(e) =>
-                                            setInputs({
-                                                ...inputs,
-                                                email: e.target.value,
-                                            })
-                                        }
+                                        disabled
+                                        readOnly
                                     />
                                     <FormLabel
                                         fontWeight={"thin"}
@@ -272,61 +318,57 @@ export default function EditProfile({ isOpen, onClose }) {
                                 />
                             </>
                         )}
-                        <Stack spacing={6} direction={["column", "row"]}>
+                        <Stack
+                            spacing={2}
+                            direction={["column", "row"]}
+                            align={["center", "flex-start"]}
+                            justify={["center", "flex-start"]}
+                        >
                             <Button
                                 bg={"red.400"}
                                 color={"white"}
-                                w="full"
+                                w="25%"
                                 _hover={{
                                     bg: "red.500",
                                 }}
-                                onClick={onClose}
+                                isDisabled={
+                                    isProfileUpdating ||
+                                    isPasswordUpdating ||
+                                    isSubmitting
+                                }
+                                onClick={() => {
+                                    resetInput();
+                                    onClose();
+                                }}
                             >
                                 Cancel
                             </Button>
                             <Button
-                                w="full"
-                                onClick={() => {
-                                    if (
-                                        inputs.oldPassword &&
-                                        inputs.newPassword &&
-                                        inputs.confirmNewPassword
-                                    ) {
-                                        if (!isPasswordValid()) {
-                                            return;
-                                        }
-
-                                        handlePasswordChange();
-                                    } else if (
-                                        inputs.oldPassword ||
-                                        inputs.newPassword ||
-                                        inputs.confirmNewPassword
-                                    ) {
-                                        showToast(
-                                            "Error",
-                                            "Please fill in all fields",
-                                            "error"
-                                        );
-                                        return;
-                                    }
-
-                                    handleEditProfile();
-                                }}
+                                w="75%"
+                                onClick={handleSubmit}
                                 isLoading={
-                                    isProfileUpdating || isPasswordUpdating
+                                    isProfileUpdating ||
+                                    isPasswordUpdating ||
+                                    isSubmitting
                                 }
                                 isDisabled={
-                                    isProfileUpdating || isPasswordUpdating
+                                    isProfileUpdating ||
+                                    isPasswordUpdating ||
+                                    isSubmitting
                                 }
                             >
-                                Submit
+                                <Text mr={2} textStyle="xs">
+                                    Submit
+                                </Text>
+                                <Text textStyle="7xl">
+                                    {inputs.username
+                                        ? "(will update name)"
+                                        : ""}
+                                </Text>
                             </Button>
                         </Stack>
                     </Stack>
                 </ModalBody>
-                {/* <ModalFooter>
-                    <Button onClick={onClose}>Close</Button>
-                </ModalFooter> */}
             </ModalContent>
         </Modal>
     );
