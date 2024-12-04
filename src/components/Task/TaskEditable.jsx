@@ -628,13 +628,8 @@ const TaskEditable = React.memo(
                                     placement="top"
                                     openDelay={500}
                                 >
-                                    <Group
-                                        size="sm"
-                                        attached
-                                        // variant="outline"
-                                    >
+                                    <Group size="sm" attached>
                                         <Button
-                                            // as={Button}
                                             display={"flex"}
                                             px={2}
                                             variant={"outline"}

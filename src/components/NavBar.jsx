@@ -92,38 +92,35 @@ const Navbar = () => {
                     </Button>
                 </MenuTrigger>
 
-                <Portal>
-                    <MenuContent>
-                        {filterSchedule.map((item, index) => {
-                            return (
-                                <MenuItem
-                                    key={index}
-                                    value={item.name}
-                                    onClick={() => {
-                                        const { icon, ...filterWithoutIcon } =
-                                            item; // Destructure and omit `icon`
-                                        setFilter(filterWithoutIcon);
-                                    }}
-                                >
-                                    <Box>
-                                        {item.icon && (
-                                            <Icon
-                                                mr="4"
-                                                fontSize="16"
-                                                _groupHover={{
-                                                    color: "white",
-                                                }}
-                                            >
-                                                <item.icon />
-                                            </Icon>
-                                        )}
-                                        {item.name}
-                                    </Box>
-                                </MenuItem>
-                            );
-                        })}
-                    </MenuContent>
-                </Portal>
+                <MenuContent>
+                    {filterSchedule.map((item, index) => {
+                        return (
+                            <MenuItem
+                                key={index}
+                                value={item.name}
+                                onClick={() => {
+                                    const { icon, ...filterWithoutIcon } = item; // Destructure and omit `icon`
+                                    setFilter(filterWithoutIcon);
+                                }}
+                            >
+                                <Box>
+                                    {item.icon && (
+                                        <Icon
+                                            mr="4"
+                                            fontSize="16"
+                                            _groupHover={{
+                                                color: "white",
+                                            }}
+                                        >
+                                            <item.icon />
+                                        </Icon>
+                                    )}
+                                    {item.name}
+                                </Box>
+                            </MenuItem>
+                        );
+                    })}
+                </MenuContent>
             </MenuRoot>
 
             <Spacer />
