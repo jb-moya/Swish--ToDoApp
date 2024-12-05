@@ -12,6 +12,7 @@ import UserProfileMenuButton from "./UserProfileMenuButton";
 import filterSchedule from "../constants/filterSchedule";
 import { useColorModeValue } from "./ui/color-mode";
 import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "./ui/menu";
+import SearchTask from "./Search/SearchTask";
 
 const Navbar = () => {
     const { selectedCategoryId } = useCategoryStore();
@@ -122,8 +123,11 @@ const Navbar = () => {
                     })}
                 </MenuContent>
             </MenuRoot>
-
             <Spacer />
+            <SearchTask
+                mainContainerProps={{ display: { base: "flex", md: "none" } }}
+                buttonProps={{ display: { base: "none", md: "flex" } }}
+            />
             <UserProfileMenuButton display={{ base: "none", md: "flex" }} />
             <ThemeToggler display={{ base: "none", md: "flex" }} />
         </Flex>

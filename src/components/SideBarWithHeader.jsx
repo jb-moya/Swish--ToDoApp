@@ -72,6 +72,7 @@ const SidebarWithHeader = () => {
                 <DrawerBackdrop />
                 <DrawerTrigger asChild>
                     <IconButton
+                        size="xs"
                         display={{ base: "flex", md: "none" }}
                         variant="outline"
                         aria-label="open menu"

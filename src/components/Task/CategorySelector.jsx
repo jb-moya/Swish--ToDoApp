@@ -9,6 +9,7 @@ import {
     Flex,
     IconButton,
     Group,
+    useBreakpointValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { Tooltip } from "../ui/tooltip";
@@ -23,7 +24,6 @@ import { RiDeleteBin7Line } from "react-icons/ri";
 import useDeleteTask from "../../hooks/useDeleteTask";
 import { v4 as uuidv4 } from "uuid";
 import useTaskStore from "../../store/taskStore";
-import useCategoryStore from "../../store/categoryStore";
 import { useColorModeValue } from "../ui/color-mode";
 import { IoChevronDown } from "react-icons/io5";
 import {
@@ -37,6 +37,7 @@ import {
 } from "./../ui/dialog";
 import { Button } from "../ui/button";
 import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "../ui/menu";
+import useCategoryStore from "../../store/categoryStore";
 
 const CategorySelector = ({
     currentCategory,
@@ -47,7 +48,7 @@ const CategorySelector = ({
     const showToast = useShowToast();
     const [isOpenDeleteConfirm, setIsOpenDeleteConfirm] = useState(false);
 
-    console.log("currentCategory", currentCategory);
+    const isSmallScreen = useBreakpointValue({ base: true, md: false });
 
     const [searchText, setSearchText] = React.useState("");
     const { tasks } = useTaskStore((state) => state);
@@ -224,6 +225,7 @@ const CategorySelector = ({
                         openDelay={500}
                     >
                         <Button
+                            size={isSmallScreen ? "sm" : "md"}
                             display={"flex"}
                             px={2}
                             variant={"outline"}

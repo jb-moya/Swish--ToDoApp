@@ -20,7 +20,12 @@ const useTaskStore = create((set, get) => ({
         }));
     },
 
-    getTasks: (schedule = "all", category = -1, isCompleted = false) => {
+    getTasks: (
+        schedule = "all",
+        category = -1,
+        isCompleted = false,
+        taskName = ""
+    ) => {
         let tasks = get().tasks;
 
         if (isCompleted) {
@@ -29,6 +34,12 @@ const useTaskStore = create((set, get) => ({
 
         if (category !== -1) {
             tasks = tasks.filter((task) => task.category === category);
+        }
+
+        if (taskName !== "") {
+            tasks = tasks.filter((task) =>
+                task.taskName.toLowerCase().includes(taskName.toLowerCase())
+            );
         }
 
         const today = new Date();

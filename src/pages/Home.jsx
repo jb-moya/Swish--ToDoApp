@@ -33,6 +33,7 @@ import CategorySelector from "../components/Task/CategorySelector";
 import Footer from "../components/Footer";
 import useShowToast from "../hooks/useShowToast";
 import SidebarWithHeader from "../components/SideBarWithHeader";
+import SearchTask from "../components/Search/SearchTask";
 const messages = [
     "Enjoy the calm and take some time for yourself. You've earned this moment of relaxation!",
     "Take a breather and enjoy the moment!",
@@ -56,7 +57,7 @@ const Home = () => {
     const showToast = useShowToast();
 
     const randomMessage = getRandomMessage();
-    const { filter } = useFilterScheduleStore();
+    const { filter: filterSchedule } = useFilterScheduleStore();
     const { selectedCategoryId, setSelectedCategoryId } = useCategoryStore();
     const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
     const { handleAddTask, isAddTaskLoading } = useAddTask();
@@ -91,7 +92,7 @@ const Home = () => {
     const handleDeletingCompletedTasks = async () => {
         try {
             await handleDeleteTasks(
-                getTasks(filter.value, selectedCategoryId).filter(
+                getTasks(filterSchedule.value, selectedCategoryId).filter(
                     (task) => task.isCompleted
                 )
             );
@@ -125,25 +126,25 @@ const Home = () => {
         const tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
 
-        if (filter.value === "all") {
+        if (filterSchedule.value === "all") {
             return true;
-        } else if (filter.value === "overdue") {
+        } else if (filterSchedule.value === "overdue") {
             return task.dueDate && new Date(task.dueDate) < today;
-        } else if (filter.value === "today") {
+        } else if (filterSchedule.value === "today") {
             return task.dueDate
                 ? new Date(task.dueDate).setHours(0, 0, 0, 0) ===
                       today.getTime()
                 : false;
-        } else if (filter.value === "tomorrow") {
+        } else if (filterSchedule.value === "tomorrow") {
             return task.dueDate
                 ? new Date(task.dueDate).setHours(0, 0, 0, 0) ===
                       tomorrow.getTime()
                 : false;
-        } else if (filter.value === "upcoming") {
+        } else if (filterSchedule.value === "upcoming") {
             return task.dueDate
                 ? new Date(task.dueDate).setHours(0, 0, 0, 0) > today.getTime()
                 : false;
-        } else if (filter.value === "unscheduled") {
+        } else if (filterSchedule.value === "unscheduled") {
             return !task.dueDate;
         }
     });
@@ -175,10 +176,7 @@ const Home = () => {
                     <SidebarWithHeader />
 
                     <Button
-                        size={"sm"}
-                        ml={-3}
-                        py={0}
-                        my={0}
+                        size={"xs"}
                         variant="ghost"
                         disabled={
                             tasks.length === 0 ||
@@ -189,7 +187,7 @@ const Home = () => {
                         loading={isDeleting}
                         loadingText={"Deleting..."}
                     >
-                        <Icon boxSize={5}>
+                        <Icon>
                             <RiDeleteBin3Line />
                         </Icon>
                         {isSmallScreen ? "" : "Delete Completed Tasks"}
@@ -203,13 +201,15 @@ const Home = () => {
 
                     <Spacer />
 
+                    {isSmallScreen && <SearchTask />}
+
                     <MenuRoot>
                         <MenuTrigger asChild>
                             <Button
                                 variant="outline"
-                                size="sm"
-                                ml={2}
-                                px={1}
+                                size="xs"
+                                // ml={2}
+                                // px={1}
                                 // as={Button}
                                 // border={`1px solid ${useColorModeValue(
                                 //     "rgba(0, 163, 196, 0.2)",
@@ -219,7 +219,7 @@ const Home = () => {
                             >
                                 <HStack>
                                     <Box
-                                        pl={1}
+                                        // pl={1}
                                         // textColor={useColorModeValue(
                                         //     "gray.700",
                                         //     "gray.100"
@@ -265,9 +265,9 @@ const Home = () => {
                     </MenuRoot>
 
                     <Button
-                        px={1}
+                        // px={1}
                         variant={"ghost"}
-                        size={"sm"}
+                        size={"xs"}
                         onClick={() => setSortConfig(sortConfig.key)}
                     >
                         {!isSmallScreen && (
