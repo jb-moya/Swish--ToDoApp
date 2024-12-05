@@ -1,27 +1,23 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/NavBar";
 import {
-    Button,
     Box,
     HStack,
-    Spinner,
     useBreakpointValue,
-    Modal,
-    useDisclosure,
-    ModalOverlay,
-    ModalBody,
-    ModalContent,
     Icon,
-    useColorModeValue,
-    Divider,
-    Menu,
     Flex,
-    MenuButton,
-    Portal,
+    Spinner,
     Spacer,
-    MenuList,
-    MenuItem,
 } from "@chakra-ui/react";
+import {
+    MenuContent,
+    MenuItem,
+    MenuRoot,
+    MenuTrigger,
+} from "./../components/ui/menu";
+import { DialogContent, DialogRoot } from "./../components/ui/dialog";
+import { Button } from "../components/ui/button";
+import { useColorModeValue } from "../components/ui/color-mode";
 import TaskContainer from "../components/Task/TaskContainer";
 import TaskEditable from "../components/Task/TaskEditable";
 import useAddTask from "../hooks/useAddTask";
@@ -31,14 +27,12 @@ import useFilterScheduleStore from "../store/filterScheduleStore";
 import { RiDeleteBin3Line } from "react-icons/ri";
 import { FaPlus } from "react-icons/fa6";
 import useDeleteTask from "../hooks/useDeleteTask";
-import { ChevronDownIcon } from "@chakra-ui/icons";
 import { BsSortDown, BsSortUp } from "react-icons/bs";
 import useCategoryStore from "../store/categoryStore";
 import CategorySelector from "../components/Task/CategorySelector";
 import Footer from "../components/Footer";
 import useShowToast from "../hooks/useShowToast";
 import SidebarWithHeader from "../components/SideBarWithHeader";
-
 const messages = [
     "Enjoy the calm and take some time for yourself. You've earned this moment of relaxation!",
     "Take a breather and enjoy the moment!",
@@ -61,10 +55,10 @@ const getRandomMessage = () => {
 const Home = () => {
     const showToast = useShowToast();
 
-    const randomMessage = useMemo(() => getRandomMessage(), []);
+    const randomMessage = getRandomMessage();
     const { filter } = useFilterScheduleStore();
     const { selectedCategoryId, setSelectedCategoryId } = useCategoryStore();
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
     const { handleAddTask, isAddTaskLoading } = useAddTask();
     const { isDeleting, handleDeleteTasks } = useDeleteTask();
     const { isLoading: isLoadingTasks } = useGetAllTasks();
@@ -79,7 +73,7 @@ const Home = () => {
     }, [tasks]);
 
     useEffect(() => {
-        sortTasks(); // Sort tasks whenever the component mounts or sorting configuration changes
+        sortTasks();
     }, [sortTasks, sortConfig]);
 
     const handleAddingTask = async (task) => {
@@ -154,10 +148,7 @@ const Home = () => {
         }
     });
 
-    const noTaskHeadingStyle = useColorModeValue(
-        "rgba(0, 163, 196, 0.8)",
-        "rgba(0, 163, 196, 0.8)"
-    );
+    const noTaskHeadingStyle = useColorModeValue("cyan.500", "cyan.200");
 
     return (
         <>
@@ -176,10 +167,10 @@ const Home = () => {
                     height={"50px"}
                     mt={6}
                     py={3}
-                    borderBottom={`1px solid ${useColorModeValue(
-                        "rgba(126, 132, 144, 0.3)",
-                        "rgba(126, 132, 144, 0.3)"
-                    )}`}
+                    // borderBottom={`1px solid ${useColorModeValue(
+                    //     "rgba(126, 132, 144, 0.3)",
+                    //     "rgba(126, 132, 144, 0.3)"
+                    // )}`}
                 >
                     <SidebarWithHeader />
 
@@ -188,19 +179,21 @@ const Home = () => {
                         ml={-3}
                         py={0}
                         my={0}
-                        leftIcon={<Icon as={RiDeleteBin3Line} boxSize={5} />}
                         variant="ghost"
-                        isDisabled={
+                        disabled={
                             tasks.length === 0 ||
                             isLoadingTasks ||
                             isAllTasksUncompleted
                         }
                         onClick={handleDeletingCompletedTasks}
-                        isLoading={isDeleting}
+                        loading={isDeleting}
+                        loadingText={"Deleting..."}
                     >
+                        <Icon boxSize={5}>
+                            <RiDeleteBin3Line />
+                        </Icon>
                         {isSmallScreen ? "" : "Delete Completed Tasks"}
                     </Button>
-                    <Divider orientation="vertical" />
 
                     <CategorySelector
                         currentCategory={selectedCategoryId}
@@ -210,65 +203,67 @@ const Home = () => {
 
                     <Spacer />
 
-                    <Menu>
-                        <MenuButton
-                            ml={2}
-                            px={1}
-                            as={Button}
-                            variant={"outline"}
-                            border={`1px solid ${useColorModeValue(
-                                "rgba(0, 163, 196, 0.2)",
-                                "rgba(0, 163, 196, 0.2)"
-                            )}`}
-                            size={"sm"}
-                            rightIcon={<ChevronDownIcon />}
-                        >
-                            <HStack>
-                                <Box
-                                    pl={1}
-                                    textColor={useColorModeValue(
-                                        "gray.700",
-                                        "gray.100"
-                                    )}
-                                    fontWeight={"thin"}
-                                    opacity={0.75}
-                                >
-                                    {!isSmallScreen ? "Sort by:" : "Sort"}
-                                </Box>
-                                {!isSmallScreen && (
-                                    <Box>
-                                        {sortConfig.key === "dueDate"
-                                            ? "Due date"
-                                            : sortConfig.key === "priority"
-                                            ? "Priority"
-                                            : "Task Name"}
+                    <MenuRoot>
+                        <MenuTrigger asChild>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                ml={2}
+                                px={1}
+                                // as={Button}
+                                // border={`1px solid ${useColorModeValue(
+                                //     "rgba(0, 163, 196, 0.2)",
+                                //     "rgba(0, 163, 196, 0.2)"
+                                // )}`}
+                                // rightIcon={<IoChevronDown />}
+                            >
+                                <HStack>
+                                    <Box
+                                        pl={1}
+                                        // textColor={useColorModeValue(
+                                        //     "gray.700",
+                                        //     "gray.100"
+                                        // )}
+                                        fontWeight={"thin"}
+                                        opacity={0.75}
+                                    >
+                                        {!isSmallScreen ? "Sort by:" : "Sort"}
                                     </Box>
-                                )}
-                            </HStack>
-                        </MenuButton>
-                        <Portal>
-                            <MenuList>
-                                <MenuItem
-                                    as={Button}
-                                    onClick={() => setSortConfig("taskName")}
-                                >
-                                    Task Name
-                                </MenuItem>
-                                <MenuItem
-                                    as={Button}
-                                    onClick={() => setSortConfig("dueDate")}
-                                >
-                                    Due date
-                                </MenuItem>
-                                <MenuItem
-                                    as={Button}
-                                    onClick={() => setSortConfig("priority")}
-                                >
-                                    Priority
-                                </MenuItem>
-                            </MenuList>
-                        </Portal>
-                    </Menu>
+                                    {!isSmallScreen && (
+                                        <Box>
+                                            {sortConfig.key === "dueDate"
+                                                ? "Due date"
+                                                : sortConfig.key === "priority"
+                                                  ? "Priority"
+                                                  : "Task Name"}
+                                        </Box>
+                                    )}
+                                </HStack>
+                            </Button>
+                        </MenuTrigger>
+
+                        <MenuContent>
+                            <MenuItem
+                                value={"Task Name"}
+                                onClick={() => setSortConfig("taskName")}
+                            >
+                                Task Name
+                            </MenuItem>
+                            <MenuItem
+                                value={"Due date"}
+                                onClick={() => setSortConfig("dueDate")}
+                            >
+                                Due date
+                            </MenuItem>
+                            <MenuItem
+                                value={"Priority"}
+                                onClick={() => setSortConfig("priority")}
+                            >
+                                Priority
+                            </MenuItem>
+                        </MenuContent>
+                    </MenuRoot>
+
                     <Button
                         px={1}
                         variant={"ghost"}
@@ -282,40 +277,37 @@ const Home = () => {
                                     : "desc"}
                             </Box>
                         )}
-                        <Icon
-                            as={
-                                sortConfig.direction === "ascending"
-                                    ? BsSortDown
-                                    : BsSortUp
-                            }
-                        />
+                        <Icon>
+                            {sortConfig.direction === "ascending" ? (
+                                <BsSortDown />
+                            ) : (
+                                <BsSortUp />
+                            )}
+                        </Icon>
                     </Button>
                 </HStack>
+
                 {isSmallScreen ? (
-                    <Modal
-                        p={0}
-                        m={0}
-                        width="fit-content"
-                        isCentered
-                        isOpen={isOpen}
-                        onClose={onClose}
+                    <DialogRoot
+                        lazyMount
+                        open={isAddTaskModalOpen}
+                        onOpenChange={() =>
+                            setIsAddTaskModalOpen(!isAddTaskModalOpen)
+                        }
                     >
-                        <ModalOverlay />
-                        <ModalContent p={0} m={0}>
-                            <ModalBody p={0} m={0}>
-                                <TaskEditable
-                                    onCancel={onClose}
-                                    onSave={handleAddingTask}
-                                    isLoading={isAddTaskLoading}
-                                    isAddingNewTask
-                                />
-                            </ModalBody>
-                        </ModalContent>
-                    </Modal>
+                        <DialogContent>
+                            <TaskEditable
+                                onCancel={() => setIsAddTaskModalOpen(false)}
+                                onSave={handleAddingTask}
+                                isLoading={isAddTaskLoading}
+                                isAddingNewTask
+                            />
+                        </DialogContent>
+                    </DialogRoot>
                 ) : (
-                    isOpen && (
+                    isAddTaskModalOpen && (
                         <TaskEditable
-                            onCancel={onClose}
+                            onCancel={() => setIsAddTaskModalOpen(false)}
                             onSave={handleAddingTask}
                             isLoading={isAddTaskLoading}
                             isAddingNewTask
@@ -340,7 +332,7 @@ const Home = () => {
                     filteredScheduleTasks.map((task) => (
                         <TaskContainer key={task.id} task={task} />
                     ))}
-                {!isOpen && (
+                {!isAddTaskModalOpen && (
                     <Button
                         zIndex={1} // 2
                         position={{ base: "fixed", sm: "static" }}
@@ -349,8 +341,11 @@ const Home = () => {
                         bottom={{ base: 10, sm: "auto" }}
                         right={{ base: 10, sm: "auto" }}
                         variant={"ghost"}
-                        onClick={onOpen}
-                        isLoading={isAddTaskLoading}
+                        onClick={() => {
+                            setIsAddTaskModalOpen(true);
+                        }}
+                        loading={isAddTaskLoading}
+                        loadingText="Adding..."
                     >
                         {buttonText}
                     </Button>

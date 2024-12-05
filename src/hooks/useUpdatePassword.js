@@ -7,7 +7,6 @@ const useUpdateUserPassword = () => {
     const [updatePassword, updating, error] = useUpdatePassword(auth);
 
     const authUser = useAuthStore((state) => state.user);
-    // const setAuthUser = useAuthStore((state) => state.setUser);
     const showToast = useShowToast();
 
     const updateUserPassword = async (newPassword) => {

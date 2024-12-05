@@ -1,16 +1,11 @@
 import { useState } from "react";
-import {
-    Input,
-    Button,
-    Alert,
-    AlertIcon,
-    Stack,
-    FormLabel,
-    FormControl,
-    useColorModeValue,
-} from "@chakra-ui/react";
+import { Input, Alert, Stack } from "@chakra-ui/react";
+import { Button } from "../ui/button";
 import PasswordInput from "./PasswordInput";
 import useSignUpWithEmailAndPassword from "../../hooks/useSignUpWithEmailAndPassword";
+import { useColorModeValue } from "../ui/color-mode";
+import useAuthStore from "../../store/authStore";
+import { Field } from "../ui/field";
 
 const SignUp = () => {
     const [inputs, setInputs] = useState({
@@ -26,7 +21,7 @@ const SignUp = () => {
     });
 
     const { loading, error, signUp } = useSignUpWithEmailAndPassword();
-
+    const isLoggingIn = useAuthStore((state) => state.isLoggingIn);
     const handleSignUp = (event) => {
         event.preventDefault();
 
@@ -41,7 +36,12 @@ const SignUp = () => {
                 maxW={"md"}
                 bg={useColorModeValue("white", "gray.700")}
             >
-                <FormControl id="username" isRequired variant="floating">
+                <Field
+                    id="username"
+                    required
+                    variant="floating"
+                    label={"Username"}
+                >
                     <Input
                         size={"sm"}
                         placeholder=" "
@@ -53,16 +53,9 @@ const SignUp = () => {
                             setInputs({ ...inputs, username: e.target.value })
                         }
                     />
-                    <FormLabel
-                        fontWeight={"thin"}
-                        size={"sm"}
-                        bg={useColorModeValue("#fff", "#2d3748")}
-                    >
-                        Username
-                    </FormLabel>
-                </FormControl>
+                </Field>
 
-                <FormControl id="email" isRequired variant="floating">
+                <Field id="email" required variant="floating" label={"Email"}>
                     <Input
                         size={"sm"}
                         placeholder=" "
@@ -74,14 +67,7 @@ const SignUp = () => {
                             setInputs({ ...inputs, email: e.target.value })
                         }
                     />
-                    <FormLabel
-                        fontWeight={"thin"}
-                        size={"sm"}
-                        bg={useColorModeValue("#fff", "#2d3748")}
-                    >
-                        Email
-                    </FormLabel>
-                </FormControl>
+                </Field>
 
                 <PasswordInput
                     placeholder="Password"
@@ -119,12 +105,17 @@ const SignUp = () => {
                         p={2}
                         my={3}
                     >
-                        <AlertIcon />
                         {error.message}
                     </Alert>
                 )}
 
-                <Button width="full" type="submit" isLoading={loading}>
+                <Button
+                    width="full"
+                    type="submit"
+                    loading={loading}
+                    disabled={isLoggingIn}
+                    loadingText="Signing up..."
+                >
                     SIGN UP
                 </Button>
             </Stack>

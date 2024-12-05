@@ -4,14 +4,15 @@ import { doc, updateDoc } from "firebase/firestore";
 import useShowToast from "./useShowToast";
 import useTaskStore from "../store/taskStore";
 import useAuthStore from "../store/authStore";
+import { useShallow } from "zustand/shallow";
 
 function useEditTask() {
     const showToast = useShowToast();
     const [isEditing, setIsEditing] = useState(false);
     const { editTask } = useTaskStore();
-    const { isGuest } = useAuthStore((state) => ({
+    const { isGuest } = useAuthStore(useShallow((state) => ({
         isGuest: state.isGuest,
-    }));
+    })));
 
     const handleEditTask = async (task) => {
         if (isEditing) return;

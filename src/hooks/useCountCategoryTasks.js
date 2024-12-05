@@ -2,13 +2,14 @@ import useTaskStore from "../store/taskStore";
 import useAuthStore from "../store/authStore";
 import useCategoryStore from "../store/categoryStore";
 import { useEffect } from "react";
+import { useShallow } from "zustand/shallow";
 
 const useCountCategoryTasks = () => {
     const { tasks } = useTaskStore();
     const { setCategoriesTaskCount } = useCategoryStore();
-    const { authUser } = useAuthStore((state) => ({
+    const { authUser } = useAuthStore(useShallow((state) => ({
         authUser: state.user,
-    }));
+    })));
 
     const countCategoryTasks = () => {
         const categoriesTaskCount = {};
@@ -27,7 +28,6 @@ const useCountCategoryTasks = () => {
     };
 
     useEffect(() => {
-        // console.log("r");
         countCategoryTasks();
     }, [authUser?.categories, tasks]);
 

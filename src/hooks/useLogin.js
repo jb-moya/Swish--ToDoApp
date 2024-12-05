@@ -8,13 +8,18 @@ const useLogin = () => {
     const showToast = useShowToast();
     const [signInWithEmailAndPassword, , loading, error] =
         useSignInWithEmailAndPassword(auth);
+
     const loginUser = useAuthStore((state) => state.login);
+    const loginStart = useAuthStore((state) => state.loginStart);
+    const loginEnd = useAuthStore((state) => state.loginEnd);
 
     const login = async (inputs) => {
         if (!inputs.email || !inputs.password) {
             return showToast("Error", "Please fill all the fields", "error");
         }
+
         try {
+            loginStart();
             const userCred = await signInWithEmailAndPassword(
                 inputs.email,
                 inputs.password
@@ -31,6 +36,8 @@ const useLogin = () => {
             }
         } catch (error) {
             showToast("Error", error.message, "error");
+        } finally {
+            loginEnd();
         }
     };
 

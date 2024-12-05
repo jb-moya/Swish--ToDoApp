@@ -1,20 +1,15 @@
 import React, { useState, useCallback, useMemo } from "react";
 import {
     Box,
-    useColorModeValue,
-    Checkbox,
     IconButton,
     Spacer,
     Stack,
     Flex,
-    Tag,
-    TagLabel,
+    Text,
     Icon,
-    Tooltip,
-    TagRightIcon,
-    TagLeftIcon,
 } from "@chakra-ui/react";
-import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { Checkbox } from "../ui/checkbox";
+import { MdDelete, MdEdit } from "react-icons/md";
 import TaskEditable from "./TaskEditable";
 import PropTypes from "prop-types";
 import "../../index.css";
@@ -22,7 +17,9 @@ import useDeleteTask from "../../hooks/useDeleteTask";
 import useEditTask from "../../hooks/useEditTask";
 import useDateFormat, { formatTime } from "../utils/dateFormat";
 import useShowToast from "../../hooks/useShowToast";
-
+import { useColorModeValue } from "../ui/color-mode";
+import { Tag } from "../ui/tag";
+import { Tooltip } from "../ui/tooltip";
 import {
     IoCalendarClearOutline,
     IoFlag,
@@ -167,9 +164,11 @@ const TaskContainer = React.memo(({ task }) => {
                     <Flex>
                         <Stack spacing={0} position={"relative"}>
                             <Checkbox
+                                colorPalette={"cyan"}
+                                variant={"solid"}
                                 position={"absolute"}
                                 top={0}
-                                onChange={() => {
+                                onCheckedChange={() => {
                                     setCurrentTaskInfo({
                                         ...currentTaskInfo,
                                         isCompleted:
@@ -178,11 +177,11 @@ const TaskContainer = React.memo(({ task }) => {
 
                                     handleCompleteTask();
                                 }}
-                                isChecked={currentTaskInfo.isCompleted}
-                                isDisabled={isEditing}
+                                checked={currentTaskInfo.isCompleted}
+                                disabled={isEditing}
                             ></Checkbox>
 
-                            <Box pl={7}>
+                            <Flex pl={7} lineClamp="2">
                                 <Box
                                     lineHeight={1.2}
                                     fontSize={"17px"}
@@ -197,17 +196,16 @@ const TaskContainer = React.memo(({ task }) => {
                                 >
                                     {currentTaskInfo.taskName}
                                 </Box>
-                                <Box
+                                <Text
                                     opacity={0.8}
                                     fontSize={"15px"}
-                                    noOfLines={2}
+                                    lineClamp="2"
                                 >
-                                    {" "}
                                     {currentTaskInfo.description
                                         ? currentTaskInfo.description
                                         : " "}
-                                </Box>
-                            </Box>
+                                </Text>
+                            </Flex>
                         </Stack>
                     </Flex>
 
@@ -225,12 +223,9 @@ const TaskContainer = React.memo(({ task }) => {
                                 size={"sm"}
                                 rounded={"sm"}
                                 border={`1px solid ${borderColor}`}
+                                startElement={<IoCalendarClearOutline />}
                             >
-                                <TagLeftIcon
-                                    as={IoCalendarClearOutline}
-                                    mr={1}
-                                />
-                                <TagLabel>{formattedDate}</TagLabel>
+                                {formattedDate}
                             </Tag>
                         )}
 
@@ -241,9 +236,9 @@ const TaskContainer = React.memo(({ task }) => {
                                 size={"sm"}
                                 rounded={"sm"}
                                 border={`1px solid ${borderColor}`}
+                                startElement={<CiClock2 />}
                             >
-                                <TagLeftIcon as={CiClock2} mr={1} />
-                                <TagLabel>{formattedTime}</TagLabel>
+                                {formattedTime}
                             </Tag>
                         )}
 
@@ -256,61 +251,60 @@ const TaskContainer = React.memo(({ task }) => {
                                     color={"#ff7e61"}
                                     rounded={"sm"}
                                     border={`1px solid #ff7e61`}
+                                    startElement={<IoAlertCircleSharp />}
                                 >
-                                    <TagLeftIcon
-                                        as={IoAlertCircleSharp}
-                                        mr={1}
-                                    />
-                                    <TagLabel>overdue</TagLabel>
+                                    overdue
                                 </Tag>
                             )}
 
                         <Spacer />
 
                         {task.category !== -1 && (
-                            <Tag bg={"transparent"} size={"sm"}>
-                                <TagLabel>
-                                    {authUser.categories?.[task.category]}
-                                </TagLabel>
-                                <TagRightIcon as={LiaHashtagSolid} />
+                            <Tag
+                                bg={"transparent"}
+                                size={"sm"}
+                                endElement={<LiaHashtagSolid />}
+                            >
+                                {authUser.categories?.[task.category]}
                             </Tag>
                         )}
 
                         {task.priority !== 0 && (
                             <Tag
-                                px={1}
                                 rounded={"sm"}
-                                width={"69px"}
-                                borderBottom={`2px solid ${tagPriorityBorderColor(
-                                    priority[task.priority]
-                                )}`}
+                                // width={"69px"}
+                                // borderBottom={`2px solid ${tagPriorityBorderColor(
+                                //     priority[task.priority]
+                                // )}`}
                                 bg="transparent"
                                 size={"sm"}
                             >
-                                <Icon
-                                    as={IoFlag}
-                                    mr={1}
-                                    color={tagPriorityBorderColor(
-                                        priority[task.priority]
-                                    )}
-                                />
-                                <TagLabel width={"full"} textAlign={"right"}>
+                                <Text>
+                                    <Icon
+                                        mr={1}
+                                        color={tagPriorityBorderColor(
+                                            priority[task.priority]
+                                        )}
+                                    >
+                                        <IoFlag />
+                                    </Icon>
                                     {priority[task.priority]}
-                                </TagLabel>
+                                </Text>
                             </Tag>
                         )}
                     </Flex>
 
                     {currentTaskInfo.isPinned && (
                         <Icon
-                            as={BsFillPinAngleFill}
                             boxSize={5}
                             color={pinColor}
                             position={"absolute"}
                             className="flip-horizontal"
                             top={0}
                             left={-6}
-                        />
+                        >
+                            <BsFillPinAngleFill />
+                        </Icon>
                     )}
 
                     {isHovered && (
@@ -325,21 +319,23 @@ const TaskContainer = React.memo(({ task }) => {
                                 size={"sm"}
                                 variant={"ghost"}
                                 aria-label="edit task"
-                                icon={<EditIcon />}
                                 onClick={() => setEditMode(true)}
-                            />
+                            >
+                                <MdEdit />
+                            </IconButton>
 
                             <IconButton
                                 size={"sm"}
                                 variant={"ghost"}
                                 aria-label="delete task"
-                                icon={<DeleteIcon />}
                                 onClick={handleDeletingTask}
-                                isLoading={isDeleting}
-                            />
+                                // loading={isDeleting}
+                            >
+                                <MdDelete />
+                            </IconButton>
 
                             <Tooltip
-                                label="pin on top"
+                                content="pin on top"
                                 placement="top"
                                 openDelay={500}
                             >
@@ -349,7 +345,6 @@ const TaskContainer = React.memo(({ task }) => {
                                     left={0}
                                     variant={"ghost"}
                                     aria-label="complete task"
-                                    icon={<BsFillPinAngleFill />}
                                     onClick={() => {
                                         setCurrentTaskInfo({
                                             ...currentTaskInfo,
@@ -358,7 +353,9 @@ const TaskContainer = React.memo(({ task }) => {
 
                                         handlePinTask();
                                     }}
-                                />
+                                >
+                                    <BsFillPinAngleFill />
+                                </IconButton>
                             </Tooltip>
                         </Box>
                     )}

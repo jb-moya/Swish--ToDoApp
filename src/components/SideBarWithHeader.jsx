@@ -1,64 +1,25 @@
 "use client";
-
+import React, { useState } from "react";
+import { IconButton, Box, Flex, Icon, Text } from "@chakra-ui/react";
 import {
-    IconButton,
-    Box,
-    CloseButton,
-    Flex,
-    Icon,
-    useColorModeValue,
-    Drawer,
+    DrawerBackdrop,
+    DrawerBody,
+    DrawerCloseTrigger,
     DrawerContent,
-    useDisclosure,
-} from "@chakra-ui/react";
-import { FiMenu } from "react-icons/fi";
+    DrawerFooter,
+    DrawerHeader,
+    DrawerRoot,
+    DrawerTitle,
+    DrawerTrigger,
+} from "./../components/ui/drawer";
+import { FiSidebar } from "react-icons/fi";
+
 import UserProfileMenuButton from "./UserProfileMenuButton";
 import ThemeToggler from "./ThemeToggler";
 import filterSchedule from "../constants/filterSchedule";
 import useFilterScheduleStore from "../store/filterScheduleStore";
 
-const SidebarContent = ({ onClose, ...rest }) => {
-    const { setFilter } = useFilterScheduleStore();
-
-    return (
-        <Box
-            transition="3s ease"
-            bg={useColorModeValue("white", "gray.900")}
-            w={{ base: "full" }}
-            pos="fixed"
-            h="full"
-            {...rest}
-        >
-            <Flex
-                h="20"
-                alignItems="center"
-                mx="4"
-                justifyContent="space-between"
-            >
-                <Flex>
-                    <UserProfileMenuButton />
-                    <ThemeToggler />
-                </Flex>
-                <CloseButton display={{ base: "flex" }} onClick={onClose} />
-            </Flex>
-            {filterSchedule.map((filterType) => (
-                <NavItem
-                    key={filterType.name}
-                    icon={filterType.icon}
-                    onClick={() => {
-                        const { icon, ...filterWithoutIcon } = filterType; // Destructure and omit `icon`
-                        setFilter(filterWithoutIcon);
-                        onClose();
-                    }}
-                >
-                    {filterType.name}
-                </NavItem>
-            ))}
-        </Box>
-    );
-};
-
-const NavItem = ({ icon, children, ...rest }) => {
+const NavItem = ({ icon, content, ...rest }) => {
     return (
         <Box
             as="a"
@@ -82,48 +43,81 @@ const NavItem = ({ icon, children, ...rest }) => {
                 {icon && (
                     <Icon
                         mr="4"
-                        fontSize="16"
+                        fontSize="20px"
                         _groupHover={{
                             color: "white",
                         }}
-                        as={icon}
-                    />
+                    >
+                        {icon}
+                    </Icon>
                 )}
-                {children}
+                <Text>{content}</Text>
             </Flex>
         </Box>
     );
 };
 
-const MobileNav = ({ onOpen, ...rest }) => {
-    return (
-        <IconButton
-            display={{ base: "flex", md: "none" }}
-            onClick={onOpen}
-            variant="outline"
-            aria-label="open menu"
-            icon={<FiMenu />}
-        />
-    );
-};
-
 const SidebarWithHeader = () => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [open, setOpen] = useState(false);
+    const { setFilter } = useFilterScheduleStore();
 
     return (
         <Box>
-            <Drawer
-                isOpen={isOpen}
-                placement="left"
-                onClose={onClose}
-                returnFocusOnClose={false}
-                onOverlayClick={onClose}
+            <DrawerRoot
+                trapFocus={false}
+                placement="start"
+                open={open}
+                onOpenChange={(e) => setOpen(e.open)}
             >
+                <DrawerBackdrop />
+                <DrawerTrigger asChild>
+                    <IconButton
+                        display={{ base: "flex", md: "none" }}
+                        variant="outline"
+                        aria-label="open menu"
+                    >
+                        <FiSidebar />
+                    </IconButton>
+                </DrawerTrigger>
                 <DrawerContent>
-                    <SidebarContent onClose={onClose} />
+                    <DrawerHeader>
+                        <DrawerTitle>
+                            <Flex
+                                h="20"
+                                alignItems="center"
+                                mx="4"
+                                justifyContent="space-between"
+                            >
+                                <Flex zindex={"max"}>
+                                    <UserProfileMenuButton />
+                                    <ThemeToggler />
+                                </Flex>
+                            </Flex>
+                        </DrawerTitle>
+                    </DrawerHeader>
+                    <DrawerTrigger />
+                    <DrawerBody>
+                        {filterSchedule.map((filterType) => {
+                            return (
+                                <NavItem
+                                    key={filterType.name}
+                                    icon={<filterType.icon />}
+                                    content={filterType.name}
+                                    onClick={() => {
+                                        const { icon, ...filterWithoutIcon } =
+                                            filterType;
+                                        setFilter(filterWithoutIcon);
+                                        setOpen(false);
+                                    }}
+                                />
+                            );
+                        })}
+                    </DrawerBody>
+                    <DrawerFooter />
+
+                    <DrawerCloseTrigger />
                 </DrawerContent>
-            </Drawer>
-            <MobileNav onOpen={onOpen} />
+            </DrawerRoot>
         </Box>
     );
 };

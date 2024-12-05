@@ -1,20 +1,7 @@
-import { useColorMode, IconButton } from "@chakra-ui/react";
-import { MdDarkMode, MdOutlineLightMode } from "react-icons/md";
+import { ColorModeButton } from "./ui/color-mode";
 
-const ThemeToggler = ({...IconStyle}) => {
-    const { colorMode, toggleColorMode } = useColorMode();
-
-    return (
-        <IconButton
-            variant={"ghost"}
-            aria-label="Toggle color mode"
-            icon={
-                colorMode === "light" ? <MdDarkMode /> : <MdOutlineLightMode />
-            }
-            {...IconStyle}
-            onClick={toggleColorMode}
-        />
-    );
+const ThemeToggler = ({ ...IconStyle }) => {
+    return <ColorModeButton {...IconStyle} />;
 };
 
 export default ThemeToggler;

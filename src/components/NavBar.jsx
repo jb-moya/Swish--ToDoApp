@@ -1,20 +1,7 @@
-import {
-    Flex,
-    Button,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
-    Spacer,
-    Tooltip,
-    Portal,
-    Stat,
-    Box,
-    Icon,
-    StatHelpText,
-    useColorModeValue,
-} from "@chakra-ui/react";
-import { ChevronDownIcon } from "@chakra-ui/icons";
+import { Flex, Spacer, Box, Icon, Portal } from "@chakra-ui/react";
+import { Button } from "./ui/button";
+import { Tooltip } from "./ui/tooltip";
+import { IoChevronDown } from "react-icons/io5";
 import useFilterScheduleStore from "../store/filterScheduleStore";
 import useTaskStore from "../store/taskStore";
 import useCategoryStore from "../store/categoryStore";
@@ -23,6 +10,8 @@ import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import ThemeToggler from "./ThemeToggler";
 import UserProfileMenuButton from "./UserProfileMenuButton";
 import filterSchedule from "../constants/filterSchedule";
+import { useColorModeValue } from "./ui/color-mode";
+import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "./ui/menu";
 
 const Navbar = () => {
     const { selectedCategoryId } = useCategoryStore();
@@ -46,51 +35,48 @@ const Navbar = () => {
             zIndex={2}
             alignItems={"center"}
         >
-            <Menu>
-                <Stat display={{ base: "none", md: "block" }}>
-                    <Tooltip label="Filter By Due Date" placement="top">
-                        <MenuButton
-                            as={Button}
-                            color={useColorModeValue("cyan.500", "cyan.300")}
-                            boxSizing="border-box"
-                            boxSize={6}
-                            minWidth={"fit-content"}
-                            textAlign={"left"}
-                            height={"42px"}
-                            variant={"unstyled"}
-                            transition="all 0.2s"
-                        >
-                            <Box fontWeight={"bold"}>
-                                {filter.name} <Icon as={ChevronDownIcon} />
-                            </Box>
+            <MenuRoot>
+                <MenuTrigger asChild>
+                    <Button
+                        display={{ base: "none", md: "block" }}
+                        color={useColorModeValue("cyan.500", "cyan.300")}
+                        boxSizing="border-box"
+                        boxSize={6}
+                        minWidth={"fit-content"}
+                        textAlign={"left"}
+                        height={"56px"}
+                        variant={"ghost"}
+                        transition="all 0.2s"
+                    >
+                        <Tooltip content="Filter By Due Date" placement="top">
+                            <Box>
+                                <Box fontWeight={"bold"}>
+                                    {filter.name}{" "}
+                                    <Icon>
+                                        <IoChevronDown />
+                                    </Icon>
+                                </Box>
 
-                            {!isGettingTasksLoading && (
-                                <StatHelpText
-                                    fontWeight={"normal"}
-                                    color={tasksCompletionCountStyle}
-                                >
-                                    <Flex>
+                                {!isGettingTasksLoading && (
+                                    <Flex
+                                        fontWeight={"normal"}
+                                        color={tasksCompletionCountStyle}
+                                    >
                                         {tasksCount === completedTaskCount ? (
                                             <Flex
                                                 fontWeight={"bold"}
                                                 alignItems={"center"}
                                             >
-                                                <Icon
-                                                    as={
-                                                        IoIosCheckmarkCircleOutline
-                                                    }
-                                                    mr={1}
-                                                />
+                                                <Icon mr={1}>
+                                                    <IoIosCheckmarkCircleOutline />
+                                                </Icon>
                                                 All Completed
                                             </Flex>
                                         ) : (
                                             <Flex alignItems={"center"}>
-                                                <Icon
-                                                    as={
-                                                        IoIosCheckmarkCircleOutline
-                                                    }
-                                                    mr={1}
-                                                />
+                                                <Icon mr={1}>
+                                                    <IoIosCheckmarkCircleOutline />
+                                                </Icon>
                                                 <Box fontWeight={"bold"}>
                                                     {completedTaskCount}
                                                 </Box>
@@ -100,38 +86,43 @@ const Navbar = () => {
                                             </Flex>
                                         )}
                                     </Flex>
-                                </StatHelpText>
-                            )}
-                        </MenuButton>
-                    </Tooltip>
-                </Stat>
+                                )}
+                            </Box>
+                        </Tooltip>
+                    </Button>
+                </MenuTrigger>
 
-                <Portal>
-                    <MenuList>
-                        {filterSchedule.map((item, index) => (
+                <MenuContent>
+                    {filterSchedule.map((item, index) => {
+                        return (
                             <MenuItem
                                 key={index}
+                                value={item.name}
                                 onClick={() => {
                                     const { icon, ...filterWithoutIcon } = item; // Destructure and omit `icon`
                                     setFilter(filterWithoutIcon);
                                 }}
                             >
-                                {item.icon && (
-                                    <Icon
-                                        mr="4"
-                                        fontSize="16"
-                                        _groupHover={{
-                                            color: "white",
-                                        }}
-                                        as={item.icon}
-                                    />
-                                )}
-                                {item.name}
+                                <Box>
+                                    {item.icon && (
+                                        <Icon
+                                            mr="4"
+                                            fontSize="16"
+                                            _groupHover={{
+                                                color: "white",
+                                            }}
+                                        >
+                                            <item.icon />
+                                        </Icon>
+                                    )}
+                                    {item.name}
+                                </Box>
                             </MenuItem>
-                        ))}
-                    </MenuList>
-                </Portal>
-            </Menu>
+                        );
+                    })}
+                </MenuContent>
+            </MenuRoot>
+
             <Spacer />
             <UserProfileMenuButton display={{ base: "none", md: "flex" }} />
             <ThemeToggler display={{ base: "none", md: "flex" }} />

@@ -6,30 +6,40 @@ import usePreviewImg from "../../../hooks/usePreviewImg";
 import useEditProfile from "../../../hooks/useEditProfile";
 import useShowToast from "../../../hooks/useShowToast";
 import {
-    Button,
-    FormControl,
-    FormLabel,
+    Fieldset,
     Heading,
     Input,
     Stack,
-    Text,
-    useColorModeValue,
-    Modal,
-    Avatar,
-    AvatarBadge,
     IconButton,
+    Text,
+    Image,
     Center,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalCloseButton,
-    ModalBody,
+    Circle,
+    Float,
 } from "@chakra-ui/react";
-import { SmallCloseIcon } from "@chakra-ui/icons";
+import { Avatar } from "../../ui/avatar";
+import { IoMdClose } from "react-icons/io";
 import PasswordInput from "../PasswordInput";
 import useUpdateUserPassword from "../../../hooks/useUpdatePassword";
 import useReauthenticateWithCredential from "../../../hooks/useReauthenticateWithCredential";
 import { getAuth } from "firebase/auth";
+import { useColorModeValue } from "../../ui/color-mode";
+import {
+    DialogBody,
+    DialogCloseTrigger,
+    DialogActionTrigger,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogRoot,
+    DialogTitle,
+    DialogTrigger,
+} from "../../ui/dialog";
+import { useShallow } from "zustand/shallow";
+import { Field } from "../../ui/field";
+import { IoMdRemoveCircle } from "react-icons/io";
+import { Button } from "../../ui/button";
+import { HiUpload } from "react-icons/hi";
 
 export default function EditProfile({ isOpen, onClose }) {
     const [inputs, setInputs] = useState({
@@ -45,7 +55,8 @@ export default function EditProfile({ isOpen, onClose }) {
         showConfirmNewPassword: false,
     });
 
-    const authUser = useAuthStore((state) => state.user);
+    const authUser = useAuthStore(useShallow((state) => state.user));
+
     const fileRef = useRef(null);
     const { handleImageChange, selectedFile, setSelectedFile } =
         usePreviewImg();
@@ -142,74 +153,83 @@ export default function EditProfile({ isOpen, onClose }) {
     };
 
     return (
-        <Modal
-            isOpen={isOpen}
-            onClose={onClose}
-            isCentered
-            bg={useColorModeValue("gray.50", "gray.800")}
+        <DialogRoot
+            lazyMount
+            placement="center"
+            open={isOpen}
+            onOpenChange={() => {
+                resetInput();
+                onClose();
+            }}
         >
-            <ModalOverlay />
-            <ModalContent pb={6}>
-                <ModalHeader>Edit Profile</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                    <Stack spacing={5}>
-                        <FormControl id="profilePicture" mb={6}>
-                            <Stack direction={["column", "row"]} spacing={6}>
-                                <Center>
-                                    <Avatar
-                                        size="xl"
-                                        src={
-                                            selectedFile ||
-                                            authUser.profilePicURL
-                                        }
-                                        border={"2px solid white "}
-                                    >
-                                        {selectedFile && (
-                                            <AvatarBadge
-                                                as={IconButton}
-                                                size="sm"
-                                                rounded="full"
-                                                bg={"red.400"}
-                                                color={"white"}
-                                                top="-10px"
-                                                colorScheme="red"
-                                                aria-label="remove Image"
-                                                icon={<SmallCloseIcon />}
-                                                onClick={() =>
-                                                    setSelectedFile(null)
-                                                }
-                                            />
-                                        )}
-                                    </Avatar>
-                                </Center>
-                                <Center w="full">
-                                    <Button
-                                        w="full"
-                                        onClick={() => fileRef.current.click()}
-                                    >
-                                        Change Profile Picture
-                                    </Button>
-                                </Center>
-
-                                <Input
-                                    type="file"
-                                    hidden
-                                    accept="image/*"
-                                    ref={fileRef}
-                                    onChange={handleImageChange}
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Edit Profile</DialogTitle>
+                </DialogHeader>
+                <DialogBody>
+                    <Stack>
+                        <Stack
+                            gap="10"
+                            direction={["column", "row"]}
+                            justify={"center"}
+                        >
+                            <Center position="relative">
+                                <Image
+                                    src={selectedFile || authUser.profilePicURL}
+                                    boxSize="120px"
+                                    borderRadius="full"
+                                    fit="cover"
+                                    border={"2px solid white "}
+                                    alt="your profile picture"
                                 />
-                            </Stack>
-                        </FormControl>
 
-                        <FormControl
+                                {selectedFile && (
+                                    <Float
+                                        placement="top-end"
+                                        offsetX="2"
+                                        offsetY="2"
+                                    >
+                                        <Circle
+                                            bg="red.400"
+                                            size="40px"
+                                            outline="0.2em solid"
+                                            outlineColor="bg"
+                                            cursor={"pointer"}
+                                            onClick={() =>
+                                                setSelectedFile(null)
+                                            }
+                                        >
+                                            <IoMdRemoveCircle size={40} />
+                                        </Circle>
+                                    </Float>
+                                )}
+                            </Center>
+                            <Center>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => fileRef.current.click()}
+                                >
+                                    <HiUpload />
+                                    Change Profile Picture
+                                </Button>
+                            </Center>
+                            <Input
+                                type="file"
+                                hidden
+                                ref={fileRef}
+                                onChange={handleImageChange}
+                            />
+                        </Stack>
+
+                        <Field
                             id="userName"
-                            isRequired
+                            label="User name"
+                            required
                             variant="floating"
                         >
                             <Input
                                 size={"sm"}
-                                placeholder=" "
+                                placeholder="me@example.com"
                                 _placeholder={{ color: "gray.500" }}
                                 type="text"
                                 variant="flushed"
@@ -221,21 +241,15 @@ export default function EditProfile({ isOpen, onClose }) {
                                     });
                                 }}
                             />
-                            <FormLabel
-                                fontWeight={"thin"}
-                                size={"sm"}
-                                bg={useColorModeValue("#fff", "#2d3748")}
-                            >
-                                User name
-                            </FormLabel>
-                        </FormControl>
+                        </Field>
 
                         {userSignInProvider === defaultSignInProvider && (
                             <>
-                                <FormControl
+                                <Field
                                     id="email"
-                                    isRequired
+                                    required
                                     variant="floating"
+                                    label="Email address"
                                 >
                                     <Input
                                         size={"sm"}
@@ -247,14 +261,7 @@ export default function EditProfile({ isOpen, onClose }) {
                                         disabled
                                         readOnly
                                     />
-                                    <FormLabel
-                                        fontWeight={"thin"}
-                                        size={"sm"}
-                                        bg={labelBackground}
-                                    >
-                                        Email address
-                                    </FormLabel>
-                                </FormControl>
+                                </Field>
 
                                 <Heading
                                     mt={4}
@@ -318,58 +325,51 @@ export default function EditProfile({ isOpen, onClose }) {
                                 />
                             </>
                         )}
-                        <Stack
-                            spacing={2}
-                            direction={["column", "row"]}
-                            align={["center", "flex-start"]}
-                            justify={["center", "flex-start"]}
-                        >
-                            <Button
-                                bg={"red.400"}
-                                color={"white"}
-                                w="25%"
-                                _hover={{
-                                    bg: "red.500",
-                                }}
-                                isDisabled={
-                                    isProfileUpdating ||
-                                    isPasswordUpdating ||
-                                    isSubmitting
-                                }
-                                onClick={() => {
-                                    resetInput();
-                                    onClose();
-                                }}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                w="75%"
-                                onClick={handleSubmit}
-                                isLoading={
-                                    isProfileUpdating ||
-                                    isPasswordUpdating ||
-                                    isSubmitting
-                                }
-                                isDisabled={
-                                    isProfileUpdating ||
-                                    isPasswordUpdating ||
-                                    isSubmitting
-                                }
-                            >
-                                <Text mr={2} textStyle="xs">
-                                    Submit
-                                </Text>
-                                <Text textStyle="7xl">
-                                    {inputs.username
-                                        ? "(will update name)"
-                                        : ""}
-                                </Text>
-                            </Button>
-                        </Stack>
                     </Stack>
-                </ModalBody>
-            </ModalContent>
-        </Modal>
+                </DialogBody>
+                <DialogFooter>
+                    <DialogActionTrigger asChild>
+                        <Button
+                            bg={"red.400"}
+                            color={"white"}
+                            _hover={{
+                                bg: "red.500",
+                            }}
+                            isDisabled={
+                                isProfileUpdating ||
+                                isPasswordUpdating ||
+                                isSubmitting
+                            }
+                            onClick={() => {
+                                resetInput();
+                                onClose();
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                    </DialogActionTrigger>
+                    <Button
+                        onClick={handleSubmit}
+                        loading={
+                            isProfileUpdating ||
+                            isPasswordUpdating ||
+                            isSubmitting
+                        }
+                        disabled={
+                            isProfileUpdating ||
+                            isPasswordUpdating ||
+                            isSubmitting
+                        }
+                        loadingText="Updating..."
+                    >
+                        <Text textStyle="xs">
+                            Submit{" "}
+                            {inputs.username ? "(will update name)" : null}
+                        </Text>
+                    </Button>
+                </DialogFooter>
+                <DialogCloseTrigger />
+            </DialogContent>
+        </DialogRoot>
     );
 }
