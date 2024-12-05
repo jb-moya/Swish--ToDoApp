@@ -335,7 +335,7 @@ export default function EditProfile({ isOpen, onClose }) {
                             _hover={{
                                 bg: "red.500",
                             }}
-                            isDisabled={
+                            disabled={
                                 isProfileUpdating ||
                                 isPasswordUpdating ||
                                 isSubmitting
