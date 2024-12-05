@@ -28,7 +28,9 @@ const UserProfileMenuButton = ({ ...mainContainerProps }) => {
         <Box {...mainContainerProps}>
             <EditProfile
                 isOpen={isEditProfileDialogOpen}
-                toggler={setIsEditProfileDialogOpen}
+                onClose={() =>
+                    setIsEditProfileDialogOpen(!isEditProfileDialogOpen)
+                }
             />
 
             {!isGuest ? (
@@ -41,6 +43,7 @@ const UserProfileMenuButton = ({ ...mainContainerProps }) => {
                                     size={"sm"}
                                     name={user?.username}
                                     src={user?.profilePicURL}
+                                    border={"1px solid white "}
                                 />
                             ) : (
                                 <MdPerson size={"24"} />

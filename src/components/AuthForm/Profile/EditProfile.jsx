@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useAuthStore from "../../../store/authStore";
 import usePreviewImg from "../../../hooks/usePreviewImg";
 import useEditProfile from "../../../hooks/useEditProfile";
@@ -11,6 +11,8 @@ import {
     Input,
     Stack,
     IconButton,
+    Text,
+    Image,
     Center,
     Circle,
     Float,
@@ -37,8 +39,9 @@ import { useShallow } from "zustand/shallow";
 import { Field } from "../../ui/field";
 import { IoMdRemoveCircle } from "react-icons/io";
 import { Button } from "../../ui/button";
+import { HiUpload } from "react-icons/hi";
 
-export default function EditProfile({ isOpen, toggler }) {
+export default function EditProfile({ isOpen, onClose }) {
     const [inputs, setInputs] = useState({
         username: "",
         email: "",
@@ -58,6 +61,9 @@ export default function EditProfile({ isOpen, toggler }) {
     const fileRef = useRef(null);
     const { handleImageChange, selectedFile, setSelectedFile } =
         usePreviewImg();
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const { isProfileUpdating, editProfile } = useEditProfile();
     const { updateUserPassword, isPasswordUpdating } = useUpdateUserPassword();
     const showToast = useShowToast();
@@ -72,17 +78,24 @@ export default function EditProfile({ isOpen, toggler }) {
     const labelBackground = useColorModeValue("gray.100", "gray.700");
 
     const handleEditProfile = async () => {
+        console.log("editing");
+
         try {
+            console.log("cccccccccc");
+
             await editProfile(inputs, selectedFile);
             setSelectedFile(null);
-            toggler(false);
+            onClose();
         } catch (error) {
             showToast("Error", error.message, "error");
         }
     };
 
-    const isPasswordValid = () => {
-        if (!verifyPassword(inputs.oldPassword)) {
+    useEffect(() => {}, [inputs]);
+
+    const isPasswordValid = async () => {
+        const resultValidation = await verifyPassword(inputs.oldPassword);
+        if (!resultValidation) {
             return false;
         }
 
@@ -94,8 +107,50 @@ export default function EditProfile({ isOpen, toggler }) {
         return true;
     };
 
-    const handlePasswordChange = () => {
-        updateUserPassword(inputs.newPassword);
+    const handlePasswordChange = async () => {
+        if (
+            !inputs.oldPassword &&
+            !inputs.newPassword &&
+            !inputs.confirmNewPassword
+        ) {
+            return;
+        }
+
+        if (
+            !inputs.oldPassword ||
+            !inputs.newPassword ||
+            !inputs.confirmNewPassword
+        ) {
+            showToast("Error", "Please fill in all fields", "error");
+            return;
+        }
+
+        if (await isPasswordValid()) {
+            updateUserPassword(inputs.newPassword);
+        }
+    };
+
+    const handleSubmit = async () => {
+        setIsSubmitting(true);
+
+        await handlePasswordChange();
+
+        if (inputs.username !== "" || selectedFile) {
+            handleEditProfile();
+        }
+
+        resetInput();
+        onClose();
+        setIsSubmitting(false);
+    };
+
+    const resetInput = () => {
+        setInputs({
+            username: "",
+            oldPassword: "",
+            newPassword: "",
+            confirmNewPassword: "",
+        });
     };
 
     return (
@@ -104,7 +159,8 @@ export default function EditProfile({ isOpen, toggler }) {
             placement="center"
             open={isOpen}
             onOpenChange={() => {
-                toggler(!isOpen);
+                resetInput();
+                onClose();
             }}
         >
             <DialogContent>
@@ -112,45 +168,52 @@ export default function EditProfile({ isOpen, toggler }) {
                     <DialogTitle>Edit Profile</DialogTitle>
                 </DialogHeader>
                 <DialogBody>
-                    <Stack spacing={5}>
-                        <Stack direction={["column", "row"]} spacing={6}>
-                            <Center>
-                                <Avatar
-                                    size="2xl"
+                    <Stack>
+                        <Stack
+                            gap="10"
+                            direction={["column", "row"]}
+                            justify={"center"}
+                        >
+                            <Center position="relative">
+                                <Image
                                     src={selectedFile || authUser.profilePicURL}
+                                    boxSize="120px"
+                                    borderRadius="full"
+                                    fit="cover"
                                     border={"2px solid white "}
-                                >
-                                    {selectedFile && (
-                                        <Float
-                                            placement="top-end"
-                                            offsetX="2"
-                                            offsetY="2"
+                                    alt="your profile picture"
+                                />
+
+                                {selectedFile && (
+                                    <Float
+                                        placement="top-end"
+                                        offsetX="2"
+                                        offsetY="2"
+                                    >
+                                        <Circle
+                                            bg="red.400"
+                                            size="40px"
+                                            outline="0.2em solid"
+                                            outlineColor="bg"
+                                            cursor={"pointer"}
+                                            onClick={() =>
+                                                setSelectedFile(null)
+                                            }
                                         >
-                                            <Circle
-                                                bg="red.400"
-                                                size="20px"
-                                                outline="0.2em solid"
-                                                outlineColor="bg"
-                                                cursor={"pointer"}
-                                                onClick={() =>
-                                                    setSelectedFile(null)
-                                                }
-                                            >
-                                                <IoMdRemoveCircle size={30} />
-                                            </Circle>
-                                        </Float>
-                                    )}
-                                </Avatar>
+                                            <IoMdRemoveCircle size={40} />
+                                        </Circle>
+                                    </Float>
+                                )}
                             </Center>
-                            <Center w="full">
+                            <Center>
                                 <Button
-                                    w="full"
+                                    variant="outline"
                                     onClick={() => fileRef.current.click()}
                                 >
+                                    <HiUpload />
                                     Change Profile Picture
                                 </Button>
                             </Center>
-
                             <Input
                                 type="file"
                                 hidden
@@ -162,7 +225,7 @@ export default function EditProfile({ isOpen, toggler }) {
                         <Field
                             id="userName"
                             label="User name"
-                            isRequired
+                            required
                             variant="floating"
                         >
                             <Input
@@ -185,7 +248,7 @@ export default function EditProfile({ isOpen, toggler }) {
                             <>
                                 <Field
                                     id="email"
-                                    isRequired
+                                    required
                                     variant="floating"
                                     label="Email address"
                                 >
@@ -196,12 +259,8 @@ export default function EditProfile({ isOpen, toggler }) {
                                         type="email"
                                         variant="flushed"
                                         value={inputs.email || authUser.email}
-                                        onChange={(e) =>
-                                            setInputs({
-                                                ...inputs,
-                                                email: e.target.value,
-                                            })
-                                        }
+                                        disabled
+                                        readOnly
                                     />
                                 </Field>
 
@@ -277,43 +336,37 @@ export default function EditProfile({ isOpen, toggler }) {
                             _hover={{
                                 bg: "red.500",
                             }}
-                            onClick={() => toggler(false)}
+                            isDisabled={
+                                isProfileUpdating ||
+                                isPasswordUpdating ||
+                                isSubmitting
+                            }
+                            onClick={() => {
+                                resetInput();
+                                onClose();
+                            }}
                         >
                             Cancel
                         </Button>
                     </DialogActionTrigger>
                     <Button
-                        onClick={() => {
-                            if (
-                                inputs.oldPassword &&
-                                inputs.newPassword &&
-                                inputs.confirmNewPassword
-                            ) {
-                                if (!isPasswordValid()) {
-                                    return;
-                                }
-
-                                handlePasswordChange();
-                            } else if (
-                                inputs.oldPassword ||
-                                inputs.newPassword ||
-                                inputs.confirmNewPassword
-                            ) {
-                                showToast(
-                                    "Error",
-                                    "Please fill in all fields",
-                                    "error"
-                                );
-                                return;
-                            }
-
-                            handleEditProfile();
-                        }}
-                        loading={isProfileUpdating || isPasswordUpdating}
+                        onClick={handleSubmit}
+                        loading={
+                            isProfileUpdating ||
+                            isPasswordUpdating ||
+                            isSubmitting
+                        }
+                        disabled={
+                            isProfileUpdating ||
+                            isPasswordUpdating ||
+                            isSubmitting
+                        }
                         loadingText="Updating..."
-                        disabled={isProfileUpdating || isPasswordUpdating}
                     >
-                        Submit
+                        <Text textStyle="xs">
+                            Submit{" "}
+                            {inputs.username ? "(will update name)" : null}
+                        </Text>
                     </Button>
                 </DialogFooter>
                 <DialogCloseTrigger />
