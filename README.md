@@ -2,7 +2,7 @@
 
 **Swiss ToDo App** is a dynamic, secure, and user-friendly task management application built with Firebase and styled with ChakraUI. This app empowers users to efficiently manage their tasks by offering a range of robust features while ensuring data privacy and security through Firebase's authentication services.
 
-![ToDo App Screenshot](./images/demo.gif)
+![ToDo App Screenshot](/images/demo.GIF)
 
 ## Current Features
 
