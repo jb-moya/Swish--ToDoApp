@@ -35,6 +35,7 @@ const Navbar = () => {
             mt={{ base: 0, md: 4 }}
             zIndex={2}
             alignItems={"center"}
+            gap={2}
         >
             <MenuRoot>
                 <MenuTrigger asChild>
