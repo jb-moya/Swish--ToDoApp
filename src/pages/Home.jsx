@@ -152,7 +152,7 @@ const Home = () => {
     const noTaskHeadingStyle = useColorModeValue("cyan.500", "cyan.200");
 
     return (
-        <>
+        <Box>
             <Flex
                 maxW="5xl"
                 px={9}
@@ -161,11 +161,14 @@ const Home = () => {
                 mx="auto"
             >
                 <Navbar />
-
-                <HStack
+                <Flex
                     position={"relative"}
                     width={"full"}
-                    height={"50px"}
+                    alignItems={"center"}
+                    justify={"space-between"}
+                    // height={"50px"}
+                    wrap="wrap"
+                    gap={2}
                     mt={6}
                     py={3}
                     // borderBottom={`1px solid ${useColorModeValue(
@@ -265,7 +268,6 @@ const Home = () => {
                     </MenuRoot>
 
                     <Button
-                        // px={1}
                         variant={"ghost"}
                         size={"xs"}
                         onClick={() => setSortConfig(sortConfig.key)}
@@ -285,7 +287,7 @@ const Home = () => {
                             )}
                         </Icon>
                     </Button>
-                </HStack>
+                </Flex>
 
                 {isSmallScreen ? (
                     <DialogRoot
@@ -365,7 +367,7 @@ const Home = () => {
                 <Spacer />
                 <Footer />
             </Flex>
-        </>
+        </Box>
     );
 };
 
