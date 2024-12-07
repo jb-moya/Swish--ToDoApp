@@ -34,6 +34,8 @@ import Footer from "../components/Footer";
 import useShowToast from "../hooks/useShowToast";
 import SidebarWithHeader from "../components/SideBarWithHeader";
 import SearchTask from "../components/Search/SearchTask";
+import AIButton from "./AIButton";
+
 const messages = [
     "Enjoy the calm and take some time for yourself. You've earned this moment of relaxation!",
     "Take a breather and enjoy the moment!",
@@ -203,6 +205,8 @@ const Home = () => {
                     />
 
                     <Spacer />
+
+                    <AIButton />
 
                     {isSmallScreen && <SearchTask />}
 
